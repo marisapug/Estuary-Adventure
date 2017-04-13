@@ -1,13 +1,21 @@
 package view;
 
-public class ViewMain {
+import javax.swing.*;
+
+public abstract class ViewMain extends JFrame {
 	
-	public static void main(String[] args){
-		
-		StartScreenView startView = new StartScreenView();
-		
-		startView.setVisible(true);
-		
-	}//main
+	private final int screenWidth = 500;
+	private final int screenHeight = 300;
+	
+	
+	public int getScreenWidth(){
+		return screenWidth;
+	}
+	
+	public int getScreenHeight(){
+		return screenHeight;
+	}
+	
+	
 
 }

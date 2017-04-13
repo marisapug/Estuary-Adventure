@@ -4,21 +4,44 @@ public class Crab extends GameFigure {
 	int health;
 	int ageState;
 	int speed;
+	
+	
+	
 	String crabType;
 	
-	void moveLeft(){}
+	public Crab(int h, int a, int s, int xL, int yL){
+		health = h;
+		ageState = a;
+		speed = s;
+		xLoc = xL;
+		yLoc = yL;
+	}
 	
-	void moveRight(){}
+	void moveLeft(){
+		xLoc = xLoc - xIncr;
+	}
+		
+	void moveRight(){
+		xLoc = xLoc + xIncr;
+	}
 	
-	void rotateRight(){}
+	void moveUp(){
+		yLoc = yLoc - yIncr;
+	}
 	
-	void rotateLeft(){}
+	void moveDown(){
+		yLoc = yLoc + yIncr;
+	}
 	
 	void plantGrass(){}
 	
 	void die(){}
 	
-	void loseHealth(){}
+	void loseHealth(){
+		health = health - 1;
+	}
 	
-	void grow(){}
+	void grow(){
+		ageState = ageState + 1;
+	}
 }
