@@ -1,26 +1,14 @@
 package view;
 
-import java.util.ArrayList;
-import java.awt.image.BufferedImage;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
-public class BeachGameView {
-	ArrayList<BufferedImage> waves;
-	ArrayList<BufferedImage> boats;
-	ArrayList<BufferedImage> barriers;
-	ArrayList<BufferedImage> grass;
-	ArrayList<BufferedImage> oysters;
+public class BeachGameView extends JPanel {
 	
-	void plantGrass(){}
+private JLabel beachMessage  = new JLabel("Beach GAMEEEEEEE!");
 	
-	void waveSplash(){}
+	public BeachGameView(){
+		this.add(beachMessage);
+	}
 	
-	void placeBarrier(){}
-	
-	void moveBoat(){}
-	
-	void crabRotate(){}
-	
-	void crabLeft(){}
-	
-	void crabRight(){}
 }

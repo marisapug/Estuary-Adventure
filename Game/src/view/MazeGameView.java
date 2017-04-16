@@ -4,25 +4,14 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class MazeGameView extends ViewMain{
-
-	private JLabel headerMessage  = new JLabel("Maze Game");
-
+public class MazeGameView extends JPanel {
+		
+	private JLabel mazeMessage  = new JLabel("Maze GAMEEEEEEE!");
+	
 	public MazeGameView(){
-
-		JPanel mazePanel = new JPanel();
-
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		this.setSize(getScreenWidth(), getScreenHeight());
-		
-		mazePanel.add(headerMessage);
-		
-		this.add(mazePanel);
-		
-		this.setVisible(false);
-
+		this.add(mazeMessage);
 	}
-		
+	
+	
 	
 }
