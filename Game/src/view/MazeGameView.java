@@ -25,11 +25,11 @@ public class MazeGameView extends JPanel {
 	private int screenWidth = 500;
 	private int screenHeight = 300;
 	
-	private int numRows = 10;
-	private int numCols = 10;
+	private int numRows = 30;
+	private int numCols = 30;
 	
-	private MazeBoard board = new MazeBoard(10,10,100,100);
-	private ArrayList<MazeCell> walls = board.getStack(); 
+	private MazeBoard board = new MazeBoard(numRows,numCols,30,30);
+	private MazeCell[][] grid = board.getGrid(); 
 		
 	private JLabel mazeMessage  = new JLabel("Maze GAMEEEEEEE!");
 	
@@ -57,13 +57,37 @@ public class MazeGameView extends JPanel {
 	//paintComponent
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		for(MazeCell m: walls){
-			g.drawRect( m.getX(), m.getY(), m.getWidth(), m.getHeight());
+//		g.drawLine(20, 20, 10,10);//(endPoint X, endPoint Y, start X, start Y)
+		
+		for(int i = 0; i < numRows; i++){
+			for(int j =0; j < numCols; j++){
+				MazeCell currG = grid[i][j];
+				int topLX = currG.getX()*currG.getWidth();
+				int topLY = currG.getY()*currG.getHeight();
+				int topRX = topLX + currG.getWidth();
+				int topRY = topLY;
+				int bottomLX = topLX;
+				int bottomLY = topLY + currG.getHeight();
+				int bottomRX = topRX;
+				int bottomRY = bottomLY;
+				if(currG.getHasTopWall()){
+					g.drawLine(topLX, topLY, topRX, topRY);
+				}
+				if(currG.getHasBottomWall()){
+					g.drawLine(bottomLX, bottomLY, bottomRX, bottomRY);
+				}
+				if(currG.getHasRightWall()){
+					g.drawLine(topRX, topRY, bottomRX, bottomRY);
+				}
+				if(currG.getHasLeftWall()){
+					g.drawLine(topLX, topLY, bottomLX, bottomLY);
+				}
+			}
 		}
 		
 		g.setColor(Color.RED);
-		
 	}
+	
 	
 	
 	//Set Button Listeners

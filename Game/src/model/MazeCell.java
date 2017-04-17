@@ -3,8 +3,6 @@ package model;
 public class MazeCell {
 	int x;
 	int y;
-	int xLoc;
-	int yLoc;
 	int width;
 	int height;
 	boolean hasTopWall = true;
@@ -20,20 +18,18 @@ public class MazeCell {
 	//getters and setters
 	
 	MazeCell(int row, int column, int width, int height){
-		x = row;
-		y = column;
+		y = row;
+		x = column;
 		this.width = width;
 		this.height = height;
-		xLoc = x * width;
-		yLoc = y * height;
 	}
 	
 	public int getX(){
-		return xLoc;
+		return x;
 	}
 	
 	public int getY(){
-		return yLoc;
+		return y;
 	}
 	
 	public int getWidth(){
@@ -42,5 +38,21 @@ public class MazeCell {
 	
 	public int getHeight(){
 		return height;
+	}
+	
+	public boolean getHasTopWall(){
+		return hasTopWall;
+	}
+	
+	public boolean getHasBottomWall(){
+		return hasBottomWall;
+	}
+	
+	public boolean getHasLeftWall(){
+		return hasLeftWall;
+	}
+	
+	public boolean getHasRightWall(){
+		return hasRightWall;
 	}
 }

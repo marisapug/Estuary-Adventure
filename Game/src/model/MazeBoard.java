@@ -10,7 +10,6 @@ public class MazeBoard {
 	int wallHeight;
 	ArrayList<MazeCell> stack = new ArrayList<MazeCell>();
 	MazeCell[][] grid;
-	MazeCell current;
 	
 	public MazeBoard(int rows, int cols, int width, int height){
 		numRows = rows;
@@ -18,13 +17,8 @@ public class MazeBoard {
 		wallWidth = width;
 		wallHeight = height;
 		grid = new MazeCell[numRows][numCols];
-		makeGrid();	
-		current = grid[0][0];
-		System.out.println("current initialized");
-		System.out.println("makeGrid()");
-		generateMaze();
-		System.out.println("generateMaze()");
-		System.out.println(stack.size());
+		makeGrid();
+		generateMaze(grid[1][0]);
 	}
 	
 	void makeGrid(){
@@ -34,48 +28,63 @@ public class MazeBoard {
 			}
 		}
 	}
-	MazeCell checkNeighbors(){
+	MazeCell checkNeighbors(MazeCell curr){
 		ArrayList<MazeCell> neighbors = new ArrayList<MazeCell>();
 		
-		if(current.y != 0)
-			current.top = grid[current.x][current.y - 1];
-		if(current.y != numRows)
-			current.bottom = grid[current.x][current.y + 1];
-		if(current.x != numCols)
-			current.right = grid[current.x + 1][current.y];
-		if(current.x != 0)
-			current.left = grid[current.x - 1][current.y];
+		if(curr.y != 0)
+			curr.top = grid[curr.y-1][curr.x];
+		if(curr.y != numRows-1)
+			curr.bottom = grid[curr.y + 1][curr.x];
+		if(curr.x != numCols-1)
+			curr.right = grid[curr.y][curr.x+1];
+		if(curr.x != 0)
+			curr.left = grid[curr.y][curr.x-1];
 		
-		if(current.top!=null && !current.top.visited)
-			neighbors.add(current.top);
-		if(current.bottom!=null && !current.bottom.visited)
-			neighbors.add(current.bottom);
-		if(current.left!=null && !current.left.visited)
-			neighbors.add(current.left);
-		if(current.right!=null && !current.right.visited)
-			neighbors.add(current.right);
+		if(curr.top!=null && !curr.top.visited)
+			neighbors.add(curr.top);
+		if(curr.bottom!=null && !curr.bottom.visited)
+			neighbors.add(curr.bottom);
+		if(curr.left!=null && !curr.left.visited)
+			neighbors.add(curr.left);
+		if(curr.right!=null && !curr.right.visited)
+			neighbors.add(curr.right);
 		
 		if(neighbors.size() != 0){
 			Random r = new Random();
 			int rand = r.nextInt(neighbors.size());
 			return neighbors.get(rand);
 		} else
-			return current;
+			return curr;
 	}
 	
-	void generateMaze(){
-		current.visited = true;
-		MazeCell next = checkNeighbors();
-		if(next != current){
-			next.visited = true;
-			stack.add(current);
-			removeWalls(current, next);
-			current = next;
+	/*
+	boolean allChecked(){
+		boolean temp = true;
+		for(int i = 0; i < numRows; i++){
+			for(int j = 0; j < numCols; j++){
+				if(grid[i][j].visited == false){
+					temp = false;
+				}
+			}
 		}
-		else if(stack.size() > 0){
-			current = stack.get(stack.size() - 1);
-			stack.remove(stack.size() - 1);
-		}
+		return temp;
+	}
+	*/
+	
+	void generateMaze(MazeCell curr){
+			curr.visited = true;
+			MazeCell next = checkNeighbors(curr);
+			MazeCell prev;
+			if(next.x != curr.x || next.y != curr.y){
+				stack.add(curr);
+				removeWalls(curr, next);
+				generateMaze(next);
+			}
+			else if(stack.size() > 0){
+				prev = stack.get(stack.size() - 1);
+				stack.remove(stack.size() - 1);
+				generateMaze(prev);
+			}
 	}
 	
 	void removeWalls(MazeCell a, MazeCell b){
@@ -100,8 +109,8 @@ public class MazeBoard {
 			
 	}
 	
-	public ArrayList<MazeCell> getStack(){
-		return stack;
+	public MazeCell[][] getGrid(){
+		return grid;
 	}
 }
 
