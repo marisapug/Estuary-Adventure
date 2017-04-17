@@ -1,10 +1,87 @@
 package model;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class MazeBoard {
-	Crab crab;
-	int[][] backGround;
+	int numRows;
+	int numCols;
+	ArrayList<MazeCell> stack = new ArrayList<MazeCell>();
+	MazeCell[][] grid = new MazeCell[numCols][numRows];
+	MazeCell current = grid[0][0]; //what to initialize to?
 	
-	public MazeBoard(int h, int a, int s, int xL, int yL){
-		crab = new Crab(h, a, s, xL,yL);
+	void makeGrid(){
+		for(int i = 0; i < numRows; i++){
+			for(int j = 0; j < numCols; j++){
+				grid[i][j] = new MazeCell(j, i);
+			}
+		}
+	}
+	
+	MazeCell checkNeighbors(){
+		ArrayList<MazeCell> neighbors = new ArrayList<MazeCell>();
+		
+		if(current.y != 0)
+			current.top = grid[current.x][current.y - 1];
+		if(current.y != numRows)
+			current.bottom = grid[current.x][current.y + 1];
+		if(current.x != numCols)
+			current.right = grid[current.x + 1][current.y];
+		if(current.x != 0)
+			current.left = grid[current.x - 1][current.y];
+		
+		if(current.top!=null && !current.top.visited)
+			neighbors.add(current.top);
+		if(current.bottom!=null && !current.bottom.visited)
+			neighbors.add(current.bottom);
+		if(current.left!=null && !current.left.visited)
+			neighbors.add(current.left);
+		if(current.right!=null && !current.right.visited)
+			neighbors.add(current.right);
+		
+		if(neighbors.size() != 0){
+			Random r = new Random();
+			int rand = r.nextInt(neighbors.size());
+			return neighbors.get(rand);
+		} else
+			return current;
+	}
+	
+	void generateMaze(){
+		current.visited = true;
+		MazeCell next = checkNeighbors();
+		if(next != current){
+			next.visited = true;
+			stack.add(current);
+			removeWalls(current, next);
+			current = next;
+		}
+		else if(stack.size() > 0){
+			current = stack.get(stack.size() - 1);
+			stack.remove(stack.size() - 1);
+		}
+	}
+	
+	void removeWalls(MazeCell a, MazeCell b){
+		int xWall = a.x - b.x;
+		int yWall = a.y - b.y;
+		if(xWall == 1){
+			a.hasLeftWall = false;
+			b.hasRightWall = false;
+		}
+		else if(xWall == -1){
+			a.hasRightWall = false;
+			b.hasLeftWall = false;
+		}
+		else if(yWall == 1){
+			a.hasTopWall = false;
+			b.hasBottomWall = false;
+		}
+		else if(yWall == -1){
+			a.hasBottomWall = false;
+			b.hasTopWall = false;
+		}
+			
 	}
 }
+
+//generate grid (with all walls) in view
