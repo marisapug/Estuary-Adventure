@@ -1,3 +1,7 @@
+package model;
+
+import java.util.List;
+
 class Shore {
   List<Barrier> shore;
   

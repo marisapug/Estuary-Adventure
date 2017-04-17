@@ -31,6 +31,14 @@ public class Boat extends GameFigure {
 	public void setXLoc(int xc){
 		this.xLoc = xc;
 	}
+	
+	public int getYLoc(){
+		return this.yLoc;
+	}
+
+	public void setYLoc(int yc){
+		this.yLoc = yc;
+	}
 
 	public int getSpeed(){
 		return this.speed;

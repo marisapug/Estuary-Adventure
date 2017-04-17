@@ -33,6 +33,9 @@ public class MazeGameView extends JPanel {
 		this.add(moveRightButton);
 	}
 	
+	//try to move rectangle
+	
+	
 	//Getters
 	public int getScreenWidth(){
 		return this.screenWidth;
