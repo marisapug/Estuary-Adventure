@@ -1,6 +1,8 @@
 package view;
 
 import model.Boat;
+import model.MazeBoard;
+import model.MazeCell;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -10,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
@@ -21,6 +24,12 @@ public class MazeGameView extends JPanel {
 	
 	private int screenWidth = 500;
 	private int screenHeight = 300;
+	
+	private int numRows = 10;
+	private int numCols = 10;
+	
+	private MazeBoard board = new MazeBoard(10,10,100,100);
+	private ArrayList<MazeCell> walls = board.getStack(); 
 		
 	private JLabel mazeMessage  = new JLabel("Maze GAMEEEEEEE!");
 	
@@ -45,8 +54,12 @@ public class MazeGameView extends JPanel {
 	//paintComponent
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		g.drawRect(getScreenWidth()/2, getScreenHeight()/2, 20, 20);
+		for(MazeCell m: walls){
+			g.drawRect( m.getX(), m.getY(), m.getWidth(), m.getHeight());
+		}
+		
 		g.setColor(Color.RED);
+		
 	}
 	
 	
