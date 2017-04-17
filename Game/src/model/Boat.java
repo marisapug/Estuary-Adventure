@@ -2,63 +2,75 @@ package model;
 
 import java.util.Random;
 
+
 public class Boat extends GameFigure {
-	//String boatType;
-	String size; // "small" "medium" or "large"
-	String direction;
-	int speed; // 1 , 3, or 5
-	int x;
-	int y;
-	
-	Boat(String size, String direction, int inc, int xc, int yc){
-		size = s;
-		direction = d;
-		inc = i;
-		x = xc;
-		y = yc;
+	int size; //0 (small), 1 (medium), 2 (large)
+	int direction; //0 (right) or 1 (left)
+	int speed; // 0 (slow), 1 (medium), 2 (fast)
+
+	Boat(int size, int direction, int speed, int x, int y){
+		this.size = size;
+		this.direction = direction;
+		this.speed = speed;
+		this.xLoc = x;
+		this.yLoc = y;
 	}
-	
-	String getSize(){
+
+	public int getSize(){
 		return size;
 	}
-	
-	String getDirection(){
+
+	public int getDirection(){
 		return direction;
 	}
-	
-	int getInc(){
-		return inc;
+
+	public int getXLoc(){
+		return this.xLoc;
 	}
-	
-	int getX(){
-		return this.x;
+
+	public void setXLoc(int xc){
+		this.xLoc = xc;
 	}
-	
-	void setX(int xc){
-		this.x == xc
+
+	public int getSpeed(){
+		return this.speed;
 	}
-	
-	void launchWave(){}
-	
-	Boat createBoat(){
+
+	public void setSpeed(int speed){
+		this.speed = speed;
+	}
+
+	public void launchWave(){
+
+	}
+
+	public Boat createBoat(){
+
+		Boat b;
+		
 		Random rand = new Random();
 		int n = rand.nextInt(3)+1;
+
 		if (n == 1){
-			Boat b = new Boat("small", "right", 5, 0, 0)
-		} if (n == 2){
-			Boat b = new Boat("medium", "right", 3, 0, 0)
-		} if (n == 3){
-			Boat b = new Boat("large", "left", 1, 0, 0)
+			b = new Boat(0, 0, 5, 0, 0);
+		} 
+		else if (n == 2){
+			b = new Boat(1, 0, 3, 0, 0);
+		} 
+		else
+			b = new Boat(2, 1, 1, 0, 0);
+
+		return b;
+	}
+
+	public void move(){
+		if (getDirection() == 0){
+			setXLoc(getXLoc() + getSpeed());
 		}
-	
-	void move(){
-		if (getDirection() == "right"){
-			setX(getX() + getInc());
-		}
-		if (getDirection() == "left"){
-			setX(getX() - getInc());
+		if (getDirection() == 1){
+			setXLoc(getXLoc() - getSpeed());
 		}
 	}
-		
-			
+
+
 }
