@@ -62,14 +62,14 @@ public class MazeGameView extends JPanel {
 		for(int i = 0; i < numRows; i++){
 			for(int j =0; j < numCols; j++){
 				MazeCell currG = grid[i][j];
-				int topLX = currG.getX()*currG.getWidth();
-				int topLY = currG.getY()*currG.getHeight();
-				int topRX = topLX + currG.getWidth();
-				int topRY = topLY;
-				int bottomLX = topLX;
-				int bottomLY = topLY + currG.getHeight();
-				int bottomRX = topRX;
-				int bottomRY = bottomLY;
+				int topLX = currG.getX()*currG.getWidth(); //top left corner x value
+				int topLY = currG.getY()*currG.getHeight(); //top left corner y value
+				int topRX = topLX + currG.getWidth(); //top right corner x value
+				int topRY = topLY; //top right corner y value
+				int bottomLX = topLX; //bottom left corner x value
+				int bottomLY = topLY + currG.getHeight(); //bottom left corner y value
+				int bottomRX = topRX; //bottom right corner x value
+				int bottomRY = bottomLY; //bottom right corner y value
 				if(currG.getHasTopWall()){
 					g.drawLine(topLX, topLY, topRX, topRY);
 				}
