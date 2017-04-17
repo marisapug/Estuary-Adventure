@@ -17,8 +17,8 @@ public class MainFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	//Frame
-	private final int screenWidth = 700;
-	private final int screenHeight = 500;
+	private final static int frameWidth = 700;
+	private final static int frameHeight = 500;
 
 	//Main Layout
 	private BorderLayout mainLayout = new BorderLayout();
@@ -44,13 +44,6 @@ public class MainFrame extends JFrame {
 	private JMenuItem mazeItem = new JMenuItem("Maze Game");
 	private JMenuItem beachItem = new JMenuItem("Estuary Defense Game");
 
-	/*
-	//Buttons
-	private JButton mazeButton = new JButton("Play Maze Game!");
-	private JButton beachButton = new JButton("Play Estuary Defense Game!");
-	private JButton storyCubesButton = new JButton("Play Story Cubes Game!");
-	 */
-
 	public MainFrame(){
 		EventQueue.invokeLater(new Runnable(){
 			public void run(){
@@ -59,7 +52,7 @@ public class MainFrame extends JFrame {
 
 		this.setTitle("Estuary Game");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setSize(screenWidth, screenHeight);
+		this.setSize(frameWidth, frameHeight);
 		this.setLayout(mainLayout);
 
 		miniGamesMenu.add(startItem);
@@ -79,12 +72,14 @@ public class MainFrame extends JFrame {
 		this.setVisible(true);
 	}
 
-	public int getScreenWidth(){
-		return screenWidth;
+	
+	//Getters
+	public int getFrameWidth(){
+		return frameWidth;
 	}
 
-	public int getScreenHeight(){
-		return screenHeight;
+	public int getFrameHeight(){
+		return frameHeight;
 	}
 
 	public void setupListeners(){
