@@ -26,7 +26,7 @@ public int getY(){
 }
 
 public Wave createWave(Boat b){
-	Wave w = new Wave(b.getSize(), b.getX(), b.getY());
+	Wave w = new Wave(b.getSize(), b.getXLoc(), b.getYLoc()); //should we just initialize y location of boats?
 	return w;
 }
 	
