@@ -6,6 +6,8 @@ import java.util.Collection;
 public class MazeBoard {
 	int numRows;
 	int numCols;
+	int xIncr = 4;
+	int yIncr = 4;
 	int wallWidth;
 	int wallHeight;
 	ArrayList<MazeCell> stack = new ArrayList<MazeCell>();
@@ -56,20 +58,7 @@ public class MazeBoard {
 		} else
 			return curr;
 	}
-	
-	/*
-	boolean allChecked(){
-		boolean temp = true;
-		for(int i = 0; i < numRows; i++){
-			for(int j = 0; j < numCols; j++){
-				if(grid[i][j].visited == false){
-					temp = false;
-				}
-			}
-		}
-		return temp;
-	}
-	*/
+
 	
 	void generateMaze(MazeCell curr){
 			curr.visited = true;
@@ -112,6 +101,40 @@ public class MazeBoard {
 	public MazeCell[][] getGrid(){
 		return grid;
 	}
+	
+	public void moveUp(){
+		for(int i = 0; i < numRows; i++){
+			for(int j = 0; j < numCols; j++){
+				grid[i][j].y = grid[i][j].y + yIncr;
+			}
+		}
+	}
+	
+	public void moveDown(){
+		for(int i = 0; i < numRows; i++){
+			for(int j = 0; j < numCols; j++){
+				grid[i][j].y = grid[i][j].y - yIncr;
+			}
+		}
+	}
+	
+	public void moveLeft(){
+		for(int i = 0; i < numRows; i++){
+			for(int j = 0; j < numCols; j++){
+				grid[i][j].x = grid[i][j].x + xIncr;
+			}
+		}
+	}
+	
+	public void moveRight(){
+		for(int i = 0; i < numRows; i++){
+			for(int j = 0; j < numCols; j++){
+				grid[i][j].x = grid[i][j].x - xIncr;
+			}
+		}
+	}
+	
+	
 }
 
 //generate grid (with all walls) in view
