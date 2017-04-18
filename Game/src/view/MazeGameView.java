@@ -9,24 +9,29 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 
-public class MazeGameView extends JPanel {
+
+public class MazeGameView extends JPanel implements ActionListener, KeyListener {
 	
 	private int screenWidth = 500;
 	private int screenHeight = 300;
 	
 	private int numRows = 40;
 	private int numCols = 40;
+	private int yIncr = 4;
+	private int xIncr = 4;
+	private int yChange, xChange;
+	
+	Timer t = new Timer(5,this);
 	
 	private MazeBoard board = new MazeBoard(numRows,numCols,100,100);
 	private MazeCell[][] grid = board.getGrid(); 
@@ -39,11 +44,14 @@ public class MazeGameView extends JPanel {
 	private JButton moveDownButton = new JButton("Move Down");
 	
 	public MazeGameView(){
+		t.start();
 		this.add(mazeMessage);
 		this.add(moveLeftButton);
 		this.add(moveRightButton);
 		this.add(moveUpButton);
 		this.add(moveDownButton);
+		this.addKeyListener(this);
+		this.setFocusable(true);
 	}
 	
 	//try to move rectangle
@@ -92,40 +100,55 @@ public class MazeGameView extends JPanel {
 		g.setColor(Color.RED);
 	}
 	
-	
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		repaint();
+			for(int i = 0; i < numRows; i++){
+				for(int j = 0; j < numCols; j++){
+					grid[i][j].setY(grid[i][j].getY() + yChange);
+					grid[i][j].setX(grid[i][j].getX() + xChange);
+				}
+			}
+		}
 	
 	//Set Button Listeners 
 	// NOT WORKING FIX BUTTON LISTENERS
 	public void setupListeners(){
-		moveUpButton.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				board.moveUp();
-			}
-		});
-		moveDownButton.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				board.moveDown();
-			}
-		});
-		moveLeftButton.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				board.moveLeft();
-			}
-		});
-		moveRightButton.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				board.moveRight();
-			}
-		});
+				
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		int code = e.getKeyCode();
+		if(code == KeyEvent.VK_UP){
+			System.out.println("Up pressed");
+			yChange = -yIncr;
+			xChange = 0;
+		}
+		if(code == KeyEvent.VK_DOWN){
+			yChange = +yIncr;
+			xChange = 0;
+		}
+		if(code == KeyEvent.VK_LEFT){
+			yChange = 0;
+			xChange = -xIncr;
+		}
+		if(code == KeyEvent.VK_RIGHT){
+			yChange = 0;
+			xChange = xIncr;
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
 

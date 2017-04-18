@@ -102,13 +102,7 @@ public class MazeBoard {
 		return grid;
 	}
 	
-	public void moveUp(){
-		for(int i = 0; i < numRows; i++){
-			for(int j = 0; j < numCols; j++){
-				grid[i][j].y = grid[i][j].y + yIncr;
-			}
-		}
-	}
+
 	
 	public void moveDown(){
 		for(int i = 0; i < numRows; i++){
