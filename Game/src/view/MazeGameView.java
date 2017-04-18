@@ -25,21 +25,25 @@ public class MazeGameView extends JPanel {
 	private int screenWidth = 500;
 	private int screenHeight = 300;
 	
-	private int numRows = 30;
-	private int numCols = 30;
+	private int numRows = 40;
+	private int numCols = 40;
 	
-	private MazeBoard board = new MazeBoard(numRows,numCols,30,30);
+	private MazeBoard board = new MazeBoard(numRows,numCols,100,100);
 	private MazeCell[][] grid = board.getGrid(); 
 		
 	private JLabel mazeMessage  = new JLabel("Maze GAMEEEEEEE!");
 	
 	private JButton moveRightButton = new JButton("Move Right");
 	private JButton moveLeftButton = new JButton("Move Left");
+	private JButton moveUpButton = new JButton("Move Up");
+	private JButton moveDownButton = new JButton("Move Down");
 	
 	public MazeGameView(){
 		this.add(mazeMessage);
 		this.add(moveLeftButton);
 		this.add(moveRightButton);
+		this.add(moveUpButton);
+		this.add(moveDownButton);
 	}
 	
 	//try to move rectangle
@@ -90,9 +94,37 @@ public class MazeGameView extends JPanel {
 	
 	
 	
-	//Set Button Listeners
+	//Set Button Listeners 
+	// NOT WORKING FIX BUTTON LISTENERS
 	public void setupListeners(){
-		
+		moveUpButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				board.moveUp();
+			}
+		});
+		moveDownButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				board.moveDown();
+			}
+		});
+		moveLeftButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				board.moveLeft();
+			}
+		});
+		moveRightButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				board.moveRight();
+			}
+		});
 		
 		
 	}
