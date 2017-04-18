@@ -32,6 +32,7 @@ public class MainFrame extends JFrame {
 	StartScreenView startPanel = new StartScreenView();
 	MazeGameView mazePanel = new MazeGameView();
 	BeachGameView beachPanel = new BeachGameView();
+	DiceGameView dicePanel = new DiceGameView();
 
 	//JMenuBar
 	private JMenuBar menuBar = new JMenuBar();
@@ -43,6 +44,7 @@ public class MainFrame extends JFrame {
 	private JMenuItem startItem = new JMenuItem("Start Screen");
 	private JMenuItem mazeItem = new JMenuItem("Maze Game");
 	private JMenuItem beachItem = new JMenuItem("Estuary Defense Game");
+	private JMenuItem diceItem = new JMenuItem("Dice Game");
 
 	public MainFrame(){
 		EventQueue.invokeLater(new Runnable(){
@@ -57,7 +59,8 @@ public class MainFrame extends JFrame {
 
 		miniGamesMenu.add(startItem);
 		miniGamesMenu.add(mazeItem);
-		miniGamesMenu.add(beachItem);		
+		miniGamesMenu.add(beachItem);
+		miniGamesMenu.add(diceItem);
 		startPanel.add(miniGamesMenu);
 		menuBar.add(miniGamesMenu);
 		this.setupListeners();
@@ -66,6 +69,7 @@ public class MainFrame extends JFrame {
 		cardPanel.add(startPanel, "start");
 		cardPanel.add(mazePanel, "maze");
 		cardPanel.add(beachPanel, "beach");
+		cardPanel.add(dicePanel, "dice");
 		this.add(cardPanel, BorderLayout.CENTER);	
 		cl.show(cardPanel, "start");
 
@@ -104,6 +108,14 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				cl.show(cardPanel, "beach");
+			}
+		});
+		
+		diceItem.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				cl.show(cardPanel, "dice");
 			}
 		});
 	}
