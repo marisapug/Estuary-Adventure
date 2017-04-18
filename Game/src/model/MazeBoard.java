@@ -20,7 +20,7 @@ public class MazeBoard {
 		wallHeight = height;
 		grid = new MazeCell[numRows][numCols];
 		makeGrid();
-		generateMaze(grid[1][0]);
+		generateMaze(grid[0][0]);
 	}
 	
 	void makeGrid(){
