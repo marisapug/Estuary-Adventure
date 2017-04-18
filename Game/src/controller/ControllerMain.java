@@ -1,10 +1,13 @@
 package controller;
 
 import view.MainFrame;
+import model.*;
 
 public class ControllerMain {
 	
 	public static void main(String[] args){
+		DiceGame d1 = new DiceGame();
+		d1.setDice();
 		
 		ControllerMain gameController = new ControllerMain();
 		gameController.start();

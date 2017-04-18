@@ -10,5 +10,7 @@ public class DiceGameView extends JPanel {
 	public DiceGameView(){
 		this.add(diceMessage);
 	}
+	
+	
 
 }
