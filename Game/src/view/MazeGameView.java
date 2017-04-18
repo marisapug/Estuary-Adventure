@@ -1,6 +1,5 @@
 package view;
-
-import model.Boat;
+import model.Crab;
 import model.MazeBoard;
 import model.MazeCell;
 
@@ -17,60 +16,65 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 
-public class MazeGameView extends JPanel implements ActionListener, KeyListener {
+public class MazeGameView extends JPanel {
 	
+	//Screen
 	private int screenWidth = 500;
 	private int screenHeight = 300;
-	
-	private int numRows = 40;
-	private int numCols = 40;
-	private int yIncr = 4;
-	private int xIncr = 4;
-	private int yChange, xChange;
-	
-	Timer t = new Timer(5,this);
-	
-	private MazeBoard board = new MazeBoard(numRows,numCols,100,100);
+
+	//characters
+	Crab testCrab = new Crab(3,0); //health, age
+	private int characterWidth = 10;
+	private int characterHeight = 10;
+
+	//Maze
+	private int numRows = 15;
+	private int numCols = 15;
+	private int mazeSizeX = 30;
+	private int mazeSizeY = 30;
+	private MazeBoard board = new MazeBoard(numRows,numCols,mazeSizeX,mazeSizeY);
 	private MazeCell[][] grid = board.getGrid(); 
-		
-	private JLabel mazeMessage  = new JLabel("Maze GAMEEEEEEE!");
+
 	
+	//Buttons
 	private JButton moveRightButton = new JButton("Move Right");
 	private JButton moveLeftButton = new JButton("Move Left");
 	private JButton moveUpButton = new JButton("Move Up");
 	private JButton moveDownButton = new JButton("Move Down");
+
 	
+	//Constructor
 	public MazeGameView(){
-		t.start();
-		this.add(mazeMessage);
+
 		this.add(moveLeftButton);
 		this.add(moveRightButton);
 		this.add(moveUpButton);
 		this.add(moveDownButton);
-		this.addKeyListener(this);
-		this.setFocusable(true);
+
+		this.setupListeners();
 	}
-	
-	//try to move rectangle
-	
-	
+
+
 	//Getters
 	public int getScreenWidth(){
 		return this.screenWidth;
 	}
-	
+
 	public int getScreenHeight(){
 		return this.screenHeight;
 	}
-	
+
 	//paintComponent
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-//		g.drawLine(20, 20, 10,10);//(endPoint X, endPoint Y, start X, start Y)
-		
+		//		g.drawLine(20, 20, 10,10);//(endPoint X, endPoint Y, start X, start Y)
+
+		//Maze
 		for(int i = 0; i < numRows; i++){
 			for(int j =0; j < numCols; j++){
 				MazeCell currG = grid[i][j];
@@ -96,61 +100,74 @@ public class MazeGameView extends JPanel implements ActionListener, KeyListener 
 				}
 			}
 		}
-		
+
+		//Character
+		g.drawRect(testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight);
 		g.setColor(Color.RED);
+		g.fillRect(testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight);
+
+	}
+
+
+	//Move Characters
+	public void moveCharacterRight(){
+		repaint(testCrab.getXLoc(),testCrab.getYLoc(),characterWidth, characterHeight);
+		testCrab.moveRight();
+		repaint(testCrab.getXLoc(),testCrab.getYLoc(),characterWidth, characterHeight);
+	}
+
+	public void moveCharacterLeft(){
+		repaint(testCrab.getXLoc(),testCrab.getYLoc(),characterWidth, characterHeight);
+		testCrab.moveLeft();
+		repaint(testCrab.getXLoc(),testCrab.getYLoc(),characterWidth, characterHeight);	
 	}
 	
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		repaint();
-			for(int i = 0; i < numRows; i++){
-				for(int j = 0; j < numCols; j++){
-					grid[i][j].setY(grid[i][j].getY() + yChange);
-					grid[i][j].setX(grid[i][j].getX() + xChange);
-				}
-			}
-		}
+	public void moveCharacterUp(){
+		repaint(testCrab.getXLoc(),testCrab.getYLoc(),characterWidth, characterHeight);
+		testCrab.moveUp();
+		repaint(testCrab.getXLoc(),testCrab.getYLoc(),characterWidth, characterHeight);	
+	}
+	
+	public void moveCharacterDown(){
+		repaint(testCrab.getXLoc(),testCrab.getYLoc(),characterWidth, characterHeight);
+		testCrab.moveDown();
+		repaint(testCrab.getXLoc(),testCrab.getYLoc(),characterWidth, characterHeight);	
+	}
+	
 	
 	//Set Button Listeners 
-	// NOT WORKING FIX BUTTON LISTENERS
 	public void setupListeners(){
-				
-	}
+		moveLeftButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				moveCharacterLeft();
+			}
+		});
 
-	@Override
-	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
-		int code = e.getKeyCode();
-		if(code == KeyEvent.VK_UP){
-			System.out.println("Up pressed");
-			yChange = -yIncr;
-			xChange = 0;
-		}
-		if(code == KeyEvent.VK_DOWN){
-			yChange = +yIncr;
-			xChange = 0;
-		}
-		if(code == KeyEvent.VK_LEFT){
-			yChange = 0;
-			xChange = -xIncr;
-		}
-		if(code == KeyEvent.VK_RIGHT){
-			yChange = 0;
-			xChange = xIncr;
-		}
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
+		moveRightButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				moveCharacterRight();
+			}
+		});
 		
-	}
+		moveUpButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				moveCharacterUp();
+			}
+		});
 
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+		moveDownButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				moveCharacterDown();
+			}
+		});
+	}//setupListener
 
-	
 }

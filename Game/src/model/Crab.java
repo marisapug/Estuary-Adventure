@@ -3,45 +3,48 @@ package model;
 public class Crab extends GameFigure {
 	int health;
 	int ageState;
-	int speed;
 	
-	
-	
-	String crabType;
-	
-	public Crab(int h, int a, int s, int xL, int yL){
+	public Crab(int h, int a){
 		health = h;
 		ageState = a;
-		speed = s;
-		xLoc = xL;
-		yLoc = yL;
+		this.xIncr = 2;
+		this.yIncr = 2;
 	}
 	
-	void moveLeft(){
+	//Getters
+	public int getXLoc(){
+		return this.xLoc;
+	}
+	
+	public int getYLoc(){
+		return this.yLoc;
+	}
+	
+	public void moveLeft(){
 		xLoc = xLoc - xIncr;
 	}
 		
-	void moveRight(){
+	public void moveRight(){
 		xLoc = xLoc + xIncr;
 	}
 	
-	void moveUp(){
+	public void moveUp(){
 		yLoc = yLoc - yIncr;
 	}
 	
-	void moveDown(){
+	public void moveDown(){
 		yLoc = yLoc + yIncr;
 	}
 	
-	void plantGrass(){}
+	public void plantGrass(){}
 	
-	void die(){}
+	public void die(){}
 	
-	void loseHealth(){
+	public void loseHealth(){
 		health = health - 1;
 	}
 	
-	void grow(){
+	public void grow(){
 		ageState = ageState + 1;
 	}
 }
