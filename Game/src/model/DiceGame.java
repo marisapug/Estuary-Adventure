@@ -3,11 +3,11 @@ package model;
 import java.util.Random;
 
 public class DiceGame {
-	int numDice = 5;
+	public int numDice = 5;
 	int numImgs = 20;
 		
 	Die[] dice = new Die[numDice];
-	int[] imgNums = new int[numDice];
+	public int[] imgNums = new int[numDice];
 	boolean[] imgBools = new boolean[numImgs];
 	
 	void setImgBools(){
@@ -17,6 +17,7 @@ public class DiceGame {
 	}
 	
 	public void setDice() {
+		setImgBools();
 		Random rand = new Random();
 		for (int i = 0; i < numDice; i++) {
 			Die tempDie = new Die(i);
@@ -26,19 +27,10 @@ public class DiceGame {
 			}
 			tempDie.dieImg = randInt;
 			imgBools[randInt] = true;
+			imgNums[i] = randInt;
 			System.out.println(randInt);
 			dice[i] = tempDie;
 		}
 	} // makes all dice with images
 	
-	void setImgs(){
-		Random rand = new Random();
-		for(int i = 0; i < numDice; i++){
-			int randInt = rand.nextInt(numImgs);
-			if(imgBools[randInt]){
-				randInt = rand.nextInt(numImgs);
-			}
-			dice[i].dieImg = randInt;
-		}
-	}
 }
