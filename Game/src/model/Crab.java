@@ -1,8 +1,8 @@
 package model;
 
 public class Crab extends GameFigure {
-	int health;
-	int ageState;
+	private int health;
+	private int ageState;
 	
 	public Crab(int h, int a, int xl, int yl){
 		health = h;

@@ -39,8 +39,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int cellHeight = 200;
 	private MazeBoard board = new MazeBoard(numRows,numCols,cellWidth,cellHeight);
 	private MazeCell[][] grids = board.getGrid(); 
-	private int xVel = 0;
-	private int yVel = 0;
 
 	//Crab
 	Crab testCrab = new Crab(3,0,screenWidth/2 ,screenHeight/2); //health, age
@@ -51,6 +49,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int characterYLoc = testCrab.getYLoc();
 	private int yIncr = testCrab.getXIncr();
 	private int xIncr = testCrab.getYIncr();
+	private int xVel = testCrab.getXVel();
+	private int yVel = testCrab.getYVel();
 
 
 	//Labels
@@ -171,7 +171,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	@Override
 	public void keyReleased(KeyEvent arg0) {
 		// TODO Auto-generated method stub
-		
+		xVel = 0;
+		yVel = 0;
 	}
 
 	@Override

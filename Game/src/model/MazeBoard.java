@@ -9,6 +9,7 @@ public class MazeBoard {
 	int wallHeight;
 	int xStartIndex;
 	int yStartIndex;
+	
 	ArrayList<MazeCell> stack = new ArrayList<MazeCell>();
 	MazeCell[][] grid;
 
@@ -149,6 +150,7 @@ public class MazeBoard {
 	public int getXStart(){
 		return xStartIndex;
 	}
+	
 
 	//SETTERS
 	public void setNumRows(int rows){
@@ -175,6 +177,7 @@ public class MazeBoard {
 	public void setXStart(int x){
 		 this.xStartIndex = x;
 	}
+	
 
 
 }
