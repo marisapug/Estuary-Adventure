@@ -64,9 +64,13 @@ public class Crab extends GameFigure {
 		yLoc = yLoc + yIncr;
 	}
 	
-	public void plantGrass(){}
+	public void plantGrass(){
+		
+	}
 	
-	public void die(){}
+	public void die(){
+		
+	}
 	
 	public void loseHealth(){
 		health = health - 1;

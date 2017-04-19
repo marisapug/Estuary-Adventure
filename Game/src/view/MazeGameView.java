@@ -109,6 +109,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		for(MazeCell m: board.getCorrectPath()){
 			g.setColor(Color.green);
 			g.drawRect(m.getXLoc()+50,m.getYLoc()+50, cellWidth-100, cellHeight-100);
+			g.fillRect(m.getXLoc()+50,m.getYLoc()+50, cellWidth-100, cellHeight-100);
 		}
 		
 		g.drawImage(crabImg, testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight, this);

@@ -158,7 +158,6 @@ public class MazeBoard {
 				}
 			}
 		} 
-		System.out.println(correctPath.size());
 	}
 
 	void removeWalls(MazeCell a, MazeCell b){
