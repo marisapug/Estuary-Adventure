@@ -1,85 +1,78 @@
 package view;
+
 import model.Crab;
 import model.MazeBoard;
 import model.MazeCell;
-
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-
 import javax.imageio.ImageIO;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 
 public class MazeGameView extends JPanel {
+
+	//=================================================================//
+
+	private static final long serialVersionUID = 1L;
 	
-	//Screen
-	private int screenWidth = 500;
-	private int screenHeight = 300;
+	//Screen dimensions
+	static private int screenWidth = MainFrame.getFrameWidth();
+	static private int screenHeight = MainFrame.getFrameHeight();
 
-	//characters
-	Crab testCrab = new Crab(3,0); //health, age
-	private int characterWidth = 10;
-	private int characterHeight = 10;
-
-	//Maze
+	//create the maze board
 	private int numRows = 15;
 	private int numCols = 15;
-	private int mazeSizeX = 30;
-	private int mazeSizeY = 30;
-	private MazeBoard board = new MazeBoard(numRows,numCols,mazeSizeX,mazeSizeY);
-	private MazeCell[][] grid = board.getGrid(); 
+	private int cellWidth = 200;
+	private int cellHeight = 200;
+	private MazeBoard board = new MazeBoard(numRows,numCols,cellWidth,cellHeight);
+	private MazeCell[][] grids = board.getGrid(); 
+	private int yIncr = board.getXIncr();
+	private int xIncr = board.getYIncr();
 
-	
+	//Crab
+	Crab testCrab = new Crab(3,0,screenWidth/2 ,screenHeight/2); //health, age
+	BufferedImage crabImg = createImage("characters/crab-clip-art-crab7.png");
+	private int characterWidth = 30;
+	private int characterHeight = 30;
+	private int characterXLoc = testCrab.getXLoc();
+
 	//Buttons
 	private JButton moveRightButton = new JButton("Move Right");
 	private JButton moveLeftButton = new JButton("Move Left");
 	private JButton moveUpButton = new JButton("Move Up");
 	private JButton moveDownButton = new JButton("Move Down");
 
-	
+	//Labels
+	private JLabel timeLabel  = new JLabel("Time Remaining:");
+
+	//=================================================================//
+
+
 	//Constructor
 	public MazeGameView(){
-
+		this.setBackground(Color.CYAN);
 		this.add(moveLeftButton);
 		this.add(moveRightButton);
 		this.add(moveUpButton);
 		this.add(moveDownButton);
-
+		this.add(timeLabel);
 		this.setupListeners();
-	}
-
-
-	//Getters
-	public int getScreenWidth(){
-		return this.screenWidth;
-	}
-
-	public int getScreenHeight(){
-		return this.screenHeight;
 	}
 
 	//paintComponent
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		//		g.drawLine(20, 20, 10,10);//(endPoint X, endPoint Y, start X, start Y)
 
-		//Maze
 		for(int i = 0; i < numRows; i++){
 			for(int j =0; j < numCols; j++){
-				MazeCell currG = grid[i][j];
-				int topLX = currG.getX()*currG.getWidth(); //top left corner x value
-				int topLY = currG.getY()*currG.getHeight(); //top left corner y value
+				MazeCell currG = grids[i][j];
+				int topLX = currG.getXLoc(); //top left corner x value
+				int topLY = currG.getYLoc(); //top left corner y value
 				int topRX = topLX + currG.getWidth(); //top right corner x value
 				int topRY = topLY; //top right corner y value
 				int bottomLX = topLX; //bottom left corner x value
@@ -99,75 +92,91 @@ public class MazeGameView extends JPanel {
 					g.drawLine(topLX, topLY, bottomLX, bottomLY);
 				}
 			}
+
 		}
-
-		//Character
-		g.drawRect(testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight);
-		g.setColor(Color.RED);
-		g.fillRect(testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight);
-
-	}
+		g.drawImage(crabImg, testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight, this);
+	}//paintComponent
 
 
-	//Move Characters
-	public void moveCharacterRight(){
-		repaint(testCrab.getXLoc(),testCrab.getYLoc(),characterWidth, characterHeight);
-		testCrab.moveRight();
-		repaint(testCrab.getXLoc(),testCrab.getYLoc(),characterWidth, characterHeight);
+
+	public void moveGridUp(){
+		if(!board.hitGridWalls(characterXLoc, testCrab.getYLoc() + characterHeight, 
+				testCrab.getXIncr(), testCrab.getYIncr(), 1)){
+			repaint();
+			board.moveGrid(0, -yIncr);
+		}
 	}
 
-	public void moveCharacterLeft(){
-		repaint(testCrab.getXLoc(),testCrab.getYLoc(),characterWidth, characterHeight);
-		testCrab.moveLeft();
-		repaint(testCrab.getXLoc(),testCrab.getYLoc(),characterWidth, characterHeight);	
+	public void moveGridDown(){
+		if(!board.hitGridWalls(characterXLoc, testCrab.getYLoc(), 
+				testCrab.getXIncr(), testCrab.getYIncr(), 0)){
+			repaint();
+			board.moveGrid(0, yIncr);
+		}
 	}
-	
-	public void moveCharacterUp(){
-		repaint(testCrab.getXLoc(),testCrab.getYLoc(),characterWidth, characterHeight);
-		testCrab.moveUp();
-		repaint(testCrab.getXLoc(),testCrab.getYLoc(),characterWidth, characterHeight);	
+
+	public void moveGridLeft(){
+		if(!board.hitGridWalls(characterXLoc + characterWidth, testCrab.getYLoc(), 
+				testCrab.getXIncr(), testCrab.getYIncr(), 2)){
+			repaint();
+			board.moveGrid(-xIncr, 0);
+		}
 	}
-	
-	public void moveCharacterDown(){
-		repaint(testCrab.getXLoc(),testCrab.getYLoc(),characterWidth, characterHeight);
-		testCrab.moveDown();
-		repaint(testCrab.getXLoc(),testCrab.getYLoc(),characterWidth, characterHeight);	
+
+	public void moveGridRight(){
+		if(!board.hitGridWalls(characterXLoc, testCrab.getYLoc(), 
+				testCrab.getXIncr(), testCrab.getYIncr(), 3)){
+			repaint();
+			board.moveGrid(xIncr, 0);
+		}
 	}
-	
-	
-	//Set Button Listeners 
+
 	public void setupListeners(){
 		moveLeftButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				moveCharacterLeft();
+				moveGridRight();
 			}
-		});
 
+		});
 		moveRightButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				moveCharacterRight();
+				moveGridLeft();
 			}
 		});
-		
 		moveUpButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				moveCharacterUp();
+				moveGridDown();
 			}
 		});
-
 		moveDownButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				moveCharacterDown();
+				moveGridUp();
 			}
 		});
-	}//setupListener
+	}
+
+	public BufferedImage createImage(String fileName){
+		BufferedImage bufferedImage;
+		try {
+			bufferedImage = ImageIO.read(new File(fileName)); 
+			return bufferedImage;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	//Getters
+	public int getScreenWidth(){
+		return screenWidth;
+	}
+
+	public int getScreenHeight(){
+		return screenHeight;
+	}
 
 }

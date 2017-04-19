@@ -17,8 +17,8 @@ public class MainFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	//Frame
-	private final static int frameWidth = 700;
-	private final static int frameHeight = 500;
+	private final static int frameWidth = 800;
+	private final static int frameHeight = 600;
 
 	//Main Layout
 	private BorderLayout mainLayout = new BorderLayout();
@@ -78,11 +78,11 @@ public class MainFrame extends JFrame {
 
 	
 	//Getters
-	public int getFrameWidth(){
+	public static int getFrameWidth(){
 		return frameWidth;
 	}
 
-	public int getFrameHeight(){
+	public static int getFrameHeight(){
 		return frameHeight;
 	}
 
