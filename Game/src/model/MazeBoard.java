@@ -9,26 +9,32 @@ public class MazeBoard {
 	int wallHeight;
 	int xStartIndex;
 	int yStartIndex;
+	int screenWidth;
+	int screenHeight;
 	
 	ArrayList<MazeCell> stack = new ArrayList<MazeCell>();
 	MazeCell[][] grid;
 
-	public MazeBoard(int rows, int cols, int width, int height){
+	public MazeBoard(int rows, int cols, int width, int height, int sWidth, int sHeight){
 		numRows = rows;
 		numCols = cols;
 		wallWidth = width;
 		wallHeight = height;
-		xStartIndex = 0;
-		yStartIndex = 0;
+		xStartIndex = 1;
+		yStartIndex = 1;
+		
+		screenWidth = sWidth;
+		screenHeight = sHeight;
+		
 		grid = new MazeCell[numRows][numCols];
 		makeGrid(xStartIndex, yStartIndex);
-		generateMaze(grid[0][0]);
+		generateMaze(grid[xStartIndex][yStartIndex]);
 	}
 
 	void makeGrid(int xStart, int yStart){
 		for(int i = 0; i < numRows; i++){
 			for(int j = 0; j < numCols; j++){
-				grid[i][j] = new MazeCell(i, j, wallWidth, wallHeight, xStart, yStart);
+				grid[i][j] = new MazeCell(i, j, wallWidth, wallHeight, xStart, yStart, screenWidth, screenHeight);
 			}
 		}
 	}

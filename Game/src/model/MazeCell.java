@@ -12,6 +12,7 @@ public class MazeCell {
 	boolean hasLeftWall = true;
 	boolean hasRightWall = true;
 	boolean visited = false;
+	boolean isCorrectPath = false;
 	MazeCell top;
 	MazeCell bottom;
 	MazeCell left;
@@ -19,13 +20,13 @@ public class MazeCell {
 	
 	//getters and setters
 	
-	MazeCell(int row, int column, int width, int height, int xStart, int yStart){
+	MazeCell(int row, int column, int width, int height, int xStart, int yStart, int sWidth, int sHeight){
 		y = row;
 		x = column;
 		this.width = width;
 		this.height = height;
-		xLoc = width*(x-xStart);
-		yLoc = height*(y-yStart);
+		xLoc = width*(x-xStart) + sWidth/2;
+		yLoc = height*(y-yStart) + sHeight/2;
 	}
 	
 	public void moveCell(int xIncr, int yIncr){

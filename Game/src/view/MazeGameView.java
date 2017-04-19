@@ -26,7 +26,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private static final long serialVersionUID = 1L;
 	
 	//Timer
-	Timer t = new Timer(10,this);
+	Timer t = new Timer(1,this);
 	
 	//Screen dimensions
 	static private int screenWidth = MainFrame.getFrameWidth();
@@ -37,7 +37,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int numCols = 15;
 	private int cellWidth = 200;
 	private int cellHeight = 200;
-	private MazeBoard board = new MazeBoard(numRows,numCols,cellWidth,cellHeight);
+	private MazeBoard board = new MazeBoard(numRows,numCols,cellWidth,cellHeight, screenWidth, screenHeight);
 	private MazeCell[][] grids = board.getGrid(); 
 
 	//Crab

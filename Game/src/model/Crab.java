@@ -7,8 +7,8 @@ public class Crab extends GameFigure {
 	public Crab(int h, int a, int xl, int yl){
 		health = h;
 		ageState = a;
-		xIncr = 6;
-		yIncr = 6;
+		xIncr = 3;
+		yIncr = 3;
 		xLoc = xl;
 		yLoc = yl;
 	}
