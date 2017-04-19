@@ -5,10 +5,7 @@ import model.*;
 
 public class ControllerMain {
 	
-	public static void main(String[] args){
-		DiceGame d1 = new DiceGame();
-		d1.setDice();
-		
+	public static void main(String[] args){		
 		ControllerMain gameController = new ControllerMain();
 		gameController.start();
 

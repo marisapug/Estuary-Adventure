@@ -1,10 +1,12 @@
 package model;
 
 import java.util.Random;
+import java.util.Scanner;
 
 public class DiceGame {
 	public int numDice = 5;
 	int numImgs = 20;
+	public String diceStory;
 		
 	Die[] dice = new Die[numDice];
 	public int[] imgNums = new int[numDice];
@@ -32,5 +34,11 @@ public class DiceGame {
 			dice[i] = tempDie;
 		}
 	} // makes all dice with images
+	
+	/*public void scanStory(){
+		Scanner storyScanner = new Scanner(System.in);
+		diceStory = storyScanner.next();
+	}
+	*/
 	
 }
