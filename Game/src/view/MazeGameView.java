@@ -26,7 +26,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private static final long serialVersionUID = 1L;
 	
 	//Timer
-	Timer t = new Timer(1,this);
+	Timer t = new Timer(10,this);
 	
 	//Screen dimensions
 	static private int screenWidth = MainFrame.getFrameWidth();
