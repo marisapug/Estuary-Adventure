@@ -5,8 +5,6 @@ import java.util.*;
 public class MazeBoard {
 	int numRows;
 	int numCols;
-	int xIncr;
-	int yIncr;
 	int wallWidth;
 	int wallHeight;
 	int xStartIndex;
@@ -19,8 +17,6 @@ public class MazeBoard {
 		numCols = cols;
 		wallWidth = width;
 		wallHeight = height;
-		xIncr = 12;
-		yIncr = 12;
 		xStartIndex = 0;
 		yStartIndex = 0;
 		grid = new MazeCell[numRows][numCols];
@@ -137,13 +133,6 @@ public class MazeBoard {
 		return this.numCols;
 	}
 
-	public int getXIncr(){
-		return this.xIncr;
-	}
-
-	public int getYIncr(){
-		return this.yIncr;
-	}
 
 	public int getWallWidth(){
 		return this.wallWidth;
@@ -170,13 +159,6 @@ public class MazeBoard {
 		this.numCols = cols;
 	}
 
-	public void setXIncr(int xIncr){
-		this.xIncr = xIncr;
-	}
-
-	public void setYIncr(int yIncr){
-		this.yIncr = yIncr;
-	}
 
 	public void setWallWidth(int width){
 		this.wallWidth = width;
@@ -196,4 +178,3 @@ public class MazeBoard {
 
 
 }
-

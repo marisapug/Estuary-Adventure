@@ -13,6 +13,8 @@ import javax.swing.JPanel;
 
 public class MainFrame extends JFrame {
 
+
+	
 	//Serial Version
 	private static final long serialVersionUID = 1L;
 
@@ -26,7 +28,7 @@ public class MainFrame extends JFrame {
 	//Card Layout
 	private CardLayout cardLayout = new CardLayout();
 	private JPanel cardPanel = new JPanel(cardLayout);
-	CardLayout cl = (CardLayout) cardPanel.getLayout(); 
+	CardLayout cl = (CardLayout) cardPanel.getLayout();
 
 	//JPanels (Game Views)
 	StartScreenView startPanel = new StartScreenView();
@@ -47,6 +49,7 @@ public class MainFrame extends JFrame {
 	private JMenuItem diceItem = new JMenuItem("Dice Game");
 
 	public MainFrame(){
+		addKeyListener(mazePanel);
 		EventQueue.invokeLater(new Runnable(){
 			public void run(){
 			}

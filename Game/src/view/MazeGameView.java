@@ -3,10 +3,15 @@ package view;
 import model.Crab;
 import model.MazeBoard;
 import model.MazeCell;
+
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -14,11 +19,14 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 
-public class MazeGameView extends JPanel {
+public class MazeGameView extends JPanel implements KeyListener, ActionListener {
 
 	//=================================================================//
 
 	private static final long serialVersionUID = 1L;
+	
+	//Timer
+	Timer t = new Timer(10,this);
 	
 	//Screen dimensions
 	static private int screenWidth = MainFrame.getFrameWidth();
@@ -31,37 +39,34 @@ public class MazeGameView extends JPanel {
 	private int cellHeight = 200;
 	private MazeBoard board = new MazeBoard(numRows,numCols,cellWidth,cellHeight);
 	private MazeCell[][] grids = board.getGrid(); 
-	private int yIncr = board.getXIncr();
-	private int xIncr = board.getYIncr();
+	private int xVel = 0;
+	private int yVel = 0;
 
 	//Crab
 	Crab testCrab = new Crab(3,0,screenWidth/2 ,screenHeight/2); //health, age
 	BufferedImage crabImg = createImage("characters/crab-clip-art-crab7.png");
-	private int characterWidth = 30;
-	private int characterHeight = 30;
+	private int characterWidth = 50;
+	private int characterHeight = 50;
 	private int characterXLoc = testCrab.getXLoc();
+	private int characterYLoc = testCrab.getYLoc();
+	private int yIncr = testCrab.getXIncr();
+	private int xIncr = testCrab.getYIncr();
 
-	//Buttons
-	private JButton moveRightButton = new JButton("Move Right");
-	private JButton moveLeftButton = new JButton("Move Left");
-	private JButton moveUpButton = new JButton("Move Up");
-	private JButton moveDownButton = new JButton("Move Down");
 
 	//Labels
-	private JLabel timeLabel  = new JLabel("Time Remaining:");
+	private JLabel timeLabel  = new JLabel("Time Remaining: ");
 
 	//=================================================================//
 
 
 	//Constructor
 	public MazeGameView(){
+		t.start();
+		addKeyListener(this);
+		setFocusable(true);
+		setFocusTraversalKeysEnabled(false);
 		this.setBackground(Color.CYAN);
-		this.add(moveLeftButton);
-		this.add(moveRightButton);
-		this.add(moveUpButton);
-		this.add(moveDownButton);
 		this.add(timeLabel);
-		this.setupListeners();
 	}
 
 	//paintComponent
@@ -79,86 +84,105 @@ public class MazeGameView extends JPanel {
 				int bottomLY = topLY + currG.getHeight(); //bottom left corner y value
 				int bottomRX = topRX; //bottom right corner x value
 				int bottomRY = bottomLY; //bottom right corner y value
+				
+				Graphics2D g2 = (Graphics2D)g;
+				g2.setStroke(new BasicStroke(5));
+				g2.setColor(Color.BLUE);
+				
 				if(currG.getHasTopWall()){
-					g.drawLine(topLX, topLY, topRX, topRY);
+					g2.drawLine(topLX, topLY, topRX, topRY);
 				}
 				if(currG.getHasBottomWall()){
-					g.drawLine(bottomLX, bottomLY, bottomRX, bottomRY);
+					g2.drawLine(bottomLX, bottomLY, bottomRX, bottomRY);
 				}
 				if(currG.getHasRightWall()){
-					g.drawLine(topRX, topRY, bottomRX, bottomRY);
+					g2.drawLine(topRX, topRY, bottomRX, bottomRY);
 				}
 				if(currG.getHasLeftWall()){
-					g.drawLine(topLX, topLY, bottomLX, bottomLY);
+					g2.drawLine(topLX, topLY, bottomLX, bottomLY);
 				}
 			}
 
 		}
+		
 		g.drawImage(crabImg, testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight, this);
 	}//paintComponent
 
 
-
-	public void moveGridUp(){
-		if(!board.hitGridWalls(characterXLoc, testCrab.getYLoc() + characterHeight, 
-				testCrab.getXIncr(), testCrab.getYIncr(), 1)){
-			repaint();
-			board.moveGrid(0, -yIncr);
-		}
-	}
-
-	public void moveGridDown(){
-		if(!board.hitGridWalls(characterXLoc, testCrab.getYLoc(), 
+	public void actionPerformed(ActionEvent arg0) {
+		// TODO Auto-generated method stub
+		if(yVel > 0 && board.hitGridWalls(characterXLoc, characterYLoc, 
 				testCrab.getXIncr(), testCrab.getYIncr(), 0)){
-			repaint();
-			board.moveGrid(0, yIncr);
+			return;
 		}
-	}
-
-	public void moveGridLeft(){
-		if(!board.hitGridWalls(characterXLoc + characterWidth, testCrab.getYLoc(), 
+		else if(yVel < 0 && board.hitGridWalls(characterXLoc, characterYLoc + characterHeight, 
+				testCrab.getXIncr(), testCrab.getYIncr(), 1)){
+			return;
+		}
+		else if(xVel < 0 && board.hitGridWalls(characterXLoc + characterWidth,characterYLoc, 
 				testCrab.getXIncr(), testCrab.getYIncr(), 2)){
-			repaint();
-			board.moveGrid(-xIncr, 0);
+			return;
 		}
-	}
 
-	public void moveGridRight(){
-		if(!board.hitGridWalls(characterXLoc, testCrab.getYLoc(), 
+		else if(xVel > 0 && board.hitGridWalls(characterXLoc, characterYLoc, 
 				testCrab.getXIncr(), testCrab.getYIncr(), 3)){
+			return;
+		}
+		else{
 			repaint();
-			board.moveGrid(xIncr, 0);
+			board.moveGrid(xVel,yVel);
+		}
+	}
+	
+	public void up(){
+		xVel = 0;
+		yVel = yIncr;
+	}
+	public void down(){
+		xVel = 0;
+		yVel = -yIncr;
+	}
+	public void left(){
+		xVel = xIncr;
+		yVel = 0;
+	}
+	public void right(){
+		xVel = -xIncr;
+		yVel = 0;
+	}
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		int code = e.getKeyCode();
+		if(code == KeyEvent.VK_UP){
+			up();
+		}
+		if(code == KeyEvent.VK_DOWN){
+			down();
+		}
+		if(code == KeyEvent.VK_LEFT){
+			left();
+		}
+		if(code == KeyEvent.VK_RIGHT){
+			right();
 		}
 	}
 
-	public void setupListeners(){
-		moveLeftButton.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				moveGridRight();
-			}
-
-		});
-		moveRightButton.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				moveGridLeft();
-			}
-		});
-		moveUpButton.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				moveGridDown();
-			}
-		});
-		moveDownButton.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				moveGridUp();
-			}
-		});
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+
+
+	
 	public BufferedImage createImage(String fileName){
 		BufferedImage bufferedImage;
 		try {
@@ -169,6 +193,7 @@ public class MazeGameView extends JPanel {
 		}
 		return null;
 	}
+	
 
 	//Getters
 	public int getScreenWidth(){
