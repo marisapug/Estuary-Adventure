@@ -4,11 +4,13 @@ public class Crab extends GameFigure {
 	int health;
 	int ageState;
 	
-	public Crab(int h, int a){
+	public Crab(int h, int a, int xl, int yl){
 		health = h;
 		ageState = a;
-		this.xIncr = 2;
-		this.yIncr = 2;
+		xIncr = 6;
+		yIncr = 6;
+		xLoc = xl;
+		yLoc = yl;
 	}
 	
 	//Getters
@@ -20,6 +22,32 @@ public class Crab extends GameFigure {
 		return this.yLoc;
 	}
 	
+	public int getXIncr(){
+		return this.xIncr;
+	}
+	
+	public int getYIncr(){
+		return this.yIncr;
+	}
+	
+	//Setters
+	public void setXLoc(int x){
+		this.xLoc = x;
+	}
+	
+	public void setYLoc(int y){
+		this.yLoc = y;
+	}
+	
+	public void setXIncr(int xi){
+		this.xIncr = xi;
+	}
+	
+	public void setYIncr(int yi){
+		this.yIncr = yi;
+	}
+	
+	//Movers
 	public void moveLeft(){
 		xLoc = xLoc - xIncr;
 	}
