@@ -9,10 +9,13 @@ public class MazeBoard {
 	int wallHeight;
 	int xStartIndex;
 	int yStartIndex;
+	int xEndIndex;
+	int yEndIndex;
 	int screenWidth;
 	int screenHeight;
 	
 	ArrayList<MazeCell> stack = new ArrayList<MazeCell>();
+	ArrayList<MazeCell> correctPath = new ArrayList<MazeCell>();
 	MazeCell[][] grid;
 
 	public MazeBoard(int rows, int cols, int width, int height, int sWidth, int sHeight){
@@ -22,6 +25,8 @@ public class MazeBoard {
 		wallHeight = height;
 		xStartIndex = 1;
 		yStartIndex = 1;
+		xEndIndex = rows-1;
+		yEndIndex = cols-1;
 		
 		screenWidth = sWidth;
 		screenHeight = sHeight;
@@ -29,6 +34,10 @@ public class MazeBoard {
 		grid = new MazeCell[numRows][numCols];
 		makeGrid(xStartIndex, yStartIndex);
 		generateMaze(grid[xStartIndex][yStartIndex]);
+		resetVisited();
+		generateShortestPath(grid[xStartIndex][yStartIndex], grid[xEndIndex][yEndIndex]);
+		getPath();
+		
 	}
 
 	void makeGrid(int xStart, int yStart){
@@ -82,6 +91,74 @@ public class MazeBoard {
 			stack.remove(stack.size() - 1);
 			generateMaze(prev);
 		}
+	}
+	
+	MazeCell checkCorrectNeighbors(MazeCell curr){
+		ArrayList<MazeCell> neighbors = new ArrayList<MazeCell>();
+		
+		if(!curr.hasTopWall)
+			curr.correctTop = grid[curr.y-1][curr.x];
+		if(!curr.hasBottomWall)
+			curr.correctBottom = grid[curr.y+1][curr.x];	
+		if(!curr.hasRightWall)
+			curr.correctRight = grid[curr.y][curr.x+1];
+		if(!curr.hasLeftWall)
+			curr.correctLeft = grid[curr.y][curr.x-1];
+		
+		if(curr.correctTop!=null && !curr.correctTop.visited)
+			neighbors.add(curr.correctTop);
+		if(curr.correctBottom!=null && !curr.correctBottom.visited)
+			neighbors.add(curr.correctBottom);
+		if(curr.correctLeft!=null && !curr.correctLeft.visited)
+			neighbors.add(curr.correctLeft);
+		if(curr.correctRight!=null && !curr.correctRight.visited)
+			neighbors.add(curr.correctRight);
+		
+		if(neighbors.size() != 0){
+			Random r = new Random();
+			int rand = r.nextInt(neighbors.size());
+			return neighbors.get(rand);
+		} else
+			return curr;
+	}
+	
+	void resetVisited(){
+		for(int i = 0; i < numRows; i++){
+			for(int j = 0; j < numCols; j++){
+				grid[i][j].visited = false;
+			}
+		} 
+	}
+	
+	
+	void generateShortestPath(MazeCell curr, MazeCell end){
+		curr.isCorrectPath = true;
+		curr.visited = true;
+		if(curr.x != end.x || curr.y != end.y){
+			MazeCell next = checkCorrectNeighbors(curr);
+			MazeCell prev;
+			if(next.x != curr.x || next.y != curr.y){
+				stack.add(curr);
+				generateShortestPath(next,end);
+			}
+			else if(stack.size() > 0){
+				prev = stack.get(stack.size() - 1);
+				stack.remove(stack.size() - 1);
+				curr.isCorrectPath = false;
+				generateShortestPath(prev,end);
+			}
+		}
+	}
+	
+	void getPath(){
+		for(int i = 0; i < numRows; i++){
+			for(int j = 0; j < numCols; j++){
+				if(grid[i][j].isCorrectPath){
+					correctPath.add(grid[i][j]);
+				}
+			}
+		} 
+		System.out.println(correctPath.size());
 	}
 
 	void removeWalls(MazeCell a, MazeCell b){
@@ -157,6 +234,9 @@ public class MazeBoard {
 		return xStartIndex;
 	}
 	
+	public ArrayList<MazeCell> getCorrectPath(){
+		return correctPath;
+	}
 
 	//SETTERS
 	public void setNumRows(int rows){

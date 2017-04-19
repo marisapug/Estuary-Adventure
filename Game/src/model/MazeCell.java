@@ -17,6 +17,10 @@ public class MazeCell {
 	MazeCell bottom;
 	MazeCell left;
 	MazeCell right;
+	MazeCell correctTop;
+	MazeCell correctBottom;
+	MazeCell correctRight;
+	MazeCell correctLeft;
 	
 	//getters and setters
 	
