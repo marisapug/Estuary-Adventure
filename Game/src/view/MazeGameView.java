@@ -27,14 +27,16 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	
 	//Timer
 	Timer t = new Timer(10,this);
+	private int timeRemaining = 120;
+	private int timeCheck = 0;
 	
 	//Screen dimensions
 	static private int screenWidth = MainFrame.getFrameWidth();
 	static private int screenHeight = MainFrame.getFrameHeight();
 
 	//create the maze board
-	private int numRows = 15;
-	private int numCols = 15;
+	private int numRows = 23;
+	private int numCols = 23;
 	private int cellWidth = 200;
 	private int cellHeight = 200;
 	private MazeBoard board = new MazeBoard(numRows,numCols,cellWidth,cellHeight, screenWidth, screenHeight);
@@ -52,9 +54,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int xVel = testCrab.getXVel();
 	private int yVel = testCrab.getYVel();
 
+	//Locations for components
+	private final int timeRemainingLabelXLoc = screenWidth/2;
+	private final int timeRemainingLabelYLoc = 10;
 
-	//Labels
-	private JLabel timeLabel  = new JLabel("Time Remaining: " );
 
 	//=================================================================//
 
@@ -66,7 +69,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
 		this.setBackground(Color.BLUE);
-		this.add(timeLabel);
 	}
 
 	//paintComponent
@@ -116,11 +118,20 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			g.fillRect(10,10,30,30);
 		}
 		
+		g.setColor(Color.WHITE);
+		g.drawString("Time Remaining: ", timeRemainingLabelXLoc, timeRemainingLabelYLoc);
+		g.drawString(""+timeRemaining, screenWidth/2 + 120, 10);
+		
 		g.drawImage(crabImg, testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight, this);
 	}//paintComponent
 
 
 	public void actionPerformed(ActionEvent arg0) {
+		timeCheck++;
+		if(timeCheck == 100){
+			timeRemaining--;
+			timeCheck = 0;
+		}
 		// TODO Auto-generated method stub
 		if(yVel > 0 && board.hitGridWalls(characterXLoc, characterYLoc, 
 				testCrab.getXIncr(), testCrab.getYIncr(), 0)){
