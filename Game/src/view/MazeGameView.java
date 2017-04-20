@@ -3,6 +3,7 @@ package view;
 import model.Crab;
 import model.MazeBoard;
 import model.MazeCell;
+import model.MiniMap;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -41,6 +42,12 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int cellHeight = 200;
 	private MazeBoard board = new MazeBoard(numRows,numCols,cellWidth,cellHeight, screenWidth, screenHeight);
 	private MazeCell[][] grids = board.getGrid(); 
+	
+	//miniMap 
+	private MiniMap miniMap = new MiniMap();
+	private int miniWidth = miniMap.getWidth();
+	private int miniHeight = miniMap.getHeight();
+	private MazeCell miniCharacter;
 
 	//Crab
 	Crab testCrab = new Crab(3,0,screenWidth/2 ,screenHeight/2); //health, age
@@ -74,7 +81,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	//paintComponent
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-
+		
+		// MAZE DRAWING
 		for(int i = 0; i < numRows; i++){
 			for(int j =0; j < numCols; j++){
 				MazeCell currG = grids[i][j];
@@ -107,15 +115,60 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 		}
 		
+		g.setColor(Color.BLACK);
+		g.drawRect(0,0,numRows*miniWidth, numCols*miniHeight);
+		g.fillRect(0,0,numRows*miniWidth, numCols*miniHeight);
+		
+		
+		//MINIMAP DRAWING
+		for(int i = 0; i < numRows; i++){
+			for(int j =0; j < numCols; j++){
+				MazeCell currG = grids[i][j];
+				int topLX = j*miniWidth; //top left corner x value
+				int topLY = i*miniHeight; //top left corner y value
+				int topRX = topLX + miniWidth; //top right corner x value
+				int topRY = topLY; //top right corner y value
+				int bottomLX = topLX; //bottom left corner x value
+				int bottomLY = topLY + miniHeight; //bottom left corner y value
+				int bottomRX = topRX; //bottom right corner x value
+				int bottomRY = bottomLY; //bottom right corner y value
+				
+				Graphics2D g2 = (Graphics2D)g;
+				g2.setStroke(new BasicStroke(1));
+				g2.setColor(Color.RED);
+				
+				if(currG.getHasTopWall()){
+					g2.drawLine(topLX, topLY, topRX, topRY);
+				}
+				if(currG.getHasBottomWall()){
+					g2.drawLine(bottomLX, bottomLY, bottomRX, bottomRY);
+				}
+				if(currG.getHasRightWall()){
+					g2.drawLine(topRX, topRY, bottomRX, bottomRY);
+				}
+				if(currG.getHasLeftWall()){
+					g2.drawLine(topLX, topLY, bottomLX, bottomLY);
+				}
+			}
+
+		}
+		
+		//MINI MAP CHARACTER DRAWING
+		miniCharacter = board.inWhichCell(characterXLoc,characterYLoc);
+		g.setColor(Color.GREEN);
+		g.drawRect(miniCharacter.getX() * miniWidth + miniWidth/4, miniCharacter.getY()*miniHeight + miniHeight/4,miniWidth/2,miniHeight/2);
+		g.fillRect(miniCharacter.getX() * miniWidth + miniWidth/4, miniCharacter.getY()*miniHeight + miniHeight/4,miniWidth/2,miniHeight/2);
+		
+		//SalinityMeter Drawing FIX MAGIC NUMBERS
 		if(board.isOnCorrectPath(characterXLoc, characterYLoc)){
 			g.setColor(Color.GREEN);
-			g.drawRect(10,10,30,30);
-			g.fillRect(10,10,30,30);
+			g.drawRect(screenWidth - 50,10,30,30);
+			g.fillRect(screenWidth - 50,10,30,30);
 		}
 		else{
 			g.setColor(Color.RED);
-			g.drawRect(10,10,30,30);
-			g.fillRect(10,10,30,30);
+			g.drawRect(screenWidth - 50,10,30,30);
+			g.fillRect(screenWidth - 50,10,30,30);
 		}
 		
 		g.setColor(Color.WHITE);

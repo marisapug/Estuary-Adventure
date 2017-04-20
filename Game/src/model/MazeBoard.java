@@ -216,6 +216,17 @@ public class MazeBoard {
 		return false;
 	}
 
+	public MazeCell inWhichCell(int xL, int yL){
+		for(int i = 0; i < numRows; i++){
+			for(int j = 0; j < numCols; j++){
+				if(xL >= grid[i][j].xLoc && xL <= grid[i][j].xLoc + wallWidth &&
+						yL >= grid[i][j].yLoc && yL <= grid[i][j].yLoc + wallHeight){
+					return grid[i][j];
+				}
+			}
+		}
+		return grid[0][0];
+	}
 
 	//GETTERS
 	public int getNumRows(){
