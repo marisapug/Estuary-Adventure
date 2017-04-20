@@ -205,6 +205,16 @@ public class MazeBoard {
 			}
 		}
 	}
+	
+	public boolean isOnCorrectPath(int x, int y){
+		for(MazeCell m : correctPath){
+			if(x >= m.xLoc && x <= m.xLoc + m.width &&
+					y >= m.yLoc && y <= m.yLoc + m.height){
+				return true;
+			}
+		}
+		return false;
+	}
 
 
 	//GETTERS

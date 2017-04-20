@@ -1,12 +1,12 @@
 package model;
 
 public class MazeCell {
-	int x;
-	int y;
+	int x; //location in grid
+	int y; //location in grid
 	int width;
 	int height;
-	int xLoc;
-	int yLoc;
+	int xLoc; //pixels
+	int yLoc; //pixels
 	boolean hasTopWall = true;
 	boolean hasBottomWall = true;
 	boolean hasLeftWall = true;

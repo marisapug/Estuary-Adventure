@@ -54,7 +54,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 
 	//Labels
-	private JLabel timeLabel  = new JLabel("Time Remaining: ");
+	private JLabel timeLabel  = new JLabel("Time Remaining: " );
 
 	//=================================================================//
 
@@ -65,7 +65,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		addKeyListener(this);
 		setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
-		this.setBackground(Color.CYAN);
+		this.setBackground(Color.BLUE);
 		this.add(timeLabel);
 	}
 
@@ -87,7 +87,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				
 				Graphics2D g2 = (Graphics2D)g;
 				g2.setStroke(new BasicStroke(5));
-				g2.setColor(Color.BLUE);
+				g2.setColor(Color.CYAN);
 				
 				if(currG.getHasTopWall()){
 					g2.drawLine(topLX, topLY, topRX, topRY);
@@ -105,11 +105,15 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 		}
 		
-		//draws green rectangle in correct path
-		for(MazeCell m: board.getCorrectPath()){
-			g.setColor(Color.green);
-			g.drawRect(m.getXLoc()+50,m.getYLoc()+50, cellWidth-100, cellHeight-100);
-			g.fillRect(m.getXLoc()+50,m.getYLoc()+50, cellWidth-100, cellHeight-100);
+		if(board.isOnCorrectPath(characterXLoc, characterYLoc)){
+			g.setColor(Color.GREEN);
+			g.drawRect(10,10,30,30);
+			g.fillRect(10,10,30,30);
+		}
+		else{
+			g.setColor(Color.RED);
+			g.drawRect(10,10,30,30);
+			g.fillRect(10,10,30,30);
 		}
 		
 		g.drawImage(crabImg, testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight, this);
