@@ -36,8 +36,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	static private int screenHeight = MainFrame.getFrameHeight();
 
 	//create the maze board
-	private int numRows = 23;
-	private int numCols = 23;
+	private int numRows = 30;
+	private int numCols = 30;
 	private int cellWidth = 200;
 	private int cellHeight = 200;
 	private MazeBoard board = new MazeBoard(numRows,numCols,cellWidth,cellHeight, screenWidth, screenHeight);
