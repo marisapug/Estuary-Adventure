@@ -11,7 +11,7 @@ public class Predator extends Obstacle {
 		xLoc = x;
 		yLoc = y;
 		speed = s;
-		direction = d;
+		direction = d;//0 = up, 1 = down, 2 = right, 3 = left
 	}
 	
 	void attack(){}

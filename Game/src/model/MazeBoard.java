@@ -17,6 +17,10 @@ public class MazeBoard {
 	ArrayList<MazeCell> stack = new ArrayList<MazeCell>();
 	ArrayList<MazeCell> correctPath = new ArrayList<MazeCell>();
 	MazeCell[][] grid;
+	
+	//PRETEDTORS
+	int numPred;
+	ArrayList<Predator> predators = new ArrayList<Predator>();
 
 	public MazeBoard(int rows, int cols, int width, int height, int sWidth, int sHeight){
 		numRows = rows;
