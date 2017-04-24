@@ -17,6 +17,7 @@ public class MazeBoard {
 	ArrayList<MazeCell> stack = new ArrayList<MazeCell>();
 	ArrayList<MazeCell> correctPath = new ArrayList<MazeCell>();
 	MazeCell[][] grid;
+	Litter[] gameLitter;
 	
 	//PRETEDTORS
 	int numPred;
@@ -230,6 +231,17 @@ public class MazeBoard {
 			}
 		}
 		return grid[0][0];
+	}
+	
+	public Litter[] generateLitter(int amount){ 
+		Litter[] pile = new Litter[amount];
+		Random rand = new Random();
+		for(int i = 0; i < amount; i++){
+			int litInd = rand.nextInt(4); 
+			Litter lit = new Litter(litInd, this);
+			pile[i] = lit;
+		}
+		return pile;
 	}
 
 	//GETTERS

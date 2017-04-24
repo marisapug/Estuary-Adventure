@@ -4,6 +4,7 @@ import model.Crab;
 import model.MazeBoard;
 import model.MazeCell;
 import model.MiniMap;
+import model.Litter;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -18,6 +19,8 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Random;
 
 
 public class MazeGameView extends JPanel implements KeyListener, ActionListener {
@@ -60,6 +63,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int xIncr = testCrab.getYIncr();
 	private int xVel = testCrab.getXVel();
 	private int yVel = testCrab.getYVel();
+	
+	//Litter
+		ArrayList<BufferedImage> litterTypes = makeLitterList();
+		Random rand = new Random();
+		Litter[] gameLitter = board.generateLitter(100);
 
 	//Locations for components
 	private final int timeRemainingLabelXLoc = screenWidth/2;
@@ -175,6 +183,12 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		g.drawString("Time Remaining: ", timeRemainingLabelXLoc, timeRemainingLabelYLoc);
 		g.drawString(""+timeRemaining, screenWidth/2 + 120, 10);
 		
+		for(int i = 0; i < gameLitter.length; i++){
+			Litter lit = gameLitter[i];
+			g.drawImage(litterTypes.get(lit.getType()), lit.getXLoc(), lit.getYLoc(),characterWidth, characterHeight, this);
+		}
+
+		
 		g.drawImage(crabImg, testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight, this);
 	}//paintComponent
 
@@ -270,6 +284,15 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		return null;
 	}
 	
+	public ArrayList<BufferedImage> makeLitterList(){
+		ArrayList<BufferedImage> litterIcons = new ArrayList<BufferedImage>();
+		litterIcons.add(createImage("characters/apple.jpeg"));
+		litterIcons.add(createImage("characters/can.png"));
+		litterIcons.add(createImage("characters/plasticBag.png"));
+		litterIcons.add(createImage("characters/plasticbottle.jpg"));
+		return litterIcons;
+	}
+
 
 	//Getters
 	public int getScreenWidth(){
