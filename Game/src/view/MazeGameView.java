@@ -271,7 +271,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	}
 	
 
-
 	
 	public BufferedImage createImage(String fileName){
 		BufferedImage bufferedImage;
