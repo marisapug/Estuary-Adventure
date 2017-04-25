@@ -28,24 +28,24 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	//=================================================================//
 
 	private static final long serialVersionUID = 1L;
-	
+
 	//Timer
 	Timer t = new Timer(10,this);
 	private int timeRemaining = 120;
 	private int timeCheck = 0;
-	
+
 	//Screen dimensions
 	static private int screenWidth = MainFrame.getFrameWidth();
 	static private int screenHeight = MainFrame.getFrameHeight();
 
 	//create the maze board
-	private int numRows = 30;
-	private int numCols = 30;
+	private int numRows = 10;
+	private int numCols = 10;
 	private int cellWidth = 200;
 	private int cellHeight = 200;
 	private MazeBoard board = new MazeBoard(numRows,numCols,cellWidth,cellHeight, screenWidth, screenHeight);
 	private MazeCell[][] grids = board.getGrid(); 
-	
+
 	//miniMap 
 	private MiniMap miniMap = new MiniMap();
 	private int miniWidth = miniMap.getWidth();
@@ -63,11 +63,15 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int xIncr = testCrab.getYIncr();
 	private int xVel = testCrab.getXVel();
 	private int yVel = testCrab.getYVel();
-	
+
 	//Litter
-		ArrayList<BufferedImage> litterTypes = makeLitterList();
-		Random rand = new Random();
-		Litter[] gameLitter = board.generateLitter(100);
+	ArrayList<BufferedImage> litterTypes = makeLitterList();
+	Random rand = new Random();
+	Litter[] gameLitter = board.getGameLitter();
+	private int litterWidth = characterWidth;
+	private int litterHeight = characterHeight;
+	private int xLitterMax = 0;
+	private int xLitterMin = 0;
 
 	//Locations for components
 	private final int timeRemainingLabelXLoc = screenWidth/2;
@@ -89,7 +93,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	//paintComponent
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		
+
 		// MAZE DRAWING
 		for(int i = 0; i < numRows; i++){
 			for(int j =0; j < numCols; j++){
@@ -102,11 +106,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				int bottomLY = topLY + currG.getHeight(); //bottom left corner y value
 				int bottomRX = topRX; //bottom right corner x value
 				int bottomRY = bottomLY; //bottom right corner y value
-				
+
 				Graphics2D g2 = (Graphics2D)g;
 				g2.setStroke(new BasicStroke(5));
 				g2.setColor(Color.CYAN);
-				
+
 				if(currG.getHasTopWall()){
 					g2.drawLine(topLX, topLY, topRX, topRY);
 				}
@@ -122,12 +126,16 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			}
 
 		}
-		
+
 		g.setColor(Color.BLACK);
 		g.drawRect(0,0,numRows*miniWidth, numCols*miniHeight);
 		g.fillRect(0,0,numRows*miniWidth, numCols*miniHeight);
-		
-		
+
+		//Draws litter
+		for(Litter lit: gameLitter){
+			g.drawImage(litterTypes.get(lit.getType()), lit.getXLoc(), lit.getYLoc(),litterWidth, litterHeight, this);
+		}
+
 		//MINIMAP DRAWING
 		for(int i = 0; i < numRows; i++){
 			for(int j =0; j < numCols; j++){
@@ -140,11 +148,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				int bottomLY = topLY + miniHeight; //bottom left corner y value
 				int bottomRX = topRX; //bottom right corner x value
 				int bottomRY = bottomLY; //bottom right corner y value
-				
+
 				Graphics2D g2 = (Graphics2D)g;
 				g2.setStroke(new BasicStroke(1));
 				g2.setColor(Color.RED);
-				
+
 				if(currG.getHasTopWall()){
 					g2.drawLine(topLX, topLY, topRX, topRY);
 				}
@@ -160,13 +168,13 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			}
 
 		}
-		
+
 		//MINI MAP CHARACTER DRAWING
 		miniCharacter = board.inWhichCell(characterXLoc,characterYLoc);
 		g.setColor(Color.GREEN);
 		g.drawRect(miniCharacter.getX() * miniWidth + miniWidth/4, miniCharacter.getY()*miniHeight + miniHeight/4,miniWidth/2,miniHeight/2);
 		g.fillRect(miniCharacter.getX() * miniWidth + miniWidth/4, miniCharacter.getY()*miniHeight + miniHeight/4,miniWidth/2,miniHeight/2);
-		
+
 		//SalinityMeter Drawing FIX MAGIC NUMBERS
 		if(board.isOnCorrectPath(characterXLoc, characterYLoc)){
 			g.setColor(Color.GREEN);
@@ -178,17 +186,12 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			g.drawRect(screenWidth - 50,10,30,30);
 			g.fillRect(screenWidth - 50,10,30,30);
 		}
-		
+
 		g.setColor(Color.WHITE);
 		g.drawString("Time Remaining: ", timeRemainingLabelXLoc, timeRemainingLabelYLoc);
 		g.drawString(""+timeRemaining, screenWidth/2 + 120, 10);
-		
-		for(int i = 0; i < gameLitter.length; i++){
-			Litter lit = gameLitter[i];
-			g.drawImage(litterTypes.get(lit.getType()), lit.getXLoc(), lit.getYLoc(),characterWidth, characterHeight, this);
-		}
 
-		
+
 		g.drawImage(crabImg, testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight, this);
 	}//paintComponent
 
@@ -199,6 +202,23 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			timeRemaining--;
 			timeCheck = 0;
 		}
+		
+		//floats the litter back and forth in a cell
+		if(xLitterMax + board.getGameLitter()[0].getFloatXIncr() + litterWidth <= cellWidth){
+			board.floatAllLitterRight();
+			xLitterMax += board.getGameLitter()[0].getFloatXIncr();
+		}
+		else if(xLitterMin + board.getGameLitter()[0].getFloatXIncr() + litterWidth <= cellWidth){
+			board.floatAllLitterLeft();
+			xLitterMin += board.getGameLitter()[0].getFloatXIncr();
+		}
+		else{
+			xLitterMax = 0;
+			xLitterMin = 0;
+		}
+		
+		//updates gameLitter
+		//gameLitter = board.getGameLitter();
 		// TODO Auto-generated method stub
 		if(yVel > 0 && board.hitGridWalls(characterXLoc, characterYLoc, 
 				testCrab.getXIncr(), testCrab.getYIncr(), 0)){
@@ -222,7 +242,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			board.moveGrid(xVel,yVel);
 		}
 	}
-	
+
 	public void up(){
 		xVel = 0;
 		yVel = yIncr;
@@ -267,11 +287,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	@Override
 	public void keyTyped(KeyEvent arg0) {
 		// TODO Auto-generated method stub
-		
-	}
-	
 
-	
+	}
+
+
+
 	public BufferedImage createImage(String fileName){
 		BufferedImage bufferedImage;
 		try {
@@ -282,7 +302,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		}
 		return null;
 	}
-	
+
 	public ArrayList<BufferedImage> makeLitterList(){
 		ArrayList<BufferedImage> litterIcons = new ArrayList<BufferedImage>();
 		litterIcons.add(createImage("characters/apple.jpeg"));

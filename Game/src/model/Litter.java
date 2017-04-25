@@ -3,20 +3,34 @@ package model;
 import java.util.Random;
 
 public class Litter extends Obstacle {
-	int type;
-	MazeCell loc;
-	int xLoc;
-	int yLoc;
+	private int type;
+	private int xLoc;
+	private int yLoc;
+	static int floatXIncr = 2;
 	
-	public Litter(int t, MazeBoard board){
+	public Litter(int t, int xLoc, int yLoc){
 		type = t;
 		Random rand = new Random();
-		int xInd = rand.nextInt(board.getNumRows());
-		int yInd = rand.nextInt(board.getNumCols());
-		loc = board.getGrid()[xInd][yInd];
-		xLoc =  loc.getXLoc() + (loc.getWidth() / 2);
-		yLoc = loc.getYLoc() - (loc.getHeight() / 2);
+		this.xLoc = xLoc;
+		this.yLoc = yLoc;
 	}
+	
+	//moves litter by the given x and y increments
+	public void moveLitter(int xIncr, int yIncr){
+		yLoc = yLoc + yIncr;
+		xLoc = xLoc + xIncr;
+	}
+	
+	//changes litters xLoc
+	void floatLitterRight(){
+		xLoc = xLoc + floatXIncr;
+	}
+	
+	void floatLitterLeft(){
+		xLoc = xLoc - floatXIncr;
+	}
+	
+
 	
 	public int getXLoc(){
 		return xLoc;
@@ -30,5 +44,8 @@ public class Litter extends Obstacle {
 		return type;
 	}
 	
-	void floatLitter(){}
+	public int getFloatXIncr(){
+		return floatXIncr;
+	}
+	
 }
