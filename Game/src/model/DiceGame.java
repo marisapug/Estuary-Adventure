@@ -30,7 +30,7 @@ public class DiceGame {
 			tempDie.dieImg = randInt;
 			imgBools[randInt] = true;
 			imgNums[i] = randInt;
-			System.out.println(randInt);
+		//	System.out.println(randInt);
 			dice[i] = tempDie;
 		}
 	} // makes all dice with images

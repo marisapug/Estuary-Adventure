@@ -56,7 +56,6 @@ public class MainFrame extends JFrame {
 		currBeachPanel = new BeachGameView();
 		
 		addKeyListener(currMazePanel);
-		addKeyListener(currBeachPanel);
 		EventQueue.invokeLater(new Runnable(){
 			public void run(){
 			}
@@ -132,10 +131,6 @@ public class MainFrame extends JFrame {
 				
 				cardPanel.remove(currMazePanel);
 				resetMaze();
-				EventQueue.invokeLater(new Runnable(){
-					public void run(){
-					}
-				});
 				addKeyListener(currMazePanel);
 				cardPanel.add(currMazePanel, "maze");
 				cl.show(cardPanel, "maze");
@@ -149,10 +144,6 @@ public class MainFrame extends JFrame {
 				cardPanel.remove(currBeachPanel);
 				resetBeach();
 				addKeyListener(currBeachPanel);
-				EventQueue.invokeLater(new Runnable(){
-					public void run(){
-					}
-				});
 				cardPanel.add(currBeachPanel, "beach");
 				cl.show(cardPanel, "beach");
 			}
