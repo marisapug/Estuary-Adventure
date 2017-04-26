@@ -117,6 +117,7 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
+				
 				resetStart();
 				cl.show(cardPanel, "start");
 			}
@@ -126,7 +127,11 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				resetMaze();
+				
+				cardPanel.remove(currMazePanel);
+				currMazePanel = new MazeGameView();
+				addKeyListener(currMazePanel);
+				cardPanel.add(currMazePanel, "maze");
 				cl.show(cardPanel, "maze");
 			}
 		});
