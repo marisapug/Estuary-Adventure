@@ -117,8 +117,9 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				
+				cardPanel.remove(currStartPanel);
 				resetStart();
+				cardPanel.add(currStartPanel, "start");
 				cl.show(cardPanel, "start");
 			}
 		});
@@ -129,7 +130,11 @@ public class MainFrame extends JFrame {
 				// TODO Auto-generated method stub
 				
 				cardPanel.remove(currMazePanel);
-				currMazePanel = new MazeGameView();
+				resetMaze();
+				EventQueue.invokeLater(new Runnable(){
+					public void run(){
+					}
+				});
 				addKeyListener(currMazePanel);
 				cardPanel.add(currMazePanel, "maze");
 				cl.show(cardPanel, "maze");
@@ -139,8 +144,10 @@ public class MainFrame extends JFrame {
 		beachItem.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				resetBeach();
 				// TODO Auto-generated method stub
+				cardPanel.remove(currBeachPanel);
+				resetBeach();
+				cardPanel.add(currBeachPanel, "beach");
 				cl.show(cardPanel, "beach");
 			}
 		});
@@ -149,7 +156,9 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
+				cardPanel.remove(currDicePanel);
 				resetDice();
+				cardPanel.add(currDicePanel, "dice");
 				cl.show(cardPanel, "dice");
 			}
 		});
