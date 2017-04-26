@@ -52,9 +52,36 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int miniHeight = miniMap.getHeight();
 	private MazeCell miniCharacter;
 
+	//Horseshoe Crab images
+	private BufferedImage crabRight0 = createImage("characters/horseshoe_crab_right_0.png");
+	private BufferedImage crabRight1 = createImage("characters/horseshoe_crab_right_1.png");
+
+	private BufferedImage crabLeft0 = createImage("characters/horseshoe_crab_left_0.png");
+	private BufferedImage crabLeft1 = createImage("characters/horseshoe_crab_left_1.png");
+
+	private BufferedImage crabDown0 = createImage("characters/horseshoe_crab_down_0.png");
+	private BufferedImage crabDown1 = createImage("characters/horseshoe_crab_down_1.png");
+
+	private BufferedImage crabUp0 = createImage("characters/horseshoe_crab_up_0.png");
+	private BufferedImage crabUp1 = createImage("characters/horseshoe_crab_up_1.png");
+
+	private BufferedImage[][] crabPics = {
+			{crabUp0, crabUp1},
+			{crabDown0, crabDown1},
+			{crabRight0,crabRight1},
+			{crabLeft0, crabLeft1},
+	};
+
+	private int crabPicNum = 0;
+	private boolean crabIsMoving = false;
+	private int swimSpeed = 5;
+	private int swimTimer = swimSpeed;
+
+
 	//Crab
-	Crab testCrab = new Crab(3,0,screenWidth/2 ,screenHeight/2); //health, age
-	BufferedImage crabImg = createImage("characters/crab-clip-art-crab7.png");
+	private Crab testCrab = new Crab(3,0,screenWidth/2 ,screenHeight/2); //health, age
+	private int crabDir = testCrab.getDir();
+	private BufferedImage crabImg;
 	private int characterWidth = 50;
 	private int characterHeight = 50;
 	private int characterXLoc = testCrab.getXLoc();
@@ -63,7 +90,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int xIncr = testCrab.getYIncr();
 	private int xVel = testCrab.getXVel();
 	private int yVel = testCrab.getYVel();
-		//crab Health
+
+	//crab Health
 	private int health = testCrab.getHealth();
 	private int hitTimer = 0;
 	private int cantBeHitLim = 100;
@@ -137,11 +165,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		}
 
 		//MINIMAP DRAWING
-			//background of minimap
+		//background of minimap
 		g.setColor(Color.BLACK);
 		g.drawRect(0,0,numRows*miniWidth, numCols*miniHeight);
 		g.fillRect(0,0,numRows*miniWidth, numCols*miniHeight);
-			//actual lines of minimap
+		//actual lines of minimap
 		for(int i = 0; i < numRows; i++){
 			for(int j =0; j < numCols; j++){
 				MazeCell currG = grids[i][j];
@@ -197,8 +225,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		g.drawString(""+timeRemaining, screenWidth/2 + 120, 10);
 
 
+		//CrabImage
+		crabImg = crabPics[crabDir][crabPicNum];
 		g.drawImage(crabImg, testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight, this);
-		
+
 		//NUMBER INDICATING HEALTH ONLY TEMPORARY
 		g.drawString("Lives: " + health,screenWidth/2, 40);
 		g.drawString("Hit timer: " + hitTimer,screenWidth/2, 70);
@@ -211,7 +241,16 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			timeRemaining--;
 			timeCheck = 0;
 		}
+
+		if(swimTimer > 0){
+			swimTimer--;
+		}
 		
+		if(crabIsMoving && swimTimer == 0){
+			crabPicNum = (crabPicNum + 1) % 2;
+			swimTimer = swimSpeed;
+		}
+
 		if(board.hitAnyLitter(characterXLoc, characterYLoc, characterWidth, characterHeight) && hitTimer == cantBeHitLim){
 			health -= 1;
 			hitTimer = 0;
@@ -219,7 +258,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		if(hitTimer < cantBeHitLim){
 			hitTimer++;
 		}
-		
+
 		//floats the litter back and forth in a cell
 		if(xLitterMax + board.getGameLitter()[0].getFloatXIncr() + litterWidth <= cellWidth){
 			board.floatAllLitterRight();
@@ -237,6 +276,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		//updates gameLitter
 		//gameLitter = board.getGameLitter();
 		// TODO Auto-generated method stub
+
+
+
 		if(yVel > 0 && board.hitGridWalls(characterXLoc, characterYLoc, 
 				testCrab.getXIncr(), testCrab.getYIncr(), 0)){
 			return;
@@ -261,18 +303,30 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	}
 
 	public void up(){
+		crabIsMoving = true;
+		testCrab.setDir(0);
+		crabDir = testCrab.getDir();
 		xVel = 0;
 		yVel = yIncr;
 	}
 	public void down(){
+		crabIsMoving = true;
+		testCrab.setDir(1);
+		crabDir = testCrab.getDir();
 		xVel = 0;
 		yVel = -yIncr;
 	}
 	public void left(){
+		crabIsMoving = true;
+		testCrab.setDir(3);
+		crabDir = testCrab.getDir();
 		xVel = xIncr;
 		yVel = 0;
 	}
 	public void right(){
+		crabIsMoving = true;
+		testCrab.setDir(2);
+		crabDir = testCrab.getDir();
 		xVel = -xIncr;
 		yVel = 0;
 	}
@@ -297,6 +351,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	@Override
 	public void keyReleased(KeyEvent arg0) {
 		// TODO Auto-generated method stub
+		crabIsMoving = false;
 		xVel = 0;
 		yVel = 0;
 	}

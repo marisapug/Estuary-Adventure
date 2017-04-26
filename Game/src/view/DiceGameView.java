@@ -6,19 +6,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import model.*;
 
 public class DiceGameView extends JPanel {
+	
+	private static final long serialVersionUID = 1L;
 	// Screen
-	private int screenWidth = 500;
-	private int screenHeight = 300;
+	private int screenWidth = MainFrame.getFrameWidth();
+	private int screenHeight = MainFrame.getFrameHeight();
 
 	// Dice
-	DiceGame dgame = new DiceGame();
+	DiceGame dgame;
 	private int diceWidth = 120;
 	private int diceStartX = 30;
 	private int diceStartY = 100;
@@ -29,16 +30,24 @@ public class DiceGameView extends JPanel {
 	private boolean isStorySaved = false;
 
 	// Buttons
-	private JButton rollDiceButton = new JButton("Roll Dice");
-	private JButton storyButton = new JButton("Submit Story");
+	private JButton rollDiceButton;
+	private JButton storyButton;
 
 
 	// TextFields
-	JTextField storyText = new JTextField("Enter Story Here");
+	JTextField storyText;
 	//dgame.diceStory = storyText.getText();
 
 	// Constructor
 	public DiceGameView() {
+		
+		dgame = new DiceGame();
+		
+		rollDiceButton = new JButton("Roll Dice");
+		storyButton = new JButton("Submit Story");
+		
+		storyText = new JTextField("Enter Story Here");
+				
 		this.add(rollDiceButton);
 		this.add(storyText);
 		this.add(storyButton);
@@ -94,8 +103,8 @@ public class DiceGameView extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				saveStory(); // save story function
 				repaint(); // print story function
+				saveStory(); // save story function
 			}
 		});
 

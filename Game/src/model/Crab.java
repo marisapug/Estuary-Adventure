@@ -3,10 +3,12 @@ package model;
 public class Crab extends GameFigure {
 	private int health;
 	private int ageState;
+	private int dir; // north 0, south 1, east 2, west 3
 	
 	public Crab(int h, int a, int xl, int yl){
 		health = h;
 		ageState = a;
+		dir = 2;
 		xIncr = 6;
 		yIncr = 6;
 		xLoc = xl;
@@ -38,6 +40,10 @@ public class Crab extends GameFigure {
 		return this.ageState;
 	}
 	
+	public int getDir(){
+		return this.dir;
+	}
+	
 	
 	//Setters
 	public void setXLoc(int x){
@@ -62,6 +68,10 @@ public class Crab extends GameFigure {
 	
 	public void setAgeState(int a){
 		this.ageState = a;
+	}
+	
+	public void setDir(int d){
+		this.dir = d;
 	}
 	
 	
