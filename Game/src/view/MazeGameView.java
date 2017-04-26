@@ -63,6 +63,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int xIncr = testCrab.getYIncr();
 	private int xVel = testCrab.getXVel();
 	private int yVel = testCrab.getYVel();
+	private int health = testCrab.getHealth();
+	private int hitTimer = 0;
+	private int cantBeHitLim = 100;
 
 	//Litter
 	ArrayList<BufferedImage> litterTypes = makeLitterList();
@@ -193,6 +196,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 
 		g.drawImage(crabImg, testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight, this);
+		
+		//NUMBER INDICATING HEALTH ONLY TEMPORARY
+		g.drawString("Lives: " + health,screenWidth/2, 40);
+		g.drawString("Hit timer: " + hitTimer,screenWidth/2, 70);
 	}//paintComponent
 
 
@@ -201,6 +208,14 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		if(timeCheck == 100){
 			timeRemaining--;
 			timeCheck = 0;
+		}
+		
+		if(board.hitAnyLitter(characterXLoc, characterYLoc, characterWidth, characterHeight) && hitTimer == cantBeHitLim){
+			health -= 1;
+			hitTimer = 0;
+		}
+		if(hitTimer < cantBeHitLim){
+			hitTimer++;
 		}
 		
 		//floats the litter back and forth in a cell
@@ -216,7 +231,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			xLitterMax = 0;
 			xLitterMin = 0;
 		}
-		
+		repaint();
 		//updates gameLitter
 		//gameLitter = board.getGameLitter();
 		// TODO Auto-generated method stub

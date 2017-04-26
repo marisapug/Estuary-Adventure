@@ -2,17 +2,20 @@ package model;
 
 import java.util.Random;
 
-public class Litter extends Obstacle {
+public class Litter {
 	private int type;
 	private int xLoc;
 	private int yLoc;
+	private int width;
+	private int height;
 	static int floatXIncr = 2;
 	
 	public Litter(int t, int xLoc, int yLoc){
 		type = t;
-		Random rand = new Random();
 		this.xLoc = xLoc;
 		this.yLoc = yLoc;
+		width = 20;
+		height = 20;
 	}
 	
 	//moves litter by the given x and y increments
@@ -22,12 +25,21 @@ public class Litter extends Obstacle {
 	}
 	
 	//changes litters xLoc
-	void floatLitterRight(){
+	public void floatLitterRight(){
 		xLoc = xLoc + floatXIncr;
 	}
 	
-	void floatLitterLeft(){
+	public void floatLitterLeft(){
 		xLoc = xLoc - floatXIncr;
+	}
+	
+	//checks if something hit the litter
+	public boolean hitLitter(int xL, int yL, int w, int h){
+		if(((xL > xLoc && xL < xLoc + width )|| (xL + w > xLoc && xL + w < xLoc + width)) &&
+				((yL > yLoc && yL < yLoc + height)||(yL + h > yLoc && yL + h < yLoc + height))){
+			return true;
+		}
+		else return false;
 	}
 	
 

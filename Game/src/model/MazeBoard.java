@@ -252,6 +252,9 @@ public class MazeBoard {
 		return grid[0][0];
 	}
 	
+	
+	//LITTER STUFF----------------------------------------------------------
+	
 	//gets a random cell from the grid
 	public MazeCell getRandomCell(){
 		Random rand = new Random();
@@ -286,8 +289,19 @@ public class MazeBoard {
 			lit.floatLitterLeft();
 		}
 	}
+	
+	//checks if anyLitter is hit
+	public boolean hitAnyLitter(int xL, int yL, int w, int h){
+		for(Litter lit: gameLitter){
+			if(lit.hitLitter(xL, yL, w, h)){
+				return true;
+			}
+		}
+		return false;
+	}
 
-	//GETTERS
+	//GETTERS-----------------------------------------------------------------------------------------
+	
 	public MazeCell[][] getGrid(){
 		return grid;
 	}
