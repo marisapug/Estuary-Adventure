@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Random;
+
 public class Predator extends Obstacle {
 	int speed;
 	int direction;
@@ -26,6 +28,15 @@ public class Predator extends Obstacle {
 		}else if(d==3){
 			xLoc -= x;
 		}
+	}
+	
+	public void setRandomDirection(int d){
+		Random rand = new Random();
+		int newDir = rand.nextInt(4);
+		while(newDir == d){
+			newDir = rand.nextInt(4);
+		}
+		direction = newDir;
 	}
 	
 	//GETTERS
