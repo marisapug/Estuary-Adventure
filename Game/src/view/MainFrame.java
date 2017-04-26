@@ -56,6 +56,7 @@ public class MainFrame extends JFrame {
 		currBeachPanel = new BeachGameView();
 		
 		addKeyListener(currMazePanel);
+		addKeyListener(currBeachPanel);
 		EventQueue.invokeLater(new Runnable(){
 			public void run(){
 			}
@@ -147,6 +148,11 @@ public class MainFrame extends JFrame {
 				// TODO Auto-generated method stub
 				cardPanel.remove(currBeachPanel);
 				resetBeach();
+				addKeyListener(currBeachPanel);
+				EventQueue.invokeLater(new Runnable(){
+					public void run(){
+					}
+				});
 				cardPanel.add(currBeachPanel, "beach");
 				cl.show(cardPanel, "beach");
 			}
