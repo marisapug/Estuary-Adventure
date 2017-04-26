@@ -31,10 +31,10 @@ public class MainFrame extends JFrame {
 	CardLayout cl = (CardLayout) cardPanel.getLayout();
 
 	//JPanels (Game Views)
-	StartScreenView startPanel = new StartScreenView();
-	MazeGameView mazePanel = new MazeGameView();
-	BeachGameView beachPanel = new BeachGameView();
-	DiceGameView dicePanel = new DiceGameView();
+	StartScreenView currStartPanel;
+	MazeGameView currMazePanel;
+	BeachGameView currBeachPanel;
+	DiceGameView currDicePanel;
 
 	//JMenuBar
 	private JMenuBar menuBar = new JMenuBar();
@@ -49,7 +49,13 @@ public class MainFrame extends JFrame {
 	private JMenuItem diceItem = new JMenuItem("Dice Game");
 
 	public MainFrame(){
-		addKeyListener(mazePanel);
+		
+		currMazePanel = new MazeGameView();
+		currStartPanel = new StartScreenView();
+		currDicePanel = new DiceGameView();
+		currBeachPanel = new BeachGameView();
+		
+		addKeyListener(currMazePanel);
 		EventQueue.invokeLater(new Runnable(){
 			public void run(){
 			}
@@ -64,15 +70,15 @@ public class MainFrame extends JFrame {
 		miniGamesMenu.add(mazeItem);
 		miniGamesMenu.add(beachItem);
 		miniGamesMenu.add(diceItem);
-		startPanel.add(miniGamesMenu);
+		currStartPanel.add(miniGamesMenu);
 		menuBar.add(miniGamesMenu);
 		this.setupListeners();
 		this.setJMenuBar(menuBar);
 	
-		cardPanel.add(startPanel, "start");
-		cardPanel.add(mazePanel, "maze");
-		cardPanel.add(beachPanel, "beach");
-		cardPanel.add(dicePanel, "dice");
+		cardPanel.add(currStartPanel, "start");
+		cardPanel.add(currMazePanel, "maze");
+		cardPanel.add(currBeachPanel, "beach");
+		cardPanel.add(currDicePanel, "dice");
 		this.add(cardPanel, BorderLayout.CENTER);	
 		cl.show(cardPanel, "start");
 
@@ -88,12 +94,30 @@ public class MainFrame extends JFrame {
 	public static int getFrameHeight(){
 		return frameHeight;
 	}
+	
+	public void resetMaze(){
+		this.currMazePanel = new MazeGameView();
+	}
+	
+	public void resetBeach(){
+		this.currBeachPanel = new BeachGameView();
+	}
+	
+	public void resetDice(){
+		this.currDicePanel = new DiceGameView();
+	}
+	
+	public void resetStart(){
+		this.currStartPanel = new StartScreenView();
+	}
+	
 
 	public void setupListeners(){
 		startItem.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
+				resetStart();
 				cl.show(cardPanel, "start");
 			}
 		});
@@ -102,6 +126,7 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
+				resetMaze();
 				cl.show(cardPanel, "maze");
 			}
 		});
@@ -109,6 +134,7 @@ public class MainFrame extends JFrame {
 		beachItem.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				resetBeach();
 				// TODO Auto-generated method stub
 				cl.show(cardPanel, "beach");
 			}
@@ -118,6 +144,7 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
+				resetDice();
 				cl.show(cardPanel, "dice");
 			}
 		});
