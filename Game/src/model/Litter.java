@@ -35,6 +35,7 @@ public class Litter {
 	
 	//checks if something hit the litter
 	public boolean hitLitter(int xL, int yL, int w, int h){
+		//NEEDS FIXING TO WORK
 		if(((xL > xLoc && xL < xLoc + width )|| (xL + w > xLoc && xL + w < xLoc + width)) &&
 				((yL > yLoc && yL < yLoc + height)||(yL + h > yLoc && yL + h < yLoc + height))){
 			return true;
