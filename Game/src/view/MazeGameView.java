@@ -63,6 +63,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int xIncr = testCrab.getYIncr();
 	private int xVel = testCrab.getXVel();
 	private int yVel = testCrab.getYVel();
+		//crab Health
 	private int health = testCrab.getHealth();
 	private int hitTimer = 0;
 	private int cantBeHitLim = 100;
@@ -71,8 +72,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	ArrayList<BufferedImage> litterTypes = makeLitterList();
 	Random rand = new Random();
 	Litter[] gameLitter = board.getGameLitter();
-	private int litterWidth = characterWidth;
-	private int litterHeight = characterHeight;
+	private int litterWidth = gameLitter[0].getWidth();
+	private int litterHeight = gameLitter[0].getHeight();
 	private int xLitterMax = 0;
 	private int xLitterMin = 0;
 
