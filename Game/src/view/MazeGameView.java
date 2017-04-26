@@ -131,16 +131,17 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 		}
 
-		g.setColor(Color.BLACK);
-		g.drawRect(0,0,numRows*miniWidth, numCols*miniHeight);
-		g.fillRect(0,0,numRows*miniWidth, numCols*miniHeight);
-
 		//Draws litter
 		for(Litter lit: gameLitter){
 			g.drawImage(litterTypes.get(lit.getType()), lit.getXLoc(), lit.getYLoc(),litterWidth, litterHeight, this);
 		}
 
 		//MINIMAP DRAWING
+			//background of minimap
+		g.setColor(Color.BLACK);
+		g.drawRect(0,0,numRows*miniWidth, numCols*miniHeight);
+		g.fillRect(0,0,numRows*miniWidth, numCols*miniHeight);
+			//actual lines of minimap
 		for(int i = 0; i < numRows; i++){
 			for(int j =0; j < numCols; j++){
 				MazeCell currG = grids[i][j];
