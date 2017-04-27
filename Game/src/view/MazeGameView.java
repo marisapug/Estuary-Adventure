@@ -141,6 +141,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	//Constructor
 	public MazeGameView(){
 		
+		//Start Timer
+		t.start();
+		
 		//Buttons
 		hCrabButton = new JButton("Horshoe Crab");
 		bCrabButton = new JButton("Blue Crab");
@@ -189,8 +192,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		
 		//background
 		this.setBackground(Color.BLUE);
-
-		t.start();
 
 	}//constructor
 
