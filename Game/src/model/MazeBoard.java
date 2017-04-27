@@ -29,7 +29,10 @@ public class MazeBoard {
 	Litter[] gameLitter;
 	
 	//PRETEDTORS
-	int numPred;
+	private int numPred;
+	private int predSpeed;
+	private int predWidth;
+	private int predHeight;
 	ArrayList<Predator> predators = new ArrayList<Predator>();
 
 	//CONSTRUCTOR initializes board
@@ -67,6 +70,10 @@ public class MazeBoard {
 		
 		//predator initialization
 		numPred = numRows;
+		predSpeed = 5;
+		predWidth = 30;
+		predHeight = 30;
+		generatePredators(numPred);
 		
 	}
 
@@ -234,16 +241,14 @@ public class MazeBoard {
 
 	//moves the grid by and x and y increment
 	public void moveGrid(int xIncr, int yIncr){
-		for(int i = 0; i < numRows; i++){
-			for(int j = 0; j < numCols; j++){
-				grid[i][j].moveCell(xIncr,yIncr);
-			}
-		}
 		for(Litter lit: gameLitter){
 			lit.moveLitter(xIncr,yIncr);
 		}
 		for(MazeWall wall: mazeWalls){
 			wall.moveWall(xIncr,yIncr);
+		}
+		for(Predator pred: predators){
+			pred.movePred(xIncr,yIncr);
 		}
 	}
 	
@@ -307,7 +312,7 @@ public class MazeBoard {
 		}
 	}
 	
-	public boolean isHittingAnyWall(int xLoc, int yLoc, int w, int h){
+	public boolean isHittingAnyWalls(int xLoc, int yLoc, int w, int h){
 		for(MazeWall wall: mazeWalls){
 			if(wall.isHittingWall(xLoc, yLoc, w, h)){
 				return true;
@@ -364,9 +369,33 @@ public class MazeBoard {
 		return false;
 	}
 
+	//----------------------------------------------------------------------------------
+	//PREDATOR STUFF-------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------
 	
-	//PREDATOR STUFF
+	public void generatePredators(int amount){
+		Random rand = new Random();
+		for(int i = 0; i < amount; i++){
+			int predDir = rand.nextInt(4); 
+			MazeCell cell = getRandomCell();
+			Predator pred = new Predator(cell.getXLoc(),cell.getYLoc(), predDir, predWidth, predHeight);
+			predators.add(pred);
+		}
+	}
 	
+	public void setRandomDirections(){
+		for(Predator pred: predators){
+			if(isHittingAnyWalls(pred.getXLoc(), pred.getYLoc(), predWidth, predHeight)){
+				pred.setRandomDirection(pred.getDirection());
+			}
+		}
+	}
+	
+	public void moveAllPredators(){
+		for(Predator pred: predators){
+			pred.move(predSpeed, pred.getDirection());
+		}
+	}
 	
 	
 	//GETTERS-----------------------------------------------------------------------------------------
@@ -410,6 +439,10 @@ public class MazeBoard {
 	
 	public Litter[] getGameLitter(){
 		return gameLitter;
+	}
+	
+	public ArrayList<Predator> getPredators(){
+		return predators;
 	}
 
 	//SETTERS

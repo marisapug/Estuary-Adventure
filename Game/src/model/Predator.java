@@ -3,30 +3,37 @@ package model;
 import java.util.Random;
 
 public class Predator extends Obstacle {
-	int speed;
-	int direction;
-	int xLoc;
-	int yLoc;
-	int type;
+	private int direction;
+	private int xLoc;
+	private int yLoc;
+	private int width;
+	private int height;
+	private int type;
 	
-	public Predator(int x, int y, int s, int d){
+	public Predator(int x, int y, int d, int w, int h){
 		xLoc = x;
 		yLoc = y;
-		speed = s;
 		direction = d;//0 = up, 1 = down, 2 = right, 3 = left
+		width = w;
+		height = h;
 	}
 	
 	void attack(){}
 	
-	public void move(int d){
+	public void movePred(int xIncr, int yIncr){
+		yLoc = yLoc + yIncr;
+		xLoc = xLoc + xIncr;
+	}
+	
+	public void move(int s, int d){
 		if(d==0){
-			yLoc -= speed;
+			yLoc -= s;
 		}else if(d==1){
-			yLoc += speed;
+			yLoc += s;
 		}else if(d==2){
-			xLoc += speed;
+			xLoc += s;
 		}else if(d==3){
-			xLoc -= speed;
+			xLoc -= s;
 		}
 	}
 	
@@ -46,9 +53,13 @@ public class Predator extends Obstacle {
 	public int getYLoc(){
 		return yLoc;
 	}
-	public int getSpeed(){
-		return speed;
+	public int getWidth(){
+		return width;
 	}
+	public int getHeight(){
+		return height;
+	}
+
 	public int getDirection(){
 		return direction;
 	}

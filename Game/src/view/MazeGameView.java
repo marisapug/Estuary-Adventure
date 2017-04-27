@@ -5,6 +5,7 @@ import model.MazeBoard;
 import model.MazeCell;
 import model.MazeWall;
 import model.MiniMap;
+import model.Predator;
 import model.Litter;
 
 import java.awt.BasicStroke;
@@ -114,13 +115,16 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int cantBeHitLim = 100;
 
 	//Litter
-	ArrayList<BufferedImage> litterTypes = makeLitterList();
+	private ArrayList<BufferedImage> litterTypes = makeLitterList();
 	Random rand = new Random();
 	Litter[] gameLitter = board.getGameLitter();
 	private int litterWidth = gameLitter[0].getWidth();
 	private int litterHeight = gameLitter[0].getHeight();
 	private int xLitterMax = 0;
 	private int xLitterMin = 0;
+	
+	//predator
+	private ArrayList<Predator> predators = board.getPredators();
 
 	//Locations for components
 	private final int timeRemainingLabelXLoc = screenWidth/2;
@@ -239,6 +243,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				g2.drawImage(litterTypes.get(lit.getType()), lit.getXLoc(), lit.getYLoc(),litterWidth, litterHeight, this);
 			}
 			
+			//DRAWS PREDATORS
+			for(Predator pred: predators){
+				g.drawRect(pred.getXLoc(), pred.getYLoc(), pred.getWidth(), pred.getHeight());
+			}
 
 			//MINIMAP DRAWING
 			//background of minimap
@@ -358,13 +366,16 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			xLitterMin = 0;
 		}
 		repaint();
-		//updates gameLitter
-		//gameLitter = board.getGameLitter();
-		// TODO Auto-generated method stub
 
-
-
-		if(board.isHittingAnyWall(characterXLoc - xVel, characterYLoc - yVel, characterWidth, characterHeight)){
+		
+		//PREDATOR TICKS
+		board.setRandomDirections();
+		board.moveAllPredators();
+		
+		repaint();
+		
+		//MOVES MAZE IF CRAB IS NOT HITTING WALL
+		if(board.isHittingAnyWalls(characterXLoc - xVel, characterYLoc - yVel, characterWidth, characterHeight)){
 			return;
 		}
 		else{
