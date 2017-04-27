@@ -288,23 +288,32 @@ public class MazeBoard {
 				int bottomRY = bottomLY; //bottom right corner y value
 
 				if(currG.getHasTopWall()){
-					MazeWall tempWall = new MazeWall(topLX, topLY, topRX, topRY);
+					MazeWall tempWall = new MazeWall(topLX, topLY, topRX, topRY, 0);
 					mazeWalls.add(tempWall);
 				}
 				if(currG.getHasBottomWall()){
-					MazeWall tempWall = new MazeWall(bottomLX, bottomLY, bottomRX, bottomRY);
+					MazeWall tempWall = new MazeWall(bottomLX, bottomLY, bottomRX, bottomRY, 0);
 					mazeWalls.add(tempWall);
 				}
 				if(currG.getHasRightWall()){
-					MazeWall tempWall = new MazeWall(topRX, topRY, bottomRX, bottomRY);
+					MazeWall tempWall = new MazeWall(topRX, topRY, bottomRX, bottomRY, 1);
 					mazeWalls.add(tempWall);
 				}
 				if(currG.getHasLeftWall()){
-					MazeWall tempWall = new MazeWall(topLX, topLY, bottomLX, bottomLY);
+					MazeWall tempWall = new MazeWall(topLX, topLY, bottomLX, bottomLY, 1);
 					mazeWalls.add(tempWall);
 				}
 			}
 		}
+	}
+	
+	public boolean isHittingAnyWall(int xLoc, int yLoc, int w, int h){
+		for(MazeWall wall: mazeWalls){
+			if(wall.isHittingWall(xLoc, yLoc, w, h)){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	

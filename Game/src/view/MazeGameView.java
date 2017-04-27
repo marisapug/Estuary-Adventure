@@ -96,7 +96,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 
 	//Crab
-	private Crab testCrab = new Crab(3,0,screenWidth/2 ,screenHeight/2); //health, age
+	private Crab testCrab = new Crab(3,0,screenWidth/2 + 10 ,screenHeight/2 + 10); //health, age
 	private int crabDir;
 	private BufferedImage crabImg;
 	private int characterWidth = 50;
@@ -364,21 +364,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 
 
-		if(yVel > 0 && board.hitGridWalls(characterXLoc, characterYLoc, 
-				testCrab.getXIncr(), testCrab.getYIncr(), 0)){
-			return;
-		}
-		else if(yVel < 0 && board.hitGridWalls(characterXLoc, characterYLoc + characterHeight, 
-				testCrab.getXIncr(), testCrab.getYIncr(), 1)){
-			return;
-		}
-		else if(xVel < 0 && board.hitGridWalls(characterXLoc + characterWidth,characterYLoc, 
-				testCrab.getXIncr(), testCrab.getYIncr(), 2)){
-			return;
-		}
-
-		else if(xVel > 0 && board.hitGridWalls(characterXLoc, characterYLoc, 
-				testCrab.getXIncr(), testCrab.getYIncr(), 3)){
+		if(board.isHittingAnyWall(characterXLoc - xVel, characterYLoc - yVel, characterWidth, characterHeight)){
 			return;
 		}
 		else{
