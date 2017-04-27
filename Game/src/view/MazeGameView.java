@@ -86,7 +86,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	};
 
 	private int crabPicNum = 0;
-	private int crabNumPics;
+	private int crabNumPics = 1;
 	private boolean crabIsMoving = false;
 	private int swimSpeed = 5;
 	private int swimTimer = swimSpeed;
@@ -158,6 +158,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			public void actionPerformed(ActionEvent e) {
 				//initializes type of crab
 				testCrab.setType(1);
+				testCrab.setDir(0);
+				crabNumPics = 3;
 				remove(bCrabButton);
 				remove(hCrabButton);
 				startScreenVisible = false;
@@ -170,6 +172,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			public void actionPerformed(ActionEvent e) {
 				//initializes type of crab
 				testCrab.setType(0);
+				testCrab.setDir(2);
+				crabNumPics = 2;
 				remove(bCrabButton);
 				remove(hCrabButton);
 				startScreenVisible = false;
@@ -186,22 +190,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		//background
 		this.setBackground(Color.BLUE);
 
-
-		//initialize initial direction of crab, based on type
-		if(testCrab.getType() == 0){
-			testCrab.setDir(2);
-		}
-		else
-			testCrab.setDir(0);
-
-		//initializes current number of pics for current crab
-		if(testCrab.getType() == 0){
-			crabNumPics = 2;	
-		}
-		else
-			crabNumPics = 3;
-		
-		
 		t.start();
 
 	}//constructor
