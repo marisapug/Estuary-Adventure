@@ -1,5 +1,8 @@
 package model;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.util.*;
 
 public class MazeBoard {
@@ -17,6 +20,12 @@ public class MazeBoard {
 	ArrayList<MazeCell> stack = new ArrayList<MazeCell>();
 	ArrayList<MazeCell> correctPath = new ArrayList<MazeCell>();
 	MazeCell[][] grid;
+	
+	//WALLS
+	ArrayList<MazeWall> mazeWalls = new ArrayList<MazeWall>();
+	
+	//LITTER
+	private int numLitter;
 	Litter[] gameLitter;
 	
 	//PRETEDTORS
@@ -49,8 +58,15 @@ public class MazeBoard {
 		generateShortestPath(grid[xStartIndex][yStartIndex], grid[xEndIndex][yEndIndex]);
 		getPath();
 		
+		//Initializes all walls
+		setWalls();
+		
 		//generates litter (number of rows times 2 amount)
-		gameLitter = generateLitter(numRows);
+		numLitter = numRows;
+		gameLitter = generateLitter(numLitter);
+		
+		//predator initialization
+		numPred = numRows;
 		
 	}
 
@@ -226,6 +242,9 @@ public class MazeBoard {
 		for(Litter lit: gameLitter){
 			lit.moveLitter(xIncr,yIncr);
 		}
+		for(MazeWall wall: mazeWalls){
+			wall.moveWall(xIncr,yIncr);
+		}
 	}
 	
 	//checks if a given x and y location falls on a correct path cell
@@ -250,6 +269,42 @@ public class MazeBoard {
 			}
 		}
 		return grid[0][0];
+	}
+	
+	//-------------------------------------------------------------------------------
+	//WALL STUFF-------------------------------------------------------------------
+	//--------------------------------------------------------------------------------
+	private void setWalls(){
+		for(int i = 0; i < numRows; i++){
+			for(int j =0; j < numCols; j++){
+				MazeCell currG = grid[i][j];
+				int topLX = currG.getXLoc(); //top left corner x value
+				int topLY = currG.getYLoc(); //top left corner y value
+				int topRX = topLX + currG.getWidth(); //top right corner x value
+				int topRY = topLY; //top right corner y value
+				int bottomLX = topLX; //bottom left corner x value
+				int bottomLY = topLY + currG.getHeight(); //bottom left corner y value
+				int bottomRX = topRX; //bottom right corner x value
+				int bottomRY = bottomLY; //bottom right corner y value
+
+				if(currG.getHasTopWall()){
+					MazeWall tempWall = new MazeWall(topLX, topLY, topRX, topRY);
+					mazeWalls.add(tempWall);
+				}
+				if(currG.getHasBottomWall()){
+					MazeWall tempWall = new MazeWall(bottomLX, bottomLY, bottomRX, bottomRY);
+					mazeWalls.add(tempWall);
+				}
+				if(currG.getHasRightWall()){
+					MazeWall tempWall = new MazeWall(topRX, topRY, bottomRX, bottomRY);
+					mazeWalls.add(tempWall);
+				}
+				if(currG.getHasLeftWall()){
+					MazeWall tempWall = new MazeWall(topLX, topLY, bottomLX, bottomLY);
+					mazeWalls.add(tempWall);
+				}
+			}
+		}
 	}
 	
 	
@@ -300,6 +355,11 @@ public class MazeBoard {
 		return false;
 	}
 
+	
+	//PREDATOR STUFF
+	
+	
+	
 	//GETTERS-----------------------------------------------------------------------------------------
 	
 	public MazeCell[][] getGrid(){
@@ -333,6 +393,10 @@ public class MazeBoard {
 	
 	public ArrayList<MazeCell> getCorrectPath(){
 		return correctPath;
+	}
+	
+	public ArrayList<MazeWall> getMazeWalls(){
+		return mazeWalls;
 	}
 	
 	public Litter[] getGameLitter(){

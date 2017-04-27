@@ -3,6 +3,7 @@ package view;
 import model.Crab;
 import model.MazeBoard;
 import model.MazeCell;
+import model.MazeWall;
 import model.MiniMap;
 import model.Litter;
 
@@ -33,7 +34,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 	//Timer
 	Timer t = new Timer(10,this);
-	private int timeRemaining = 120;
+	private int totalTime = 120;
+	private int timeRemaining = totalTime;
 	private int timeCheck = 0;
 
 	//Screen dimensions
@@ -47,6 +49,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int cellHeight = 200;
 	private MazeBoard board = new MazeBoard(numRows,numCols,cellWidth,cellHeight, screenWidth, screenHeight);
 	private MazeCell[][] grids = board.getGrid(); 
+	private ArrayList<MazeWall> mazeWalls = board.getMazeWalls();
 
 	//miniMap 
 	private MiniMap miniMap = new MiniMap();
@@ -166,6 +169,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				remove(bCrabButton);
 				remove(hCrabButton);
 				startScreenVisible = false;
+				timeRemaining = totalTime;
 			}
 			
 		});
@@ -180,6 +184,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				remove(bCrabButton);
 				remove(hCrabButton);
 				startScreenVisible = false;
+				timeRemaining = totalTime;
 			}
 			
 		});
@@ -212,42 +217,28 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		else{
 
 			// MAZE DRAWING
-			for(int i = 0; i < numRows; i++){
-				for(int j =0; j < numCols; j++){
-					MazeCell currG = grids[i][j];
-					int topLX = currG.getXLoc(); //top left corner x value
-					int topLY = currG.getYLoc(); //top left corner y value
-					int topRX = topLX + currG.getWidth(); //top right corner x value
-					int topRY = topLY; //top right corner y value
-					int bottomLX = topLX; //bottom left corner x value
-					int bottomLY = topLY + currG.getHeight(); //bottom left corner y value
-					int bottomRX = topRX; //bottom right corner x value
-					int bottomRY = bottomLY; //bottom right corner y value
-
-					Graphics2D g2 = (Graphics2D)g;
-					g2.setStroke(new BasicStroke(5));
-					g2.setColor(Color.CYAN);
-
-					if(currG.getHasTopWall()){
-						g2.drawLine(topLX, topLY, topRX, topRY);
-					}
-					if(currG.getHasBottomWall()){
-						g2.drawLine(bottomLX, bottomLY, bottomRX, bottomRY);
-					}
-					if(currG.getHasRightWall()){
-						g2.drawLine(topRX, topRY, bottomRX, bottomRY);
-					}
-					if(currG.getHasLeftWall()){
-						g2.drawLine(topLX, topLY, bottomLX, bottomLY);
-					}
-				}
-
+			Graphics2D g2 = (Graphics2D)g;
+			g2.setStroke(new BasicStroke(5));
+			g2.setColor(Color.CYAN);
+			for (MazeWall wall: mazeWalls){
+				int startX = wall.getStartX();
+				int startY = wall.getStartY();
+				int endX = wall.getEndX();
+				int endY = wall.getEndY();
+				//checks if on Screen
+				if(
+						((startX > 0 && startX < screenWidth) || (endX > 0 && endX < screenWidth)) ||
+						((startY>0 && startY < screenHeight) || (endY > 0 && endY > screenHeight))
+						)
+				g.drawLine(startX, startY, endX, endY);
 			}
 
 			//Draws litter
 			for(Litter lit: gameLitter){
-				g.drawImage(litterTypes.get(lit.getType()), lit.getXLoc(), lit.getYLoc(),litterWidth, litterHeight, this);
+				if(lit.getXLoc()+litterWidth > 0 && lit.getXLoc() <= screenWidth && lit.getYLoc()+litterHeight > 0 && lit.getYLoc() < screenHeight)
+				g2.drawImage(litterTypes.get(lit.getType()), lit.getXLoc(), lit.getYLoc(),litterWidth, litterHeight, this);
 			}
+			
 
 			//MINIMAP DRAWING
 			//background of minimap
@@ -267,7 +258,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 					int bottomRX = topRX; //bottom right corner x value
 					int bottomRY = bottomLY; //bottom right corner y value
 
-					Graphics2D g2 = (Graphics2D)g;
+	
 					g2.setStroke(new BasicStroke(1));
 					g2.setColor(Color.RED);
 

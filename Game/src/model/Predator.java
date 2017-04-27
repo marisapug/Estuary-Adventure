@@ -18,15 +18,15 @@ public class Predator extends Obstacle {
 	
 	void attack(){}
 	
-	public void move(int x, int y, int d){
+	public void move(int d){
 		if(d==0){
-			yLoc -= y;
+			yLoc -= speed;
 		}else if(d==1){
-			yLoc += y;
+			yLoc += speed;
 		}else if(d==2){
-			xLoc += x;
+			xLoc += speed;
 		}else if(d==3){
-			xLoc -= x;
+			xLoc -= speed;
 		}
 	}
 	
