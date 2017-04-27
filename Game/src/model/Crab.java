@@ -1,6 +1,7 @@
 package model;
 
 public class Crab extends GameFigure {
+	private int type; //0 horshoecrab, 1 bluecrab
 	private int health;
 	private int ageState;
 	private int dir; // north 0, south 1, east 2, west 3
@@ -8,7 +9,6 @@ public class Crab extends GameFigure {
 	public Crab(int h, int a, int xl, int yl){
 		health = h;
 		ageState = a;
-		dir = 2;
 		xIncr = 6;
 		yIncr = 6;
 		xLoc = xl;
@@ -44,6 +44,10 @@ public class Crab extends GameFigure {
 		return this.dir;
 	}
 	
+	public int getType(){
+		return this.type;
+	}
+	
 	
 	//Setters
 	public void setXLoc(int x){
@@ -74,6 +78,9 @@ public class Crab extends GameFigure {
 		this.dir = d;
 	}
 	
+	public void setType(int t){
+		this.type = t;
+	}
 	
 	
 	//Movers

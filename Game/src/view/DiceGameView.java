@@ -45,6 +45,8 @@ public class DiceGameView extends JPanel {
 		
 		rollDiceButton = new JButton("Roll Dice");
 		storyButton = new JButton("Submit Story");
+		rollDiceButton.setFocusable(false);
+		storyButton.setFocusable(false);
 		
 		storyText = new JTextField("Enter Story Here");
 				

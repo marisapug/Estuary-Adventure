@@ -7,7 +7,9 @@ import model.MiniMap;
 import model.Litter;
 
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
@@ -65,6 +67,13 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private BufferedImage crabUp0 = createImage("characters/horseshoe_crab_up_0.png");
 	private BufferedImage crabUp1 = createImage("characters/horseshoe_crab_up_1.png");
 
+	//Blue Crab images
+	private BufferedImage bCrab0 = createImage("characters/bluecrab_0.png");
+	private BufferedImage bCrab1 = createImage("characters/bluecrab_1.png");
+	private BufferedImage bCrab2 = createImage("characters/bluecrab_2.png");
+
+
+	//Crab images arrays
 	private BufferedImage[][] crabPics = {
 			{crabUp0, crabUp1},
 			{crabDown0, crabDown1},
@@ -72,7 +81,12 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			{crabLeft0, crabLeft1},
 	};
 
+	private BufferedImage[][] bCrabPics = {
+			{bCrab0, bCrab1, bCrab2},
+	};
+
 	private int crabPicNum = 0;
+	private int crabNumPics;
 	private boolean crabIsMoving = false;
 	private int swimSpeed = 5;
 	private int swimTimer = swimSpeed;
@@ -80,7 +94,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 	//Crab
 	private Crab testCrab = new Crab(3,0,screenWidth/2 ,screenHeight/2); //health, age
-	private int crabDir = testCrab.getDir();
+	private int crabDir;
 	private BufferedImage crabImg;
 	private int characterWidth = 50;
 	private int characterHeight = 50;
@@ -109,133 +123,224 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private final int timeRemainingLabelXLoc = screenWidth/2;
 	private final int timeRemainingLabelYLoc = 10;
 
-
+	//StartScreen
+	private boolean startScreenVisible;
+	private JButton hCrabButton;
+	private JButton bCrabButton;
+	
+	private BufferedImage startBackgroundImg = createImage("background/2D_estuary.jpg");
+	private int titleFontSize = 30;
+	private String titleFontStyle = "TimesRoman";
+	private String titleText = "Estuary Maze Adventure!";
+	private int titleStringX = screenWidth/2 - ((titleFontSize * titleText.length())/4);
+	private int titleStringY = screenHeight/4;
+	
 	//=================================================================//
 
 
 	//Constructor
 	public MazeGameView(){
-		t.start();
+		
+		//Buttons
+		hCrabButton = new JButton("Horshoe Crab");
+		bCrabButton = new JButton("Blue Crab");
+		hCrabButton.setFocusable(false);
+		bCrabButton.setFocusable(false);
+		
+		//StartScreen Visibility
+		startScreenVisible = true;
+		this.add(bCrabButton);
+		this.add(hCrabButton);
+		
+		//Button Listeners
+		bCrabButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//initializes type of crab
+				testCrab.setType(1);
+				remove(bCrabButton);
+				remove(hCrabButton);
+				startScreenVisible = false;
+			}
+			
+		});
+		
+		hCrabButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//initializes type of crab
+				testCrab.setType(0);
+				remove(bCrabButton);
+				remove(hCrabButton);
+				startScreenVisible = false;
+			}
+			
+		});
+		
+
+		//initialize key
 		addKeyListener(this);
-		setFocusable(true);
+		this.setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
+		
+		//background
 		this.setBackground(Color.BLUE);
-	}
+
+
+		//initialize initial direction of crab, based on type
+		if(testCrab.getType() == 0){
+			testCrab.setDir(2);
+		}
+		else
+			testCrab.setDir(0);
+
+		//initializes current number of pics for current crab
+		if(testCrab.getType() == 0){
+			crabNumPics = 2;	
+		}
+		else
+			crabNumPics = 3;
+		
+		
+		t.start();
+
+	}//constructor
 
 	//paintComponent
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 
-		// MAZE DRAWING
-		for(int i = 0; i < numRows; i++){
-			for(int j =0; j < numCols; j++){
-				MazeCell currG = grids[i][j];
-				int topLX = currG.getXLoc(); //top left corner x value
-				int topLY = currG.getYLoc(); //top left corner y value
-				int topRX = topLX + currG.getWidth(); //top right corner x value
-				int topRY = topLY; //top right corner y value
-				int bottomLX = topLX; //bottom left corner x value
-				int bottomLY = topLY + currG.getHeight(); //bottom left corner y value
-				int bottomRX = topRX; //bottom right corner x value
-				int bottomRY = bottomLY; //bottom right corner y value
-
-				Graphics2D g2 = (Graphics2D)g;
-				g2.setStroke(new BasicStroke(5));
-				g2.setColor(Color.CYAN);
-
-				if(currG.getHasTopWall()){
-					g2.drawLine(topLX, topLY, topRX, topRY);
-				}
-				if(currG.getHasBottomWall()){
-					g2.drawLine(bottomLX, bottomLY, bottomRX, bottomRY);
-				}
-				if(currG.getHasRightWall()){
-					g2.drawLine(topRX, topRY, bottomRX, bottomRY);
-				}
-				if(currG.getHasLeftWall()){
-					g2.drawLine(topLX, topLY, bottomLX, bottomLY);
-				}
-			}
-
-		}
-
-		//Draws litter
-		for(Litter lit: gameLitter){
-			g.drawImage(litterTypes.get(lit.getType()), lit.getXLoc(), lit.getYLoc(),litterWidth, litterHeight, this);
-		}
-
-		//MINIMAP DRAWING
-		//background of minimap
-		g.setColor(Color.BLACK);
-		g.drawRect(0,0,numRows*miniWidth, numCols*miniHeight);
-		g.fillRect(0,0,numRows*miniWidth, numCols*miniHeight);
-		//actual lines of minimap
-		for(int i = 0; i < numRows; i++){
-			for(int j =0; j < numCols; j++){
-				MazeCell currG = grids[i][j];
-				int topLX = j*miniWidth; //top left corner x value
-				int topLY = i*miniHeight; //top left corner y value
-				int topRX = topLX + miniWidth; //top right corner x value
-				int topRY = topLY; //top right corner y value
-				int bottomLX = topLX; //bottom left corner x value
-				int bottomLY = topLY + miniHeight; //bottom left corner y value
-				int bottomRX = topRX; //bottom right corner x value
-				int bottomRY = bottomLY; //bottom right corner y value
-
-				Graphics2D g2 = (Graphics2D)g;
-				g2.setStroke(new BasicStroke(1));
-				g2.setColor(Color.RED);
-
-				if(currG.getHasTopWall()){
-					g2.drawLine(topLX, topLY, topRX, topRY);
-				}
-				if(currG.getHasBottomWall()){
-					g2.drawLine(bottomLX, bottomLY, bottomRX, bottomRY);
-				}
-				if(currG.getHasRightWall()){
-					g2.drawLine(topRX, topRY, bottomRX, bottomRY);
-				}
-				if(currG.getHasLeftWall()){
-					g2.drawLine(topLX, topLY, bottomLX, bottomLY);
-				}
-			}
-
-		}
-
-		//MINI MAP CHARACTER DRAWING
-		miniCharacter = board.inWhichCell(characterXLoc,characterYLoc);
-		g.setColor(Color.GREEN);
-		g.drawRect(miniCharacter.getX() * miniWidth + miniWidth/4, miniCharacter.getY()*miniHeight + miniHeight/4,miniWidth/2,miniHeight/2);
-		g.fillRect(miniCharacter.getX() * miniWidth + miniWidth/4, miniCharacter.getY()*miniHeight + miniHeight/4,miniWidth/2,miniHeight/2);
-
-		//SalinityMeter Drawing FIX MAGIC NUMBERS
-		if(board.isOnCorrectPath(characterXLoc, characterYLoc)){
-			g.setColor(Color.GREEN);
-			g.drawRect(screenWidth - 50,10,30,30);
-			g.fillRect(screenWidth - 50,10,30,30);
-		}
+		//START SCREEN DRAWING
+		if(startScreenVisible){
+			g.drawImage(startBackgroundImg,0,0,screenWidth,screenHeight,this);
+			
+			g.setFont(new Font(titleFontStyle,Font.BOLD,titleFontSize));
+			g.drawString(titleText,titleStringX,titleStringY);
+			
+		}//if
+		
+		//EVERYTHING ELSE
 		else{
-			g.setColor(Color.RED);
-			g.drawRect(screenWidth - 50,10,30,30);
-			g.fillRect(screenWidth - 50,10,30,30);
-		}
 
-		g.setColor(Color.WHITE);
-		g.drawString("Time Remaining: ", timeRemainingLabelXLoc, timeRemainingLabelYLoc);
-		g.drawString(""+timeRemaining, screenWidth/2 + 120, 10);
+			// MAZE DRAWING
+			for(int i = 0; i < numRows; i++){
+				for(int j =0; j < numCols; j++){
+					MazeCell currG = grids[i][j];
+					int topLX = currG.getXLoc(); //top left corner x value
+					int topLY = currG.getYLoc(); //top left corner y value
+					int topRX = topLX + currG.getWidth(); //top right corner x value
+					int topRY = topLY; //top right corner y value
+					int bottomLX = topLX; //bottom left corner x value
+					int bottomLY = topLY + currG.getHeight(); //bottom left corner y value
+					int bottomRX = topRX; //bottom right corner x value
+					int bottomRY = bottomLY; //bottom right corner y value
+
+					Graphics2D g2 = (Graphics2D)g;
+					g2.setStroke(new BasicStroke(5));
+					g2.setColor(Color.CYAN);
+
+					if(currG.getHasTopWall()){
+						g2.drawLine(topLX, topLY, topRX, topRY);
+					}
+					if(currG.getHasBottomWall()){
+						g2.drawLine(bottomLX, bottomLY, bottomRX, bottomRY);
+					}
+					if(currG.getHasRightWall()){
+						g2.drawLine(topRX, topRY, bottomRX, bottomRY);
+					}
+					if(currG.getHasLeftWall()){
+						g2.drawLine(topLX, topLY, bottomLX, bottomLY);
+					}
+				}
+
+			}
+
+			//Draws litter
+			for(Litter lit: gameLitter){
+				g.drawImage(litterTypes.get(lit.getType()), lit.getXLoc(), lit.getYLoc(),litterWidth, litterHeight, this);
+			}
+
+			//MINIMAP DRAWING
+			//background of minimap
+			g.setColor(Color.BLACK);
+			g.drawRect(0,0,numRows*miniWidth, numCols*miniHeight);
+			g.fillRect(0,0,numRows*miniWidth, numCols*miniHeight);
+			//actual lines of minimap
+			for(int i = 0; i < numRows; i++){
+				for(int j =0; j < numCols; j++){
+					MazeCell currG = grids[i][j];
+					int topLX = j*miniWidth; //top left corner x value
+					int topLY = i*miniHeight; //top left corner y value
+					int topRX = topLX + miniWidth; //top right corner x value
+					int topRY = topLY; //top right corner y value
+					int bottomLX = topLX; //bottom left corner x value
+					int bottomLY = topLY + miniHeight; //bottom left corner y value
+					int bottomRX = topRX; //bottom right corner x value
+					int bottomRY = bottomLY; //bottom right corner y value
+
+					Graphics2D g2 = (Graphics2D)g;
+					g2.setStroke(new BasicStroke(1));
+					g2.setColor(Color.RED);
+
+					if(currG.getHasTopWall()){
+						g2.drawLine(topLX, topLY, topRX, topRY);
+					}
+					if(currG.getHasBottomWall()){
+						g2.drawLine(bottomLX, bottomLY, bottomRX, bottomRY);
+					}
+					if(currG.getHasRightWall()){
+						g2.drawLine(topRX, topRY, bottomRX, bottomRY);
+					}
+					if(currG.getHasLeftWall()){
+						g2.drawLine(topLX, topLY, bottomLX, bottomLY);
+					}
+				}
+
+			}
+
+			//MINI MAP CHARACTER DRAWING
+			miniCharacter = board.inWhichCell(characterXLoc,characterYLoc);
+			g.setColor(Color.GREEN);
+			g.drawRect(miniCharacter.getX() * miniWidth + miniWidth/4, miniCharacter.getY()*miniHeight + miniHeight/4,miniWidth/2,miniHeight/2);
+			g.fillRect(miniCharacter.getX() * miniWidth + miniWidth/4, miniCharacter.getY()*miniHeight + miniHeight/4,miniWidth/2,miniHeight/2);
+
+			//SalinityMeter Drawing FIX MAGIC NUMBERS
+			if(board.isOnCorrectPath(characterXLoc, characterYLoc)){
+				g.setColor(Color.GREEN);
+				g.drawRect(screenWidth - 50,10,30,30);
+				g.fillRect(screenWidth - 50,10,30,30);
+			}
+			else{
+				g.setColor(Color.RED);
+				g.drawRect(screenWidth - 50,10,30,30);
+				g.fillRect(screenWidth - 50,10,30,30);
+			}
+
+			g.setColor(Color.WHITE);
+			g.drawString("Time Remaining: ", timeRemainingLabelXLoc, timeRemainingLabelYLoc);
+			g.drawString(""+timeRemaining, screenWidth/2 + 120, 10);
 
 
-		//CrabImage
-		crabImg = crabPics[crabDir][crabPicNum];
-		g.drawImage(crabImg, testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight, this);
+			//CrabImage
+			if(testCrab.getType() == 0){
+				crabImg = crabPics[crabDir][crabPicNum];
+			}
+			else
+				crabImg = bCrabPics[crabDir][crabPicNum];
 
-		//NUMBER INDICATING HEALTH ONLY TEMPORARY
-		g.drawString("Lives: " + health,screenWidth/2, 40);
-		g.drawString("Hit timer: " + hitTimer,screenWidth/2, 70);
+			g.drawImage(crabImg, testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight, this);
+
+			//NUMBER INDICATING HEALTH ONLY TEMPORARY
+			g.drawString("Lives: " + health,screenWidth/2, 40);
+			g.drawString("Hit timer: " + hitTimer,screenWidth/2, 70);
+
+		}//else
+
 	}//paintComponent
 
 
 	public void actionPerformed(ActionEvent arg0) {
+		
 		timeCheck++;
 		if(timeCheck == 100){
 			timeRemaining--;
@@ -245,9 +350,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		if(swimTimer > 0){
 			swimTimer--;
 		}
-		
+
 		if(crabIsMoving && swimTimer == 0){
-			crabPicNum = (crabPicNum + 1) % 2;
+			crabPicNum = (crabPicNum + 1) % crabNumPics;
 			swimTimer = swimSpeed;
 		}
 
@@ -303,29 +408,48 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	}
 
 	public void up(){
-		crabIsMoving = true;
 		testCrab.setDir(0);
 		crabDir = testCrab.getDir();
+
+		crabIsMoving = true;
 		xVel = 0;
 		yVel = yIncr;
 	}
 	public void down(){
+		//checks crab type, sets direction accordingly
+		if(testCrab.getType() == 1){
+			testCrab.setDir(0);
+		}
+		else
+			testCrab.setDir(1);
+
 		crabIsMoving = true;
-		testCrab.setDir(1);
 		crabDir = testCrab.getDir();
 		xVel = 0;
 		yVel = -yIncr;
 	}
 	public void left(){
+		//checks crab type, sets direction accordingly
+		if(testCrab.getType() == 1){
+			testCrab.setDir(0);
+		}
+		else
+			testCrab.setDir(3);
+
 		crabIsMoving = true;
-		testCrab.setDir(3);
 		crabDir = testCrab.getDir();
 		xVel = xIncr;
 		yVel = 0;
 	}
 	public void right(){
+		//checks crab type, sets direction accordingly
+		if(testCrab.getType() == 1){
+			testCrab.setDir(0);
+		}
+		else
+			testCrab.setDir(2);
+
 		crabIsMoving = true;
-		testCrab.setDir(2);
 		crabDir = testCrab.getDir();
 		xVel = -xIncr;
 		yVel = 0;
