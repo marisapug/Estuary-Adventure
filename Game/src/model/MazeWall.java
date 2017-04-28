@@ -33,7 +33,7 @@ public class MazeWall {
 		}
 		else if(dir == 1){
 			if(
-					((xLoc <= startX) && (xLoc + w > endX)) && 
+					((xLoc <= startX) && (xLoc + w >= endX)) && 
 					( ((yLoc >= startY) && (yLoc <= endY)) || ((yLoc + h >= startY) && (yLoc + h <= endY)) )
 					){
 				return true;
