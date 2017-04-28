@@ -6,7 +6,12 @@ import java.util.Random;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -45,6 +50,11 @@ public class DiceGameView extends JPanel {
 
 	// TextFields
 	JTextField storyText;
+	
+	//Images 
+	BufferedImage oceanBackground = createImage("background/dicebackground.jpg");
+
+	
 	// dgame.diceStory = storyText.getText();
 
 	// Constructor
@@ -82,9 +92,21 @@ public class DiceGameView extends JPanel {
 		return this.screenHeight;
 	}
 
+	public BufferedImage createImage(String fileName){
+		BufferedImage img = null;
+		try {
+			img = ImageIO.read(new File(fileName));
+		} catch (IOException e) {
+			System.out.println("no");
+		}
+		return img;
+	}
+	
 	// paintComponent
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+
+		g.drawImage(oceanBackground, 0, 0, screenWidth, screenHeight, this);
 
 		// Dice
 		for (int i = 0; i < dgame.getNumDice(); i++) {
@@ -96,7 +118,7 @@ public class DiceGameView extends JPanel {
 						screenHeight - diceStartY - diceWidth, diceWidth, diceWidth);
 			}
 			if (isRolled) {
-				if (!isAnimDone) {
+				if (isAnimDone) {
 					System.out.println("animation done");
 					Random myRand = new Random();
 					dgame.setAnimNum(myRand.nextInt(dgame.getNumImgs()));
@@ -146,7 +168,7 @@ public class DiceGameView extends JPanel {
 
 	
 	
-	/*public void animateDice(){
+	public void animateDice(){
 		Random rand = new Random();
 		int animsDone = 0;
 		Timer timer = new Timer(50, new ActionListener() {
@@ -161,7 +183,7 @@ public class DiceGameView extends JPanel {
 		});
 		timer.start();
 	}
-	*/
+	
 	
 	/*void animateDice(){
 		for(int i = 0; i < 200000; i++){
