@@ -241,6 +241,11 @@ public class MazeBoard {
 
 	//moves the grid by and x and y increment
 	public void moveGrid(int xIncr, int yIncr){
+		for(int i = 0; i < numRows; i++){
+			for(int j = 0; j < numCols; j++){
+				grid[i][j].moveCell(xIncr, yIncr);
+			}
+		}
 		for(Litter lit: gameLitter){
 			lit.moveLitter(xIncr,yIncr);
 		}
