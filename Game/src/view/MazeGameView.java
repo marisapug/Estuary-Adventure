@@ -51,6 +51,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private MazeBoard board = new MazeBoard(numRows,numCols,cellWidth,cellHeight, screenWidth, screenHeight);
 	private MazeCell[][] grids = board.getGrid(); 
 	private ArrayList<MazeWall> mazeWalls = board.getMazeWalls();
+	private MazeCell endCell  = grids[board.getXEnd()][board.getYEnd()];
 
 	//miniMap 
 	private MiniMap miniMap = new MiniMap();
@@ -241,6 +242,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			for(Litter lit: gameLitter){
 				if(lit.getXLoc()+litterWidth > 0 && lit.getXLoc() <= screenWidth && lit.getYLoc()+litterHeight > 0 && lit.getYLoc() < screenHeight)
 				g2.drawImage(litterTypes.get(lit.getType()), lit.getXLoc(), lit.getYLoc(),litterWidth, litterHeight, this);
+							 //DELETE LATER
+							 //predatorsPics[pred.getDiriectio()], pred.getXLoc(),...
 			}
 			
 			//DRAWS PREDATORS
@@ -308,13 +311,15 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			g.drawString("Time Remaining: ", timeRemainingLabelXLoc, timeRemainingLabelYLoc);
 			g.drawString(""+timeRemaining, screenWidth/2 + 120, 10);
 
-
 			//CrabImage
 			if(testCrab.getType() == 0){
 				crabImg = crabPics[crabDir][crabPicNum];
 			}
 			else
 				crabImg = bCrabPics[crabDir][crabPicNum];
+			
+				//TEMPORARY END LOCATION DRAWING
+				g.drawImage(crabImg, endCell.getXLoc(), endCell.getYLoc(), characterWidth, characterHeight, this);
 
 			g.drawImage(crabImg, testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight, this);
 

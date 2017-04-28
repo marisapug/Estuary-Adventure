@@ -37,6 +37,7 @@ public class Predator extends Obstacle {
 		}
 	}
 
+	//Sets new random direction for the predator
 	public void setRandomDirection(int d){
 		Random rand = new Random();
 		int newDir = rand.nextInt(4);

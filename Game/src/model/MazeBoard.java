@@ -17,6 +17,10 @@ public class MazeBoard {
 	int screenWidth;
 	int screenHeight;
 	
+	// MazeCell endCell = board.getGrid()[board.getXIndex][board.getYIndex]
+	// endCell.getXLoc();
+	// endCell.getYLoc();
+	
 	ArrayList<MazeCell> stack = new ArrayList<MazeCell>();
 	ArrayList<MazeCell> correctPath = new ArrayList<MazeCell>();
 	MazeCell[][] grid;
@@ -41,8 +45,8 @@ public class MazeBoard {
 		numCols = cols;
 		cellWidth = width;
 		cellHeight = height;
-		xStartIndex = 1;
-		yStartIndex = 1;
+		xStartIndex = 0;
+		yStartIndex = 0;
 		xEndIndex = rows-1;
 		yEndIndex = cols-1;
 		//pixels the litter moves
@@ -383,22 +387,49 @@ public class MazeBoard {
 		for(int i = 0; i < amount; i++){
 			int predDir = rand.nextInt(4); 
 			MazeCell cell = getRandomCell();
-			Predator pred = new Predator(cell.getXLoc(),cell.getYLoc(), predDir, predWidth, predHeight);
+			Predator pred = new Predator(cell.getXLoc()+cellWidth/3,cell.getYLoc()+cellHeight/3, predDir, predWidth, predHeight);
 			predators.add(pred);
 		}
 	}
 	
 	public void setRandomDirections(){
 		for(Predator pred: predators){
-			if(isHittingAnyWalls(pred.getXLoc(), pred.getYLoc(), predWidth, predHeight)){
-				pred.setRandomDirection(pred.getDirection());
+			if(pred.getDirection() == 0){
+				if(isHittingAnyWalls(pred.getXLoc(), pred.getYLoc() - predSpeed , predWidth, predHeight)){
+					pred.setRandomDirection(pred.getDirection());
+				}
+			}else if(pred.getDirection() == 1){
+				if(isHittingAnyWalls(pred.getXLoc(), pred.getYLoc() + predSpeed , predWidth, predHeight)){
+					pred.setRandomDirection(pred.getDirection());
+				}
+			}else if(pred.getDirection() == 2){
+				if(isHittingAnyWalls(pred.getXLoc() + predSpeed, pred.getYLoc() , predWidth, predHeight)){
+					pred.setRandomDirection(pred.getDirection());
+				}
+			}else if(pred.getDirection() == 3){
+				if(isHittingAnyWalls(pred.getXLoc() - predSpeed, pred.getYLoc() , predWidth, predHeight)){
+					pred.setRandomDirection(pred.getDirection());
+				}
 			}
 		}
 	}
 	
 	public void moveAllPredators(){
 		for(Predator pred: predators){
-			pred.move(predSpeed, pred.getDirection());
+			if((pred.getDirection() == 0) &&
+				isHittingAnyWalls(pred.getXLoc(), pred.getYLoc() - predSpeed , predWidth, predHeight)){
+					
+			}else if((pred.getDirection() == 1)&&
+				isHittingAnyWalls(pred.getXLoc(), pred.getYLoc() + predSpeed , predWidth, predHeight)){
+					
+			}else if((pred.getDirection() == 2) &&
+				isHittingAnyWalls(pred.getXLoc() + predSpeed, pred.getYLoc() , predWidth, predHeight)){
+				
+			}else if((pred.getDirection() == 3) &&
+				isHittingAnyWalls(pred.getXLoc() - predSpeed, pred.getYLoc() , predWidth, predHeight)){
+					
+			}
+			else pred.move(predSpeed, pred.getDirection());
 		}
 	}
 	
@@ -441,6 +472,14 @@ public class MazeBoard {
 
 	public int getXStart(){
 		return xStartIndex;
+	}
+	
+	public int getYEnd(){
+		return yEndIndex;
+	}
+
+	public int getXEnd(){
+		return xEndIndex;
 	}
 	
 	public ArrayList<MazeCell> getCorrectPath(){
