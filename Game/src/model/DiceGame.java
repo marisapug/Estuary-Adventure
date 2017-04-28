@@ -7,13 +7,38 @@ public class DiceGame {
 	public int numDice = 5;
 	int numImgs = 20;
 	public String diceStory;
+	int animNum;
 		
 	Die[] dice = new Die[numDice];
 	public int[] imgNums = new int[numDice];
 	boolean[] imgBools = new boolean[numImgs];
 	
+	//Getters
+	
+	public int getNumDice(){
+		return numDice;
+	}
+	
+	public int getNumImgs(){
+		return numImgs;
+	}
+	
+	public String getDiceStory(){
+		return diceStory;
+	}
+	
+	public int getAnimNum(){
+		return animNum;
+	}
+	
+	//Setters
+	public void setAnimNum(int a){
+		animNum = a;
+	}
+	
+	//Makes array of length numDice signaling whether or not an image has been chosen
 	void setImgBools(){
-		for(int i = 0; i < numDice; i++){
+		for(int i = 0; i < numImgs; i++){
 			imgBools[i] = false;
 		}
 	}
@@ -34,11 +59,4 @@ public class DiceGame {
 			dice[i] = tempDie;
 		}
 	} // makes all dice with images
-	
-	/*public void scanStory(){
-		Scanner storyScanner = new Scanner(System.in);
-		diceStory = storyScanner.next();
-	}
-	*/
-	
 }

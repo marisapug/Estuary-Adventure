@@ -1,6 +1,8 @@
 
 package view;
 
+import java.util.Random;
+
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,11 +10,12 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.Timer;
 
 import model.*;
 
 public class DiceGameView extends JPanel {
-	
+
 	private static final long serialVersionUID = 1L;
 	// Screen
 	private int screenWidth = MainFrame.getFrameWidth();
@@ -21,35 +24,49 @@ public class DiceGameView extends JPanel {
 	// Dice
 	DiceGame dgame;
 	private int diceWidth = 120;
-	private int diceStartX = 30;
-	private int diceStartY = 100;
-	private int betweenDice = 10;
+	private int betweenDice;
+	private int betweenStory = 10;
+	private int diceStartX;
+	private int storyStartX;
+	private int diceStartY;
+	private int storyStartY;
 	private int storyTextX = 50;
-	private int storyTextY = 250;
-	private boolean isRolled = false;
-	private boolean isStorySaved = false;
+	private int storyTextY;
+	private boolean isRolled = false; // true if the user pressed the button to
+										// roll
+	private boolean isStorySaved = false; // true if the user pressed the button
+											// to enter a story
+	private boolean isAnimDone = false; // true if the dice have finished
+										// "rolling"
 
 	// Buttons
 	private JButton rollDiceButton;
 	private JButton storyButton;
 
-
 	// TextFields
 	JTextField storyText;
-	//dgame.diceStory = storyText.getText();
+	// dgame.diceStory = storyText.getText();
 
 	// Constructor
 	public DiceGameView() {
-		
+
 		dgame = new DiceGame();
-		
+
+		betweenDice = diceWidth + 10;
+		diceStartX = (screenWidth - (dgame.getNumDice() / 2 * diceWidth + (dgame.getNumDice() / 2 - 1) * betweenDice))
+				/ 2;
+		storyStartX = (screenWidth - (dgame.getNumDice() * diceWidth + (dgame.getNumDice() - 1) * betweenStory)) / 2;
+		diceStartY = (screenHeight - (3 * diceWidth + 2 * betweenStory)) / 2;
+		storyStartY = (screenHeight - diceWidth) / 2;
+		storyTextY = screenHeight - 2 * diceStartY / 3;
+
 		rollDiceButton = new JButton("Roll Dice");
 		storyButton = new JButton("Submit Story");
 		rollDiceButton.setFocusable(false);
 		storyButton.setFocusable(false);
-		
+
 		storyText = new JTextField("Enter Story Here");
-				
+
 		this.add(rollDiceButton);
 		this.add(storyText);
 		this.add(storyButton);
@@ -70,27 +87,88 @@ public class DiceGameView extends JPanel {
 		super.paintComponent(g);
 
 		// Dice
-		for (int i = 0; i < dgame.numDice; i++) {
-			g.drawRect(diceStartX + (diceWidth + betweenDice) * i, diceStartY, diceWidth, diceWidth);
-			if (isRolled)
-				g.drawString("" + dgame.imgNums[i], diceStartX + diceWidth / 2 + (diceWidth + betweenDice) * i,
-						diceStartY + diceWidth / 2);
-			if (isStorySaved)
-				g.drawString(dgame.diceStory, storyTextX, storyTextY);
-		}
+		for (int i = 0; i < dgame.getNumDice(); i++) {
+			if (i < 3) {
+				g.drawRect(diceStartX + (diceWidth + betweenDice) * i - (diceWidth + betweenDice) / 2, diceStartY,
+						diceWidth, diceWidth);
+			} else {
+				g.drawRect(diceStartX + (diceWidth + betweenDice) * (i % (dgame.getNumDice() / 2)),
+						screenHeight - diceStartY - diceWidth, diceWidth, diceWidth);
+			}
+			if (isRolled) {
+				if (!isAnimDone) {
+					System.out.println("animation done");
+					Random myRand = new Random();
+					dgame.setAnimNum(myRand.nextInt(dgame.getNumImgs()));
+				} else{
+					System.out.println("rolling done");
+					dgame.setAnimNum(dgame.imgNums[i]);
+				}
+				// Storyboard Slots
+				g.drawRect(storyStartX + (diceWidth + betweenStory) * i, storyStartY, diceWidth, diceWidth);
+				// Numbers -- to be images
+				if (i < 3)
+					g.drawString("" + dgame.getAnimNum(),
+							diceStartX + diceWidth / 2 + (diceWidth + betweenDice) * i - (diceWidth + betweenDice) / 2,
+							diceStartY + diceWidth / 2);
+				else
+					g.drawString("" + dgame.getAnimNum(),
+							diceStartX + (diceWidth + betweenDice) * (i % (dgame.getNumDice() / 2)) + diceWidth / 2,
+							screenHeight - diceStartY - diceWidth + diceWidth / 2);
+			}
+			if (isStorySaved) {
+				// Story Text
+				g.drawString(dgame.getDiceStory(), storyTextX, storyTextY);
+			} // if
+		} // for loop
+
+		// testing
+		g.drawString(".", screenWidth, screenHeight);
+
 	}
 
 	// Rolls Dice and Sets Images
 	void rollDice() {
+		System.out.println("about to animate dice");
+		//animateDice();
+		System.out.println("animation done");
+		isAnimDone = true;
+		System.out.println("boolean set");
 		dgame.setDice();
 		isRolled = true;
 		repaint();
 	}
-	
-	void saveStory(){
+
+	void saveStory() {
 		dgame.diceStory = storyText.getText();
 		isStorySaved = true;
 	}
+
+	
+	
+	/*public void animateDice(){
+		Random rand = new Random();
+		int animsDone = 0;
+		Timer timer = new Timer(50, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ae){
+				int animsToDo = 100;
+				//if(!isAnimDone && isRolled){
+					System.out.println("timer");
+					dgame.setAnimNum(rand.nextInt(dgame.getNumImgs()));
+					repaint();
+				}
+		});
+		timer.start();
+	}
+	*/
+	
+	/*void animateDice(){
+		for(int i = 0; i < 200000; i++){
+			repaint();
+		}
+		isAnimDone = true;
+	}*/
 
 	// Set Button Listeners
 	void setupListeners() {
