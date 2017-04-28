@@ -402,6 +402,15 @@ public class MazeBoard {
 		}
 	}
 	
+	//checks if anyLitter is hit
+	public boolean hitAnyPreds(int xL, int yL, int w, int h){
+		for(Predator pred: predators){
+			if(pred.hitPred(xL, yL, w, h)){
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	//GETTERS-----------------------------------------------------------------------------------------
 	

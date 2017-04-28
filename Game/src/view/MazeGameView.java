@@ -344,10 +344,18 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			swimTimer = swimSpeed;
 		}
 
+		//checks for litter hits
 		if(board.hitAnyLitter(characterXLoc, characterYLoc, characterWidth, characterHeight) && hitTimer == cantBeHitLim){
 			health -= 1;
 			hitTimer = 0;
 		}
+		
+		//checks for predator hits
+		if(board.hitAnyPreds(characterXLoc, characterYLoc, characterWidth, characterHeight) && hitTimer == cantBeHitLim){
+			health -= 1;
+			hitTimer = 0;
+		}
+		
 		if(hitTimer < cantBeHitLim){
 			hitTimer++;
 		}
