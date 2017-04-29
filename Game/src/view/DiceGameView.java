@@ -1,4 +1,3 @@
-
 package view;
 
 import java.util.Random;
@@ -6,7 +5,12 @@ import java.util.Random;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -38,6 +42,14 @@ public class DiceGameView extends JPanel {
 											// to enter a story
 	private boolean isAnimDone = false; // true if the dice have finished
 										// "rolling"
+	private String imgStrings[] = { "diceimages/apple.png", "diceimages/banana.png", "diceimages/beaker.png",
+			"diceimages/box.png", "diceimages/bucket.png", "diceimages/can.png", "diceimages/canwithwings.png",
+			"diceimages/chipBag.png", "diceimages/cleanvessel.png", "diceimages/clipboard.png", "diceimages/clock.png",
+			"diceimages/crabfoodpile.png", "diceimages/crabtrap.png", "diceimages/crumbledpaper.png",
+			"diceimages/crushedcan.png", "diceimages/deadfish.png", "diceimages/dirtyvessel.png",
+			"diceimages/dogpoopbag.png", "diceimages/fishtag.png", "diceimages.flagFull.png" };
+	private BufferedImage[] possibleDiceImgs;
+	private BufferedImage[] diceImages;
 
 	// Buttons
 	private JButton rollDiceButton;
@@ -45,12 +57,19 @@ public class DiceGameView extends JPanel {
 
 	// TextFields
 	JTextField storyText;
+
+	// Images
+	BufferedImage oceanBackground = createImage("background/dicebackground.jpg");
+
 	// dgame.diceStory = storyText.getText();
 
 	// Constructor
 	public DiceGameView() {
 
 		dgame = new DiceGame();
+
+		possibleDiceImgs = new BufferedImage[dgame.getNumImgs()];
+		diceImages = new BufferedImage[dgame.getNumDice()];
 
 		betweenDice = diceWidth + 10;
 		diceStartX = (screenWidth - (dgame.getNumDice() / 2 * diceWidth + (dgame.getNumDice() / 2 - 1) * betweenDice))
@@ -71,6 +90,8 @@ public class DiceGameView extends JPanel {
 		this.add(storyText);
 		this.add(storyButton);
 		this.setupListeners();
+		
+		makeImages();
 	}
 
 	// Getters
@@ -82,9 +103,34 @@ public class DiceGameView extends JPanel {
 		return this.screenHeight;
 	}
 
+	public BufferedImage createImage(String fileName) {
+		BufferedImage img = null;
+		try {
+			img = ImageIO.read(new File(fileName));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return img;
+	}
+
+	// Creates all possible images
+	public void makeImages() {
+		for (int i = 0; i < dgame.getNumImgs(); i++) {
+			BufferedImage temp = createImage(imgStrings[i]);
+			possibleDiceImgs[i] = temp;
+		}
+	}
+
+	// Sets images to dice
+	public void setDiceImgs() {
+		
+	}
+
 	// paintComponent
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+
+		g.drawImage(oceanBackground, 0, 0, screenWidth, screenHeight, this);
 
 		// Dice
 		for (int i = 0; i < dgame.getNumDice(); i++) {
@@ -96,11 +142,11 @@ public class DiceGameView extends JPanel {
 						screenHeight - diceStartY - diceWidth, diceWidth, diceWidth);
 			}
 			if (isRolled) {
-				if (!isAnimDone) {
+				if (isAnimDone) {
 					System.out.println("animation done");
 					Random myRand = new Random();
 					dgame.setAnimNum(myRand.nextInt(dgame.getNumImgs()));
-				} else{
+				} else {
 					System.out.println("rolling done");
 					dgame.setAnimNum(dgame.imgNums[i]);
 				}
@@ -130,7 +176,7 @@ public class DiceGameView extends JPanel {
 	// Rolls Dice and Sets Images
 	void rollDice() {
 		System.out.println("about to animate dice");
-		//animateDice();
+		// animateDice();
 		System.out.println("animation done");
 		isAnimDone = true;
 		System.out.println("boolean set");
@@ -144,31 +190,20 @@ public class DiceGameView extends JPanel {
 		isStorySaved = true;
 	}
 
-	
-	
-	/*public void animateDice(){
-		Random rand = new Random();
-		int animsDone = 0;
-		Timer timer = new Timer(50, new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae){
-				int animsToDo = 100;
-				//if(!isAnimDone && isRolled){
-					System.out.println("timer");
-					dgame.setAnimNum(rand.nextInt(dgame.getNumImgs()));
-					repaint();
-				}
-		});
-		timer.start();
-	}
-	*/
-	
-	/*void animateDice(){
-		for(int i = 0; i < 200000; i++){
-			repaint();
-		}
-		isAnimDone = true;
-	}*/
+	/*
+	 * public void animateDice(){ Random rand = new Random(); int animsDone = 0;
+	 * Timer timer = new Timer(50, new ActionListener() {
+	 * 
+	 * @Override public void actionPerformed(ActionEvent ae){ int animsToDo =
+	 * 100; //if(!isAnimDone && isRolled){ System.out.println("timer");
+	 * dgame.setAnimNum(rand.nextInt(dgame.getNumImgs())); repaint(); } });
+	 * timer.start(); }
+	 */
+
+	/*
+	 * void animateDice(){ for(int i = 0; i < 200000; i++){ repaint(); }
+	 * isAnimDone = true; }
+	 */
 
 	// Set Button Listeners
 	void setupListeners() {
