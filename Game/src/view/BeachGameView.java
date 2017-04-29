@@ -50,7 +50,6 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	int xIncr = crabimg.getYIncr();
 	int xVel = crabimg.getXVel();
 	int yVel = crabimg.getYVel();
-	
 
 	public BeachGameView(){
 
