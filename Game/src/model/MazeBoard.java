@@ -29,11 +29,11 @@ public class MazeBoard {
 	ArrayList<MazeWall> mazeWalls = new ArrayList<MazeWall>();
 	
 	//LITTER
-	private int numLitter = numRows/2;
+	private int numLitter;
 	Litter[] gameLitter;
 	
 	//PRETEDTORS
-	private int numPred = numRows;
+	private int numPred;
 	private int predSpeed;
 	private int predWidth;
 	private int predHeight;
@@ -69,9 +69,11 @@ public class MazeBoard {
 		setWalls();
 		
 		//generates litter (number of rows times 2 amount)
+		numLitter = rows/2;
 		gameLitter = generateLitter(numLitter);
 		
 		//predator initialization
+		numPred = rows;
 		predSpeed = 3;
 		predWidth = 30;
 		predHeight = 30;
