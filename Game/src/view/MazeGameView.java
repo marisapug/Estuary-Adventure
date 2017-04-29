@@ -320,7 +320,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			
 				//TEMPORARY END LOCATION DRAWING
 				g.drawImage(crabImg, endCell.getXLoc(), endCell.getYLoc(), characterWidth, characterHeight, this);
-
+				//TEMPORARY HIT BLINKING OF CRAB
+				if(hitTimer%(cantBeHitLim/20) == 0)
 			g.drawImage(crabImg, testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight, this);
 
 			//NUMBER INDICATING HEALTH ONLY TEMPORARY
