@@ -91,7 +91,7 @@ public class DiceGameView extends JPanel {
 		this.add(storyButton);
 		this.setupListeners();
 		
-		makeImages();
+		//makeImages();
 	}
 
 	// Getters
@@ -113,6 +113,7 @@ public class DiceGameView extends JPanel {
 		return img;
 	}
 
+	/*
 	// Creates all possible images
 	public void makeImages() {
 		for (int i = 0; i < dgame.getNumImgs(); i++) {
@@ -120,6 +121,7 @@ public class DiceGameView extends JPanel {
 			possibleDiceImgs[i] = temp;
 		}
 	}
+	*/
 
 	// Sets images to dice
 	public void setDiceImgs() {

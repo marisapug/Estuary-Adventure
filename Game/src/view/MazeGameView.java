@@ -239,7 +239,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			}
 
 			//Draws litter
-			for(Litter lit: gameLitter){
+			for(Litter lit : gameLitter){
 				if(lit.getXLoc()+litterWidth > 0 && lit.getXLoc() <= screenWidth && lit.getYLoc()+litterHeight > 0 && lit.getYLoc() < screenHeight)
 				g2.drawImage(litterTypes.get(lit.getType()), lit.getXLoc(), lit.getYLoc(),litterWidth, litterHeight, this);
 							 //DELETE LATER
