@@ -18,8 +18,6 @@ public class Predator extends Obstacle {
 		height = h;
 	}
 
-	void attack(){}
-
 	public void movePred(int xIncr, int yIncr){
 		yLoc = yLoc + yIncr;
 		xLoc = xLoc + xIncr;

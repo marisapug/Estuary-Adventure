@@ -32,6 +32,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	//=================================================================//
 
 	private static final long serialVersionUID = 1L;
+	
 
 	//Timer
 	Timer t = new Timer(10,this);
@@ -42,10 +43,13 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	//Screen dimensions
 	static private int screenWidth = MainFrame.getFrameWidth();
 	static private int screenHeight = MainFrame.getFrameHeight();
+	
+	//Background image
+	private BufferedImage backGroundImg = createImage("background/underwater2.png");
 
 	//create the maze board
-	private int numRows = 10;
-	private int numCols = 10;
+	private int numRows = 20;
+	private int numCols = 20;
 	private int cellWidth = 200;
 	private int cellHeight = 200;
 	private MazeBoard board = new MazeBoard(numRows,numCols,cellWidth,cellHeight, screenWidth, screenHeight);
@@ -110,10 +114,38 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int xVel = testCrab.getXVel();
 	private int yVel = testCrab.getYVel();
 
-	//crab Health
+	//Predator Images
+	private BufferedImage bassPredRight = createImage("characters/fish_bass_right.png");
+	private BufferedImage bassPredLeft = createImage("characters/fish_bass_left.png");
+	private BufferedImage bassPredUp = createImage("characters/fish_bass_up.png");
+	private BufferedImage bassPredDown = createImage("characters/fish_bass_down.png");
+
+	private BufferedImage groupPredRight = createImage("characters/fish_group_right.png");
+	private BufferedImage groupPredLeft = createImage("characters/fish_group_left.png");
+	private BufferedImage groupPredUp = createImage("characters/fish_group_up.png");
+	private BufferedImage groupPredDown = createImage("characters/fish_group_down.png");
+
+	//Predator Pic Arrays 0 = bass, 1 = group
+	private BufferedImage[][] preds = {
+			{bassPredUp,bassPredDown,bassPredRight,bassPredLeft},
+			{groupPredUp,groupPredDown,groupPredRight,groupPredLeft}
+	};
+
+	//Features bar
+	private final int featuresBarWidth = screenWidth;
+	private final int featuresBarHeight = 50;
+
+	//Health
 	private int health = testCrab.getHealth();
 	private int hitTimer = 0;
 	private int cantBeHitLim = 100;
+
+	private BufferedImage healthImg = createImage("MazeExtraImgs/fullHeart.png");
+	private final int healthImgWidth = 30;
+	private final int healthImgHeight = 30;
+	private final int healthImgXLoc = screenWidth/3;
+	private final int healthImgYLoc = 0;
+
 
 	//Litter
 	private ArrayList<BufferedImage> litterTypes = makeLitterList();
@@ -123,11 +155,12 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int litterHeight = gameLitter[0].getHeight();
 	private int xLitterMax = 0;
 	private int xLitterMin = 0;
-	
+
 	//predator
 	private ArrayList<Predator> predators = board.getPredators();
 
-	//Locations for components
+	//Locations for Time Components
+	private final String timeRemainingLabel = "Time Remaining: ";
 	private final int timeRemainingLabelXLoc = screenWidth/2;
 	private final int timeRemainingLabelYLoc = 10;
 
@@ -135,34 +168,34 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private boolean startScreenVisible;
 	private JButton hCrabButton;
 	private JButton bCrabButton;
-	
+
 	private BufferedImage startBackgroundImg = createImage("background/2D_estuary.jpg");
 	private int titleFontSize = 30;
 	private String titleFontStyle = "TimesRoman";
 	private String titleText = "Estuary Maze Adventure!";
 	private int titleStringX = screenWidth/2 - ((titleFontSize * titleText.length())/4);
 	private int titleStringY = screenHeight/4;
-	
+
 	//=================================================================//
 
 
 	//Constructor
 	public MazeGameView(){
-		
+
 		//Start Timer
 		t.start();
-		
+
 		//Buttons
 		hCrabButton = new JButton("Horshoe Crab");
 		bCrabButton = new JButton("Blue Crab");
 		hCrabButton.setFocusable(false);
 		bCrabButton.setFocusable(false);
-		
+
 		//StartScreen Visibility
 		startScreenVisible = true;
 		this.add(bCrabButton);
 		this.add(hCrabButton);
-		
+
 		//Button Listeners
 		bCrabButton.addActionListener(new ActionListener(){
 			@Override
@@ -176,9 +209,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				startScreenVisible = false;
 				timeRemaining = totalTime;
 			}
-			
+
 		});
-		
+
 		hCrabButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -191,19 +224,21 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				startScreenVisible = false;
 				timeRemaining = totalTime;
 			}
-			
+
 		});
-		
+
 
 		//initialize key
 		addKeyListener(this);
 		this.setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
-		
+
 		//background
 		this.setBackground(Color.BLUE);
 
 	}//constructor
+
+
 
 	//paintComponent
 	public void paintComponent(Graphics g){
@@ -212,14 +247,17 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		//START SCREEN DRAWING
 		if(startScreenVisible){
 			g.drawImage(startBackgroundImg,0,0,screenWidth,screenHeight,this);
-			
+
 			g.setFont(new Font(titleFontStyle,Font.BOLD,titleFontSize));
 			g.drawString(titleText,titleStringX,titleStringY);
-			
+
 		}//if
-		
+
 		//EVERYTHING ELSE
 		else{
+			
+			//BACKGROUND DRAWING
+			g.drawImage(backGroundImg, 0, 0, screenWidth, screenHeight, this);
 
 			// MAZE DRAWING
 			Graphics2D g2 = (Graphics2D)g;
@@ -235,21 +273,28 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 						((startX > 0 && startX < screenWidth) || (endX > 0 && endX < screenWidth)) ||
 						((startY>0 && startY < screenHeight) || (endY > 0 && endY > screenHeight))
 						)
-				g.drawLine(startX, startY, endX, endY);
+					g.drawLine(startX, startY, endX, endY);
 			}
 
 			//Draws litter
 			for(Litter lit : gameLitter){
 				if(lit.getXLoc()+litterWidth > 0 && lit.getXLoc() <= screenWidth && lit.getYLoc()+litterHeight > 0 && lit.getYLoc() < screenHeight)
-				g2.drawImage(litterTypes.get(lit.getType()), lit.getXLoc(), lit.getYLoc(),litterWidth, litterHeight, this);
-							 //DELETE LATER
-							 //predatorsPics[pred.getDiriectio()], pred.getXLoc(),...
+					g2.drawImage(litterTypes.get(lit.getType()), lit.getXLoc(), lit.getYLoc(),litterWidth, litterHeight, this);
+			}
+
+			//DRAWS PREDATORS
+			for(int i = 0; i < predators.size()/2; i++){
+				g.drawImage(preds[0][predators.get(i).getDirection()], predators.get(i).getXLoc(), predators.get(i).getYLoc(), predators.get(i).getWidth(), predators.get(i).getHeight(), this);
 			}
 			
-			//DRAWS PREDATORS
-			for(Predator pred: predators){
-				g.drawRect(pred.getXLoc(), pred.getYLoc(), pred.getWidth(), pred.getHeight());
+			for(int i = (predators.size()/2) + 1; i < predators.size(); i++){
+				g.drawImage(preds[1][predators.get(i).getDirection()], predators.get(i).getXLoc(), predators.get(i).getYLoc(), predators.get(i).getWidth(), predators.get(i).getHeight(), this);
 			}
+
+			//Features Bar Drawing
+			g.setColor(Color.yellow);
+			g.drawRect(0, 0, featuresBarWidth, featuresBarHeight);
+			g.fillRect(0, 0, featuresBarWidth, featuresBarHeight);
 
 			//MINIMAP DRAWING
 			//background of minimap
@@ -269,7 +314,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 					int bottomRX = topRX; //bottom right corner x value
 					int bottomRY = bottomLY; //bottom right corner y value
 
-	
+
 					g2.setStroke(new BasicStroke(1));
 					g2.setColor(Color.RED);
 
@@ -295,6 +340,19 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			g.drawRect(miniCharacter.getX() * miniWidth + miniWidth/4, miniCharacter.getY()*miniHeight + miniHeight/4,miniWidth/2,miniHeight/2);
 			g.fillRect(miniCharacter.getX() * miniWidth + miniWidth/4, miniCharacter.getY()*miniHeight + miniHeight/4,miniWidth/2,miniHeight/2);
 
+			//Time Remaining Drawing
+			g.setColor(Color.BLACK);
+			g.drawString(timeRemainingLabel, timeRemainingLabelXLoc, timeRemainingLabelYLoc);
+			g.drawString(String.valueOf(timeRemaining), timeRemainingLabelXLoc + timeRemainingLabel.length()
+			, timeRemainingLabelYLoc);
+
+
+			//Crab Health Drawing
+			g.setColor(Color.BLACK);
+			g.setFont(new Font(titleFontStyle,Font.BOLD,titleFontSize));
+			g.drawString(String.valueOf(health), healthImgXLoc + healthImgWidth, healthImgYLoc + healthImgHeight);
+			g.drawImage(healthImg, healthImgXLoc, healthImgYLoc, healthImgWidth, healthImgHeight, this);
+
 			//SalinityMeter Drawing FIX MAGIC NUMBERS
 			if(board.isOnCorrectPath(characterXLoc, characterYLoc)){
 				g.setColor(Color.GREEN);
@@ -307,9 +365,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				g.fillRect(screenWidth - 50,10,30,30);
 			}
 
-			g.setColor(Color.WHITE);
-			g.drawString("Time Remaining: ", timeRemainingLabelXLoc, timeRemainingLabelYLoc);
-			g.drawString(""+timeRemaining, screenWidth/2 + 120, 10);
 
 			//CrabImage
 			if(testCrab.getType() == 0){
@@ -317,24 +372,26 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			}
 			else
 				crabImg = bCrabPics[crabDir][crabPicNum];
+
+			//TEMPORARY END LOCATION DRAWING
+			g.drawImage(crabImg, endCell.getXLoc(), endCell.getYLoc(), characterWidth, characterHeight, this);
+
+			//TEMPORARY HIT BLINKING OF CRAB
+			if(hitTimer%(cantBeHitLim/20) == 0)
+				g.drawImage(crabImg, testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight, this);
+
 			
-				//TEMPORARY END LOCATION DRAWING
-				g.drawImage(crabImg, endCell.getXLoc(), endCell.getYLoc(), characterWidth, characterHeight, this);
-				//TEMPORARY HIT BLINKING OF CRAB
-				if(hitTimer%(cantBeHitLim/20) == 0)
-			g.drawImage(crabImg, testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight, this);
-
-			//NUMBER INDICATING HEALTH ONLY TEMPORARY
-			g.drawString("Lives: " + health,screenWidth/2, 40);
-			g.drawString("Hit timer: " + hitTimer,screenWidth/2, 70);
-
+			//mid screen line
+			g.setColor(Color.RED);
+			g.drawLine(screenWidth/2, 0, screenWidth/2, screenHeight);
+			
 		}//else
 
 	}//paintComponent
 
 
 	public void actionPerformed(ActionEvent arg0) {
-		
+
 		timeCheck++;
 		if(timeCheck == 100){
 			timeRemaining--;
@@ -355,13 +412,13 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			health -= 1;
 			hitTimer = 0;
 		}
-		
+
 		//checks for predator hits
 		if(board.hitAnyPreds(characterXLoc, characterYLoc, characterWidth, characterHeight) && hitTimer == cantBeHitLim){
 			health -= 1;
 			hitTimer = 0;
 		}
-		
+
 		if(hitTimer < cantBeHitLim){
 			hitTimer++;
 		}
@@ -381,13 +438,13 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		}
 		repaint();
 
-		
+
 		//PREDATOR TICKS
 		board.setRandomDirections();
 		board.moveAllPredators();
-		
+
 		repaint();
-		
+
 		//MOVES MAZE IF CRAB IS NOT HITTING WALL
 		if(board.isHittingAnyWalls(characterXLoc - xVel, characterYLoc - yVel, characterWidth, characterHeight)){
 			return;
@@ -492,10 +549,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 	public ArrayList<BufferedImage> makeLitterList(){
 		ArrayList<BufferedImage> litterIcons = new ArrayList<BufferedImage>();
-		litterIcons.add(createImage("characters/apple.jpeg"));
-		litterIcons.add(createImage("characters/can.png"));
-		litterIcons.add(createImage("characters/plasticBag.png"));
-		litterIcons.add(createImage("characters/plasticbottle.jpg"));
+		litterIcons.add(createImage("MazeExtraImgs/apple.png"));
+		litterIcons.add(createImage("MazeExtraImgs/chipBag.png"));
+		litterIcons.add(createImage("MazeExtraImgs/soda.png"));
+		litterIcons.add(createImage("mazeExtraImgs/crumbledpaper.png"));
 		return litterIcons;
 	}
 

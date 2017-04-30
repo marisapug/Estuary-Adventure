@@ -54,7 +54,7 @@ public class MazeBoard {
 		screenWidth = sWidth;
 		screenHeight = sHeight;
 		
-		//initialzes grid
+		//initializes grid
 		grid = new MazeCell[numRows][numCols];
 		makeGrid(xStartIndex, yStartIndex);
 		//generates maze from grid
@@ -69,14 +69,14 @@ public class MazeBoard {
 		setWalls();
 		
 		//generates litter (number of rows times 2 amount)
-		numLitter = rows/2;
+		numLitter = rows;
 		gameLitter = generateLitter(numLitter);
 		
 		//predator initialization
-		numPred = rows;
+		numPred = rows * 2;
 		predSpeed = 3;
-		predWidth = 30;
-		predHeight = 30;
+		predWidth = 70;
+		predHeight = 70;
 		generatePredators(numPred);
 		
 	}
