@@ -32,7 +32,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	//=================================================================//
 
 	private static final long serialVersionUID = 1L;
-	
+
 
 	//Timer
 	Timer t = new Timer(10,this);
@@ -43,25 +43,58 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	//Screen dimensions
 	static private int screenWidth = MainFrame.getFrameWidth();
 	static private int screenHeight = MainFrame.getFrameHeight();
-	
+
 	//Background image
 	private BufferedImage backGroundImg = createImage("background/underwater2.png");
 
 	//create the maze board
-	private int numRows = 20;
-	private int numCols = 20;
+	private int numRows = 10;
+	private int numCols = 10;
 	private int cellWidth = 200;
 	private int cellHeight = 200;
 	private MazeBoard board = new MazeBoard(numRows,numCols,cellWidth,cellHeight, screenWidth, screenHeight);
 	private MazeCell[][] grids = board.getGrid(); 
 	private ArrayList<MazeWall> mazeWalls = board.getMazeWalls();
-	private MazeCell endCell  = grids[board.getXEnd()][board.getYEnd()];
 
 	//miniMap 
 	private MiniMap miniMap = new MiniMap();
 	private int miniWidth = miniMap.getWidth();
 	private int miniHeight = miniMap.getHeight();
 	private MazeCell miniCharacter;
+	
+	//Salinity Meter
+	private int meterWidth = 60;
+	private int meterHeight = 30;
+	private int greenMeterX = screenWidth - 70;
+	private int redMeterX = screenWidth - 130;
+	private int meterY = 10;
+	
+	private int salinityTextSize = 12;
+	private String salinityTextStyle = "TimesRoman";
+	
+	private int correctSalinityTextX = screenWidth - 60;
+	private int correctSalinityTextY = 30;
+	
+	private int wrongSalinityTextX = screenWidth - 120;
+	private int wrongSalinityTextY = 30;
+	
+	private String correctSalinityTextBCrab = "> 20 ppt";
+	private String correctSalinityTextHCrab = "20-30 ppt";
+	private String wrongSalinityTextBCrab = "Too low!";
+	private String wrongSalinityTextHCrab = "Too high!";
+	
+	private String[][] salinityTextArray = {
+			{correctSalinityTextHCrab,wrongSalinityTextHCrab},
+			{correctSalinityTextBCrab,wrongSalinityTextBCrab},
+	};
+	
+	private String salinityTitleText = "Current Salinity:";
+	private int salinityTitleX = wrongSalinityTextX - 130;
+	private int salinityTitleY = 30;
+	private int salinityTitleFontSize = 15;
+	private String salinityTitleFontStyle = "TimesRoman";
+	
+	
 
 	//Horseshoe Crab images
 	private BufferedImage crabRight0 = createImage("characters/horseshoe_crab_right_0.png");
@@ -102,7 +135,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 
 	//Crab
-	private Crab testCrab = new Crab(3,0,screenWidth/2 + 10 ,screenHeight/2 + 10); //health, age
+	private Crab testCrab = new Crab(5,0,screenWidth/2 + 10 ,screenHeight/2 + 10); //health, age
 	private int crabDir;
 	private BufferedImage crabImg;
 	private int characterWidth = 50;
@@ -152,12 +185,12 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private final String timeRemainingLabel = "Time Remaining: ";
 	private final int timeRemainingLabelXLoc = (screenWidth/2) - 50;
 	private final int timeRemainingLabelYLoc = 30;
-	
+
 	private final int timeRemainingFontSize = 20;
-	
+
 	private final int timeXLoc = timeRemainingLabelXLoc + 155;
 	private final int timeYLoc = timeRemainingLabelYLoc;
-	
+
 	//Health
 	private int health = testCrab.getHealth();
 	private int hitTimer = 0;
@@ -181,7 +214,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private String titleText = "Estuary Maze Adventure!";
 	private int titleStringX = screenWidth/2 - ((titleFontSize * titleText.length())/4);
 	private int titleStringY = screenHeight/4;
-	
+
 	//End Screen
 	private boolean endScreenVisible;
 	private BufferedImage endBackgroundImg = createImage("background/overfishing_background.jpg");
@@ -192,6 +225,16 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int endTitleStringX = screenWidth/2 - ((titleFontSize * titleText.length())/4);
 	private int endTitleStringY = screenHeight/4;
 	
+	//End Cell
+	private MazeCell endCell  = grids[board.getXEnd()][board.getYEnd()];
+	
+	private BufferedImage endGrassImg = createImage("MazeExtraImgs/seagrass.png");
+	
+	private BufferedImage endBlueCrabImg = createImage("characters/bluecrab_0.png");
+	private BufferedImage endHorshoeCrabImg = createImage("characters/horseshoe_crab_left_0.png");
+	
+	private BufferedImage[] endCrabImgArray = {endHorshoeCrabImg,endBlueCrabImg};
+
 	//Game state
 	private boolean hasWon;
 
@@ -200,7 +243,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 	//Constructor
 	public MazeGameView(){
-
+		
 		//Start Timer
 		t.start();
 
@@ -251,10 +294,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		addKeyListener(this);
 		this.setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
-		
+
 		//initialize game state
 		endScreenVisible = false;
 		hasWon = false;
+		
 
 		//background
 		this.setBackground(Color.BLUE);
@@ -275,24 +319,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			g.drawString(titleText,titleStringX,titleStringY);
 
 		}//if
-		
-		//END SCREEN DRAWING
-		else if(endScreenVisible){
-			g.drawImage(endBackgroundImg, 0, 0, screenWidth, screenHeight, this);
-			
-			g.setFont(new Font(endTitleFontStyle,Font.BOLD,endTitleFontSize));
-			
-			if(hasWon){
-				g.drawString(endWinText, endTitleStringX, endTitleStringY);
-			}
-			else{
-				g.drawString(endLoseText, endTitleStringX, endTitleStringY);
-			}
-		}
+
 
 		//EVERYTHING ELSE
 		else{
-			
+
 			//BACKGROUND DRAWING
 			g.drawImage(backGroundImg, 0, 0, screenWidth, screenHeight, this);
 
@@ -323,7 +354,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			for(int i = 0; i < predators.size()/2; i++){
 				g.drawImage(preds[0][predators.get(i).getDirection()], predators.get(i).getXLoc(), predators.get(i).getYLoc(), predators.get(i).getWidth(), predators.get(i).getHeight(), this);
 			}
-			
+
 			for(int i = (predators.size()/2) + 1; i < predators.size(); i++){
 				g.drawImage(preds[1][predators.get(i).getDirection()], predators.get(i).getXLoc(), predators.get(i).getYLoc(), predators.get(i).getWidth(), predators.get(i).getHeight(), this);
 			}
@@ -378,7 +409,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			g.fillRect(miniCharacter.getX() * miniWidth + miniWidth/4, miniCharacter.getY()*miniHeight + miniHeight/4,miniWidth/2,miniHeight/2);
 
 			//Time Remaining Drawing
-			g.setColor(Color.BLACK);
 			g.setFont(new Font(titleFontStyle,Font.BOLD,timeRemainingFontSize));
 			g.setColor(Color.BLACK);
 			g.drawString(timeRemainingLabel, timeRemainingLabelXLoc, timeRemainingLabelYLoc);
@@ -391,51 +421,94 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			g.drawString(String.valueOf(health), healthImgXLoc + healthImgWidth, healthImgYLoc + healthImgHeight);
 			g.drawImage(healthImg, healthImgXLoc, healthImgYLoc, healthImgWidth, healthImgHeight, this);
 
-			//SalinityMeter Drawing FIX MAGIC NUMBERS
+			//SALINITY METER DRAWING
+			g.setFont(new Font(salinityTitleFontStyle,Font.BOLD,salinityTitleFontSize));
+			g.drawString(salinityTitleText, salinityTitleX, salinityTitleY);
+			
+			g.setColor(Color.GREEN);
+			g.drawRect(greenMeterX,meterY,meterWidth,meterHeight);
+			g.fillRect(greenMeterX,meterY,meterWidth,meterHeight);
+			
+			g.setColor(Color.RED);
+			g.drawRect(redMeterX,meterY,meterWidth,meterHeight);
+			g.fillRect(redMeterX,meterY,meterWidth,meterHeight);
+			
+			
+			//highlight for current salinity
+			g2.setColor(Color.BLACK);
+			g2.setStroke(new BasicStroke(3));
+			g.setFont(new Font(salinityTextStyle,Font.ITALIC,salinityTextSize));
 			if(board.isOnCorrectPath(characterXLoc, characterYLoc)){
-				g.setColor(Color.GREEN);
-				g.drawRect(screenWidth - 50,10,30,30);
-				g.fillRect(screenWidth - 50,10,30,30);
+				g2.drawRect(greenMeterX,meterY,meterWidth,meterHeight);
+				g.drawString(salinityTextArray[testCrab.getType()][0], correctSalinityTextX, correctSalinityTextY);
 			}
 			else{
-				g.setColor(Color.RED);
-				g.drawRect(screenWidth - 50,10,30,30);
-				g.fillRect(screenWidth - 50,10,30,30);
+				g2.drawRect(redMeterX,meterY,meterWidth,meterHeight);
+				g.drawString(salinityTextArray[testCrab.getType()][1], wrongSalinityTextX, wrongSalinityTextY);
 			}
+			
 
+			
+			//END LOCATION DRAWING
+			g.drawImage(endGrassImg, endCell.getXLoc(), endCell.getYLoc(), characterWidth, characterHeight, this);
+			g.drawImage(endGrassImg, endCell.getXLoc(), endCell.getYLoc()+150, characterWidth, characterHeight, this);
+			g.drawImage(endGrassImg, endCell.getXLoc()+150, endCell.getYLoc(), characterWidth, characterHeight, this);
+			g.drawImage(endGrassImg, endCell.getXLoc()+150, endCell.getYLoc()+150, characterWidth, characterHeight, this);
+			g.drawImage(endCrabImgArray[testCrab.getType()], endCell.getXLoc()+50, endCell.getYLoc()+50, characterWidth, characterHeight, this);
+			g.drawImage(endCrabImgArray[testCrab.getType()], endCell.getXLoc()+125, endCell.getYLoc()+50, characterWidth, characterHeight, this);
 
-			//CrabImage
+			//CRAB DRAWING
 			if(testCrab.getType() == 0){
 				crabImg = crabPics[crabDir][crabPicNum];
 			}
 			else
 				crabImg = bCrabPics[crabDir][crabPicNum];
+			
 
-			//TEMPORARY END LOCATION DRAWING
-			g.drawImage(crabImg, endCell.getXLoc(), endCell.getYLoc(), characterWidth, characterHeight, this);
-
-			//TEMPORARY HIT BLINKING OF CRAB
+			//HIT BLINKING OF CRAB
 			if(hitTimer%(cantBeHitLim/20) == 0)
 				g.drawImage(crabImg, testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight, this);
 
+			
+			//END SCREEN DRAWING
+			if(endScreenVisible){
+				//g.drawImage(endBackgroundImg, 0, 0, screenWidth, screenHeight, this);
+
+				g.setFont(new Font(endTitleFontStyle,Font.BOLD,endTitleFontSize));
+
+				if(hasWon){
+					g.setColor(Color.BLUE);
+					g.drawString(endWinText, endTitleStringX, endTitleStringY);
+				}
+				else{
+					g.setColor(Color.RED);
+					g.drawString(endLoseText, endTitleStringX, endTitleStringY);
+				}
+			}
+			
 		}//else
+		
 
 	}//paintComponent
 
 
 	public void actionPerformed(ActionEvent arg0) {
-		
+
 		timeCheck++;
 		if(timeCheck == 100){
 			timeRemaining--;
 			timeCheck = 0;
 		}
-		
+
 		if(health == 0 || timeRemaining == 0){
 			hasWon = false;
 			endScreenVisible = true;
 		}
 
+		if(testCrab.getXLoc() >= endCell.getXLoc() && testCrab.getYLoc() >= endCell.getYLoc()){
+			hasWon = true;
+			endScreenVisible = true;
+		}
 
 		if(swimTimer > 0){
 			swimTimer--;

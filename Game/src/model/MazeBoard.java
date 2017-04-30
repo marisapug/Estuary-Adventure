@@ -73,7 +73,7 @@ public class MazeBoard {
 		gameLitter = generateLitter(numLitter);
 		
 		//predator initialization
-		numPred = rows * 2;
+		numPred = rows;
 		predSpeed = 3;
 		predWidth = 70;
 		predHeight = 70;
