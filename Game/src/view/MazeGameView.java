@@ -181,6 +181,19 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private String titleText = "Estuary Maze Adventure!";
 	private int titleStringX = screenWidth/2 - ((titleFontSize * titleText.length())/4);
 	private int titleStringY = screenHeight/4;
+	
+	//End Screen
+	private boolean endScreenVisible;
+	private BufferedImage endBackgroundImg = createImage("background/overfishing_background.jpg");
+	private int endTitleFontSize = 30;
+	private String endTitleFontStyle = "TimesRoman";
+	private String endLoseText = "Oh no! You lost! Please try again.";
+	private String endWinText = "Congratulations, you won!";
+	private int endTitleStringX = screenWidth/2 - ((titleFontSize * titleText.length())/4);
+	private int endTitleStringY = screenHeight/4;
+	
+	//Game state
+	private boolean hasWon;
 
 	//=================================================================//
 
@@ -238,6 +251,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		addKeyListener(this);
 		this.setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
+		
+		//initialize game state
+		endScreenVisible = false;
+		hasWon = false;
 
 		//background
 		this.setBackground(Color.BLUE);
@@ -258,6 +275,20 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			g.drawString(titleText,titleStringX,titleStringY);
 
 		}//if
+		
+		//END SCREEN DRAWING
+		else if(endScreenVisible){
+			g.drawImage(endBackgroundImg, 0, 0, screenWidth, screenHeight, this);
+			
+			g.setFont(new Font(endTitleFontStyle,Font.BOLD,endTitleFontSize));
+			
+			if(hasWon){
+				g.drawString(endWinText, endTitleStringX, endTitleStringY);
+			}
+			else{
+				g.drawString(endLoseText, endTitleStringX, endTitleStringY);
+			}
+		}
 
 		//EVERYTHING ELSE
 		else{
@@ -393,12 +424,18 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 
 	public void actionPerformed(ActionEvent arg0) {
-
+		
 		timeCheck++;
 		if(timeCheck == 100){
 			timeRemaining--;
 			timeCheck = 0;
 		}
+		
+		if(health == 0 || timeRemaining == 0){
+			hasWon = false;
+			endScreenVisible = true;
+		}
+
 
 		if(swimTimer > 0){
 			swimTimer--;
