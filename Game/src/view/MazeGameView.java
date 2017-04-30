@@ -125,7 +125,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private BufferedImage groupPredUp = createImage("characters/fish_group_up.png");
 	private BufferedImage groupPredDown = createImage("characters/fish_group_down.png");
 
-	//Predator Pic Arrays 0 = bass, 1 = group
+	//Predator Pic Array -- 0 = bass, 1 = group
 	private BufferedImage[][] preds = {
 			{bassPredUp,bassPredDown,bassPredRight,bassPredLeft},
 			{groupPredUp,groupPredDown,groupPredRight,groupPredLeft}
@@ -134,17 +134,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	//Features bar
 	private final int featuresBarWidth = screenWidth;
 	private final int featuresBarHeight = 50;
-
-	//Health
-	private int health = testCrab.getHealth();
-	private int hitTimer = 0;
-	private int cantBeHitLim = 100;
-
-	private BufferedImage healthImg = createImage("MazeExtraImgs/fullHeart.png");
-	private final int healthImgWidth = 30;
-	private final int healthImgHeight = 30;
-	private final int healthImgXLoc = screenWidth/3;
-	private final int healthImgYLoc = 0;
 
 
 	//Litter
@@ -156,13 +145,30 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int xLitterMax = 0;
 	private int xLitterMin = 0;
 
-	//predator
+	//predator arraylist
 	private ArrayList<Predator> predators = board.getPredators();
 
-	//Locations for Time Components
+	//Time Remaining Label
 	private final String timeRemainingLabel = "Time Remaining: ";
-	private final int timeRemainingLabelXLoc = screenWidth/2;
-	private final int timeRemainingLabelYLoc = 10;
+	private final int timeRemainingLabelXLoc = (screenWidth/2) - 50;
+	private final int timeRemainingLabelYLoc = 30;
+	
+	private final int timeRemainingFontSize = 20;
+	
+	private final int timeXLoc = timeRemainingLabelXLoc + 155;
+	private final int timeYLoc = timeRemainingLabelYLoc;
+	
+	//Health
+	private int health = testCrab.getHealth();
+	private int hitTimer = 0;
+	private int cantBeHitLim = 100;
+
+	private BufferedImage healthImg = createImage("MazeExtraImgs/fullHeart.png");
+	private final int healthImgWidth = 30;
+	private final int healthImgHeight = 30;
+	private final int healthImgXLoc = timeRemainingLabelXLoc - 200;
+	private final int healthImgYLoc = 10;
+
 
 	//StartScreen
 	private boolean startScreenVisible;
@@ -342,9 +348,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 			//Time Remaining Drawing
 			g.setColor(Color.BLACK);
+			g.setFont(new Font(titleFontStyle,Font.BOLD,timeRemainingFontSize));
+			g.setColor(Color.BLACK);
 			g.drawString(timeRemainingLabel, timeRemainingLabelXLoc, timeRemainingLabelYLoc);
-			g.drawString(String.valueOf(timeRemaining), timeRemainingLabelXLoc + timeRemainingLabel.length()
-			, timeRemainingLabelYLoc);
+			g.drawString(String.valueOf(timeRemaining), timeXLoc, timeYLoc);
 
 
 			//Crab Health Drawing
@@ -380,11 +387,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			if(hitTimer%(cantBeHitLim/20) == 0)
 				g.drawImage(crabImg, testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight, this);
 
-			
-			//mid screen line
-			g.setColor(Color.RED);
-			g.drawLine(screenWidth/2, 0, screenWidth/2, screenHeight);
-			
 		}//else
 
 	}//paintComponent
