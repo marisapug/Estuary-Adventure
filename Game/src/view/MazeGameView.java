@@ -217,13 +217,21 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 	//End Screen
 	private boolean endScreenVisible;
-	private BufferedImage endBackgroundImg = createImage("background/overfishing_background.jpg");
 	private int endTitleFontSize = 30;
 	private String endTitleFontStyle = "TimesRoman";
-	private String endLoseText = "Oh no! You lost! Please try again.";
+	private String endLoseText = "Oh no! You lost!";
 	private String endWinText = "Congratulations, you won!";
 	private int endTitleStringX = screenWidth/2 - ((titleFontSize * titleText.length())/4);
 	private int endTitleStringY = screenHeight/4;
+	
+	private String endWinTimeText = "Your Time: ";
+	private int endWinTimeTextX = endTitleStringX;
+	private int endWinTimeTextY = screenHeight/4 + 100;
+	
+	private String endLoseTextHealth = "You have no more health!";
+	private String endLoseTextTime = "You have no more time left!";
+	private int endLoseTextX = endTitleStringX;
+	private int endLoseTextY = screenHeight/4 + 100;
 	
 	//End Cell
 	private MazeCell endCell  = grids[board.getXEnd()][board.getYEnd()];
@@ -472,17 +480,23 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			
 			//END SCREEN DRAWING
 			if(endScreenVisible){
-				//g.drawImage(endBackgroundImg, 0, 0, screenWidth, screenHeight, this);
-
+				
 				g.setFont(new Font(endTitleFontStyle,Font.BOLD,endTitleFontSize));
 
 				if(hasWon){
 					g.setColor(Color.BLUE);
 					g.drawString(endWinText, endTitleStringX, endTitleStringY);
+					g.drawString(endWinTimeText + (120 - timeRemaining) + " seconds", endWinTimeTextX, endWinTimeTextY);
 				}
 				else{
 					g.setColor(Color.RED);
 					g.drawString(endLoseText, endTitleStringX, endTitleStringY);
+					if(timeRemaining == 0){
+						g.drawString(endLoseTextTime, endLoseTextX, endLoseTextY);
+					}
+					else{
+						g.drawString(endLoseTextHealth, endLoseTextX, endLoseTextY);
+					}
 				}
 			}
 			
@@ -500,14 +514,18 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			timeCheck = 0;
 		}
 
+		//Checks if you lose
 		if(health == 0 || timeRemaining == 0){
 			hasWon = false;
 			endScreenVisible = true;
+			t.stop();
 		}
 
-		if(testCrab.getXLoc() >= endCell.getXLoc() && testCrab.getYLoc() >= endCell.getYLoc()){
+		//Checks if you win
+		if(testCrab.getXLoc() > endCell.getXLoc() && testCrab.getYLoc() > endCell.getYLoc()){
 			hasWon = true;
 			endScreenVisible = true;
+			t.stop();
 		}
 
 		if(swimTimer > 0){
