@@ -5,6 +5,7 @@ public class ShoreCrab extends GameFigure {
 	public ShoreCrab(int xl, int yl){
 		xLoc = xl;
 		yLoc = yl;
+		xIncr = 6;
 	}
 
 	public int getXLoc() {
@@ -25,7 +26,6 @@ public class ShoreCrab extends GameFigure {
 
 	public void moveHorizontal(int xVel) {
 		xLoc = xLoc + xVel;
-		
 	}
 	
 	
