@@ -1,6 +1,6 @@
 package model;
 
-public class Grass extends GameFigure{
+public class Grass extends Barrier{
 	boolean isHit;
 	
 	void die(){}

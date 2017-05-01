@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Shore {
 	ArrayList<Barrier> shore;
 
-	void addBarr(Barrier b){
+	public void addBarr(Barrier b){
 		shore.add(b);
 	}
 
@@ -13,7 +13,7 @@ public class Shore {
 		shore.remove(b);
 	}
 
-	public Object getShore() {
+	public ArrayList<Barrier> getShore() {
 		return shore;
 	}
 

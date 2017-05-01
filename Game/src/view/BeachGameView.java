@@ -101,9 +101,10 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		g.drawImage(crabImg, crabimg.getXLoc(), crabimg.getYLoc(), characterWidth, characterHeight, this);
 		//renderBarriers(shore1, g, crabimg);
 	}
-	/*		
+			
 		public void renderBarriers(Shore s, Graphics g, ShoreCrab c){
-			for (Barrier b : s.getShore()){
+			Barrier[] barrAr = (Barrier[]) s.getShore().toArray();
+			for (Barrier b : barrAr){
 				if (b instanceof Grass){
 					g.drawRect(c.getXLoc(),c.getYLoc(),100,100);
 				}
@@ -112,15 +113,15 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				}
 				else return;
 			}
-		}*/
+		}
 
 	//Set Button Listeners 
 	void setupListeners() {
 		grassButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//Grass g1 = new Grass();
-				//shore1.addBarr(g1);
+				Grass g1 = new Grass();
+				shore1.addBarr(g1);
 			}
 		});
 		ogButton.addActionListener(new ActionListener() {
