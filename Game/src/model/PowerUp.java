@@ -1,40 +1,22 @@
 package model;
 
-
-public class Litter {
-	private int type;
+public class PowerUp {
+	private int type; //0 = health, 1 = speed, 2 = invincibility
 	private int xLoc;
 	private int yLoc;
 	private static int width;
 	private static int height;
-	static int floatXIncr = 2;
 	
-	public Litter(int t, int xLoc, int yLoc){
+	public PowerUp(int t, int xLoc, int yLoc){
 		type = t;
 		this.xLoc = xLoc;
 		this.yLoc = yLoc;
-		width = 50;
-		height = 50;
+		width = 30;
+		height = 30;
 	}
 	
-	//moves litter by the given x and y increments
-	public void moveLitter(int xIncr, int yIncr){
-		yLoc = yLoc + yIncr;
-		xLoc = xLoc + xIncr;
-	}
-	
-	//changes litters xLoc
-	public void floatLitterRight(){
-		xLoc = xLoc + floatXIncr;
-	}
-	
-	public void floatLitterLeft(){
-		xLoc = xLoc - floatXIncr;
-	}
-	
-	//checks if something hit the litter
-	public boolean hitLitter(int xL, int yL, int w, int h){
-		//NEEDS FIXING TO WORK
+	//checks if something hit the PowerUp
+	public boolean hitPowerUp(int xL, int yL, int w, int h){
 		if((
 				(xL > xLoc && xL < xLoc + width)   || (xL + w > xLoc && xL + w < xLoc + width)) &&
 				((yL > yLoc && yL < yLoc + height) || (yL + h > yLoc && yL + h < yLoc + height))
@@ -59,10 +41,6 @@ public class Litter {
 	
 	public int getType(){
 		return type;
-	}
-	
-	public int getFloatXIncr(){
-		return floatXIncr;
 	}
 	
 	public int getWidth(){

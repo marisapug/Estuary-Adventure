@@ -5,6 +5,7 @@ import model.MazeBoard;
 import model.MazeCell;
 import model.MazeWall;
 import model.MiniMap;
+import model.PowerUp;
 import model.Predator;
 import model.Litter;
 
@@ -61,40 +62,40 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int miniWidth = miniMap.getWidth();
 	private int miniHeight = miniMap.getHeight();
 	private MazeCell miniCharacter;
-	
+
 	//Salinity Meter
 	private int meterWidth = 60;
 	private int meterHeight = 30;
 	private int greenMeterX = screenWidth - 70;
 	private int redMeterX = screenWidth - 130;
 	private int meterY = 10;
-	
+
 	private int salinityTextSize = 12;
 	private String salinityTextStyle = "TimesRoman";
-	
+
 	private int correctSalinityTextX = screenWidth - 60;
 	private int correctSalinityTextY = 30;
-	
+
 	private int wrongSalinityTextX = screenWidth - 120;
 	private int wrongSalinityTextY = 30;
-	
+
 	private String correctSalinityTextBCrab = "> 20 ppt";
 	private String correctSalinityTextHCrab = "20-30 ppt";
 	private String wrongSalinityTextBCrab = "Too low!";
 	private String wrongSalinityTextHCrab = "Too high!";
-	
+
 	private String[][] salinityTextArray = {
 			{correctSalinityTextHCrab,wrongSalinityTextHCrab},
 			{correctSalinityTextBCrab,wrongSalinityTextBCrab},
 	};
-	
+
 	private String salinityTitleText = "Current Salinity:";
 	private int salinityTitleX = wrongSalinityTextX - 130;
 	private int salinityTitleY = 30;
 	private int salinityTitleFontSize = 15;
 	private String salinityTitleFontStyle = "TimesRoman";
-	
-	
+
+
 
 	//Horseshoe Crab images
 	private BufferedImage crabRight0 = createImage("characters/horseshoe_crab_right_0.png");
@@ -158,7 +159,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private BufferedImage groupPredUp = createImage("characters/fish_group_up.png");
 	private BufferedImage groupPredDown = createImage("characters/fish_group_down.png");
 
-	//Predator Pic Array -- 0 = bass, 1 = group
+	//Predator Pic Array,  0 = bass, 1 = group
 	private BufferedImage[][] preds = {
 			{bassPredUp,bassPredDown,bassPredRight,bassPredLeft},
 			{groupPredUp,groupPredDown,groupPredRight,groupPredLeft}
@@ -178,7 +179,12 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int xLitterMax = 0;
 	private int xLitterMin = 0;
 
-	//predator arraylist
+	//PowerUps
+	private ArrayList<PowerUp> gamePowerUps = board.getGamePowerUps();
+	private int powerUpWidth = gamePowerUps.get(0).getWidth();
+	private int powerUpHeight = gamePowerUps.get(0).getHeight();
+
+	//Predator Array List
 	private ArrayList<Predator> predators = board.getPredators();
 
 	//Time Remaining Label
@@ -223,24 +229,24 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private String endWinText = "Congratulations, you won!";
 	private int endTitleStringX = screenWidth/2 - ((titleFontSize * titleText.length())/4);
 	private int endTitleStringY = screenHeight/4;
-	
+
 	private String endWinTimeText = "Your Time: ";
 	private int endWinTimeTextX = endTitleStringX;
 	private int endWinTimeTextY = screenHeight/4 + 100;
-	
+
 	private String endLoseTextHealth = "You have no more health!";
 	private String endLoseTextTime = "You have no more time left!";
 	private int endLoseTextX = endTitleStringX;
 	private int endLoseTextY = screenHeight/4 + 100;
-	
+
 	//End Cell
 	private MazeCell endCell  = grids[board.getXEnd()][board.getYEnd()];
-	
+
 	private BufferedImage endGrassImg = createImage("MazeExtraImgs/seagrass.png");
-	
+
 	private BufferedImage endBlueCrabImg = createImage("characters/bluecrab_0.png");
 	private BufferedImage endHorshoeCrabImg = createImage("characters/horseshoe_crab_left_0.png");
-	
+
 	private BufferedImage[] endCrabImgArray = {endHorshoeCrabImg,endBlueCrabImg};
 
 	//Game state
@@ -251,7 +257,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 	//Constructor
 	public MazeGameView(){
-		
+
 		//Start Timer
 		t.start();
 
@@ -306,7 +312,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		//initialize game state
 		endScreenVisible = false;
 		hasWon = false;
-		
+
 
 		//background
 		this.setBackground(Color.BLUE);
@@ -358,6 +364,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 					g2.drawImage(litterTypes.get(lit.getType()), lit.getXLoc(), lit.getYLoc(),litterWidth, litterHeight, this);
 			}
 
+			//Draws Power Ups
+			for(PowerUp pu : gamePowerUps){
+				g.drawRect(pu.getXLoc(),pu.getYLoc(), powerUpWidth, powerUpHeight);
+				g.drawRect(pu.getXLoc(),pu.getYLoc(), powerUpWidth, powerUpHeight);
+			}
 			//DRAWS PREDATORS
 			for(int i = 0; i < predators.size()/2; i++){
 				g.drawImage(preds[0][predators.get(i).getDirection()], predators.get(i).getXLoc(), predators.get(i).getYLoc(), predators.get(i).getWidth(), predators.get(i).getHeight(), this);
@@ -366,6 +377,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			for(int i = (predators.size()/2) + 1; i < predators.size(); i++){
 				g.drawImage(preds[1][predators.get(i).getDirection()], predators.get(i).getXLoc(), predators.get(i).getYLoc(), predators.get(i).getWidth(), predators.get(i).getHeight(), this);
 			}
+
 
 			//Features Bar Drawing
 			g.setColor(Color.yellow);
@@ -432,16 +444,16 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			//SALINITY METER DRAWING
 			g.setFont(new Font(salinityTitleFontStyle,Font.BOLD,salinityTitleFontSize));
 			g.drawString(salinityTitleText, salinityTitleX, salinityTitleY);
-			
+
 			g.setColor(Color.GREEN);
 			g.drawRect(greenMeterX,meterY,meterWidth,meterHeight);
 			g.fillRect(greenMeterX,meterY,meterWidth,meterHeight);
-			
+
 			g.setColor(Color.RED);
 			g.drawRect(redMeterX,meterY,meterWidth,meterHeight);
 			g.fillRect(redMeterX,meterY,meterWidth,meterHeight);
-			
-			
+
+
 			//highlight for current salinity
 			g2.setColor(Color.BLACK);
 			g2.setStroke(new BasicStroke(3));
@@ -454,9 +466,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				g2.drawRect(redMeterX,meterY,meterWidth,meterHeight);
 				g.drawString(salinityTextArray[testCrab.getType()][1], wrongSalinityTextX, wrongSalinityTextY);
 			}
-			
 
-			
+
+
 			//END LOCATION DRAWING
 			g.drawImage(endGrassImg, endCell.getXLoc(), endCell.getYLoc(), characterWidth, characterHeight, this);
 			g.drawImage(endGrassImg, endCell.getXLoc(), endCell.getYLoc()+150, characterWidth, characterHeight, this);
@@ -471,16 +483,16 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			}
 			else
 				crabImg = bCrabPics[crabDir][crabPicNum];
-			
+
 
 			//HIT BLINKING OF CRAB
 			if(hitTimer%(cantBeHitLim/20) == 0)
 				g.drawImage(crabImg, testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight, this);
 
-			
+
 			//END SCREEN DRAWING
 			if(endScreenVisible){
-				
+
 				g.setFont(new Font(endTitleFontStyle,Font.BOLD,endTitleFontSize));
 
 				if(hasWon){
@@ -499,9 +511,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 					}
 				}
 			}
-			
+
 		}//else
-		
+
 
 	}//paintComponent
 

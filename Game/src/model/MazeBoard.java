@@ -38,6 +38,11 @@ public class MazeBoard {
 	private int predWidth;
 	private int predHeight;
 	ArrayList<Predator> predators = new ArrayList<Predator>();
+	
+	//POWER UPs
+	private int numPowerUps;
+//	private PowerUp[] gamePowerUps;
+	private ArrayList<PowerUp> gamePowerUps = new ArrayList<PowerUp>();
 
 	//CONSTRUCTOR initializes board
 	public MazeBoard(int rows, int cols, int width, int height, int sWidth, int sHeight){
@@ -68,9 +73,13 @@ public class MazeBoard {
 		//Initializes all walls
 		setWalls();
 		
-		//generates litter (number of rows times 2 amount)
+		//generates litter 
 		numLitter = rows;
 		gameLitter = generateLitter(numLitter);
+		
+		//power ups initialization
+		numPowerUps = 5;
+		generatePowerUps(numPowerUps);
 		
 		//predator initialization
 		numPred = rows;
@@ -78,6 +87,7 @@ public class MazeBoard {
 		predWidth = 70;
 		predHeight = 70;
 		generatePredators(numPred);
+		
 		
 	}
 
@@ -443,6 +453,31 @@ public class MazeBoard {
 		return false;
 	}
 	
+	
+	//===== POWER UPS ======
+	
+	public void generatePowerUps(int amount){
+		Random rand = new Random();
+		for(int i = 0; i < amount; i++){
+			int puType = rand.nextInt(4); 
+			MazeCell cell = getRandomCell();
+			PowerUp pu = new PowerUp(puType,cell.getXLoc()+cellWidth/3,cell.getYLoc()+cellHeight/3);
+			gamePowerUps.add(pu);
+		}
+	}
+	
+	//checks if any power up is hit
+	public boolean hitAnyPowerUps(int xL, int yL, int w, int h){
+		for(PowerUp pu: gamePowerUps){
+			if(pu.hitPowerUp(xL, yL, w, h)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	
 	//GETTERS-----------------------------------------------------------------------------------------
 	
 	public MazeCell[][] getGrid(){
@@ -492,6 +527,10 @@ public class MazeBoard {
 	
 	public Litter[] getGameLitter(){
 		return gameLitter;
+	}
+	
+	public ArrayList<PowerUp> getGamePowerUps(){
+		return gamePowerUps;
 	}
 	
 	public ArrayList<Predator> getPredators(){
