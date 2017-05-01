@@ -564,16 +564,16 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			if(pu.hitPowerUp(characterXLoc, characterYLoc, characterWidth, characterHeight)){
 				if(pu.getType() == 0){
 					health += 1;
-					gamePowerUps.remove(pu);
+					board.getGamePowerUps().remove(pu);
 				}
 				else if(pu.getType() == 1){
 					xIncr += 2;
 					yIncr += 2;
-					gamePowerUps.remove(pu);
+					board.getGamePowerUps().remove(pu);
 				}
 				else{
 					System.out.println("invincibility");
-					gamePowerUps.remove(pu);
+					board.getGamePowerUps().remove(pu);
 				}
 			}
 		}
