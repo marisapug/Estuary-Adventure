@@ -50,8 +50,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private BufferedImage backGroundImg = createImage("background/underwater2.png");
 
 	//create the maze board
-	private int numRows = 10;
-	private int numCols = 10;
+	private int numRows = 20;
+	private int numCols = 20;
 	private int cellWidth = 200;
 	private int cellHeight = 200;
 	private MazeBoard board = new MazeBoard(numRows,numCols,cellWidth,cellHeight, screenWidth, screenHeight);
@@ -180,17 +180,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int xLitterMax = 0;
 	private int xLitterMin = 0;
 
-	//PowerUps
-	private ArrayList<PowerUp> gamePowerUps = board.getGamePowerUps();
-	private int powerUpWidth = gamePowerUps.get(0).getWidth();
-	private int powerUpHeight = gamePowerUps.get(0).getHeight();
-	private BufferedImage powerUpImg = createImage("MazeExtraImgs/powerup.png");
-	
-	private String powerHealthText = "Extra Life!";
-	private String powerSpeedText = "Speed Boost!";
-	private String powerInvincibilityText = "Invincibility!";
-	
-	private String [] powerUpTexts = {powerHealthText, powerSpeedText, powerInvincibilityText};
 
 	//Predator Array List
 	private ArrayList<Predator> predators = board.getPredators();
@@ -213,9 +202,29 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private BufferedImage healthImg = createImage("MazeExtraImgs/fullHeart.png");
 	private final int healthImgWidth = 30;
 	private final int healthImgHeight = 30;
-	private final int healthImgXLoc = timeRemainingLabelXLoc - 200;
+	private final int healthImgXLoc = timeRemainingLabelXLoc - 250;
 	private final int healthImgYLoc = 10;
 
+	//PowerUps
+	private ArrayList<PowerUp> gamePowerUps = board.getGamePowerUps();
+	private int powerUpWidth = gamePowerUps.get(0).getWidth();
+	private int powerUpHeight = gamePowerUps.get(0).getHeight();
+	private BufferedImage powerUpImg = createImage("MazeExtraImgs/powerup.png");
+
+	private String powerHealthText = "Extra Life!";
+	private String powerSpeedText = "Speed Boost!";
+	private String powerInvincibilityText = "Invincibility!";
+	private String [] powerUpTexts = {powerHealthText, powerSpeedText, powerInvincibilityText};
+
+	
+	private String powerUpTitleText = "Power Up: ";
+	private int powerUpTitleX = timeRemainingLabelXLoc - 175;
+	private int powerUpTitleY = 30;
+	private int powerUpTitleFontSize = 15;
+	private String powerUpTitleFontStyle = "TimesRoman";
+	
+	private int powerUpX;
+	private int powerUpY = 30;
 
 	//StartScreen
 	private boolean startScreenVisible;
@@ -440,7 +449,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			g.setColor(Color.BLACK);
 			g.drawString(timeRemainingLabel, timeRemainingLabelXLoc, timeRemainingLabelYLoc);
 			g.drawString(String.valueOf(timeRemaining), timeXLoc, timeYLoc);
-
+			
+			//Current Power Up Drawing
+			g.setFont(new Font(powerUpTitleFontStyle,Font.BOLD,powerUpTitleFontSize));
+			g.setColor(Color.BLACK);
+			g.drawString(powerUpTitleText, powerUpTitleX, powerUpTitleY);
 
 			//Crab Health Drawing
 			g.setColor(Color.BLACK);
@@ -448,6 +461,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			g.drawString(String.valueOf(health), healthImgXLoc + healthImgWidth, healthImgYLoc + healthImgHeight);
 			g.drawImage(healthImg, healthImgXLoc, healthImgYLoc, healthImgWidth, healthImgHeight, this);
 
+			
 			//SALINITY METER DRAWING
 			g.setFont(new Font(salinityTitleFontStyle,Font.BOLD,salinityTitleFontSize));
 			g.drawString(salinityTitleText, salinityTitleX, salinityTitleY);
@@ -496,10 +510,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			if(hitTimer%(cantBeHitLim/20) == 0)
 				g.drawImage(crabImg, testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight, this);
 
-			
-			//CURRENT POWERUP DRAWING
-			
-			
 
 			//END SCREEN DRAWING
 			if(endScreenVisible){
