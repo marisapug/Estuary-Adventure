@@ -50,8 +50,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private BufferedImage backGroundImg = createImage("background/underwater2.png");
 
 	//create the maze board
-	private int numRows = 10;
-	private int numCols = 10;
+	private int numRows = 15;
+	private int numCols = 15;
 	private int cellWidth = 200;
 	private int cellHeight = 200;
 	private MazeBoard board = new MazeBoard(numRows,numCols,cellWidth,cellHeight, screenWidth, screenHeight);
