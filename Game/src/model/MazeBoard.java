@@ -269,6 +269,9 @@ public class MazeBoard {
 		for(Predator pred: predators){
 			pred.movePred(xIncr,yIncr);
 		}
+		for(PowerUp pow: gamePowerUps){
+			pow.movePowerUp(xIncr,yIncr);
+		}
 	}
 	
 	//checks if a given x and y location falls on a correct path cell

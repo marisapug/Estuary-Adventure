@@ -29,6 +29,11 @@ public class PowerUp {
 		else return false;
 	}
 	
+	public void movePowerUp(int xIncr, int yIncr){
+		xLoc += xIncr;
+		yLoc += yIncr;
+	}
+	
 
 	
 	public int getXLoc(){
