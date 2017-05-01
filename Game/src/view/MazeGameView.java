@@ -25,6 +25,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 
@@ -560,20 +561,22 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		}
 
 		//check for power up hit
-		for(PowerUp pu : gamePowerUps){
+		Iterator<PowerUp> p = gamePowerUps.iterator();
+		while(p.hasNext()){
+			PowerUp pu = p.next();
 			if(pu.hitPowerUp(characterXLoc, characterYLoc, characterWidth, characterHeight)){
 				if(pu.getType() == 0){
 					health += 1;
-					board.getGamePowerUps().remove(pu);
+					p.remove();
 				}
 				else if(pu.getType() == 1){
 					xIncr += 2;
 					yIncr += 2;
-					board.getGamePowerUps().remove(pu);
+					p.remove();
 				}
 				else{
 					System.out.println("invincibility");
-					board.getGamePowerUps().remove(pu);
+					p.remove();
 				}
 			}
 		}
