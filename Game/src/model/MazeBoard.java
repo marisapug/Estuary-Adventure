@@ -78,7 +78,7 @@ public class MazeBoard {
 		gameLitter = generateLitter(numLitter);
 		
 		//power ups initialization
-		numPowerUps = 5;
+		numPowerUps = 4;
 		generatePowerUps(numPowerUps);
 		
 		//predator initialization
@@ -462,7 +462,7 @@ public class MazeBoard {
 	public void generatePowerUps(int amount){
 		Random rand = new Random();
 		for(int i = 0; i < amount; i++){
-			int puType = rand.nextInt(4); 
+			int puType = rand.nextInt(3); 
 			MazeCell cell = getRandomCell();
 			PowerUp pu = new PowerUp(puType,cell.getXLoc()+cellWidth/3,cell.getYLoc()+cellHeight/3);
 			gamePowerUps.add(pu);

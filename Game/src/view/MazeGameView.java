@@ -183,6 +183,13 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private ArrayList<PowerUp> gamePowerUps = board.getGamePowerUps();
 	private int powerUpWidth = gamePowerUps.get(0).getWidth();
 	private int powerUpHeight = gamePowerUps.get(0).getHeight();
+	private BufferedImage powerUpImg = createImage("MazeExtraImgs/powerup.png");
+	
+	private String powerHealthText = "Extra Life!";
+	private String powerSpeedText = "Speed Boost!";
+	private String powerInvincibilityText = "Invincibility!";
+	
+	private String [] powerUpTexts = {powerHealthText, powerSpeedText, powerInvincibilityText};
 
 	//Predator Array List
 	private ArrayList<Predator> predators = board.getPredators();
@@ -366,8 +373,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 			//Draws Power Ups
 			for(PowerUp pu : gamePowerUps){
-				g.drawRect(pu.getXLoc(),pu.getYLoc(), powerUpWidth, powerUpHeight);
-				g.drawRect(pu.getXLoc(),pu.getYLoc(), powerUpWidth, powerUpHeight);
+				g.drawImage(powerUpImg,pu.getXLoc(),pu.getYLoc(), powerUpWidth, powerUpHeight, this);
 			}
 			//DRAWS PREDATORS
 			for(int i = 0; i < predators.size()/2; i++){
@@ -489,6 +495,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			if(hitTimer%(cantBeHitLim/20) == 0)
 				g.drawImage(crabImg, testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight, this);
 
+			
+			//CURRENT POWERUP DRAWING
+			
+			
 
 			//END SCREEN DRAWING
 			if(endScreenVisible){
@@ -547,6 +557,25 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		if(crabIsMoving && swimTimer == 0){
 			crabPicNum = (crabPicNum + 1) % crabNumPics;
 			swimTimer = swimSpeed;
+		}
+
+		//check for power up hit
+		for(PowerUp pu : gamePowerUps){
+			if(pu.hitPowerUp(characterXLoc, characterYLoc, characterWidth, characterHeight)){
+				if(pu.getType() == 0){
+					health += 1;
+					gamePowerUps.remove(pu);
+				}
+				else if(pu.getType() == 1){
+					xIncr += 2;
+					yIncr += 2;
+					gamePowerUps.remove(pu);
+				}
+				else{
+					System.out.println("invincibility");
+					gamePowerUps.remove(pu);
+				}
+			}
 		}
 
 		//checks for litter hits
@@ -696,6 +725,15 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		litterIcons.add(createImage("MazeExtraImgs/soda.png"));
 		litterIcons.add(createImage("mazeExtraImgs/crumbledpaper.png"));
 		return litterIcons;
+	}
+
+
+	public ArrayList<BufferedImage> makePowerUps(){
+		ArrayList<BufferedImage> powerUps = new ArrayList<BufferedImage>();
+		powerUps.add(createImage("MazeExtraImgs/apple.png"));
+		powerUps.add(createImage("MazeExtraImgs/chipBag.png"));
+		powerUps.add(createImage("MazeExtraImgs/soda.png"));
+		return powerUps;
 	}
 
 
