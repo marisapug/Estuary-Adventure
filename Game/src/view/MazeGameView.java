@@ -48,13 +48,29 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 	//Background image
 	private BufferedImage backGroundImg = createImage("background/underwater2.png");
-
-	//create the maze board
-	private int numRows = 20;
-	private int numCols = 20;
+	
+	//Maze Difficulties
+	private int easyNumRows = 10;
+	private int easyNumCols = 10;
+	private int mediumNumRows = 20;
+	private int mediumNumCols = 20;
+	private int hardNumRows = 25;
+	private int hardNumCols = 25;
+	
 	private int cellWidth = 200;
 	private int cellHeight = 200;
-	private MazeBoard board = new MazeBoard(numRows,numCols,cellWidth,cellHeight, screenWidth, screenHeight);
+	
+	//Maze Boards
+	private MazeBoard easyBoard = new MazeBoard(easyNumRows,easyNumCols, cellWidth, cellHeight,screenWidth,screenHeight);
+	private MazeBoard mediumBoard = new MazeBoard(mediumNumRows,mediumNumCols, cellWidth, cellHeight,screenWidth,screenHeight);
+	private MazeBoard hardBoard = new MazeBoard(hardNumRows,hardNumCols, cellWidth, cellHeight,screenWidth,screenHeight);
+	private MazeBoard[] boardArr = {easyBoard, mediumBoard, hardBoard};
+	private int boardInd = 0;
+	
+	//create the maze board
+	private int numRows = 10;
+	private int numCols = 10;
+	private MazeBoard board = boardArr[boardInd];
 	private MazeCell[][] grids = board.getGrid(); 
 	private ArrayList<MazeWall> mazeWalls = board.getMazeWalls();
 
@@ -222,9 +238,13 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int powerUpTitleY = 30;
 	private int powerUpTitleFontSize = 15;
 	private String powerUpTitleFontStyle = "TimesRoman";
-	
 	private int powerUpX;
 	private int powerUpY = 30;
+	
+	private int powerUpSpeed = 8;
+	
+	private int powerUpLimit = 1000;
+	private int powerUpTimer = powerUpLimit;
 
 	//StartScreen
 	private boolean startScreenVisible;
@@ -268,6 +288,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 	//Game state
 	private boolean hasWon;
+	
+	//Board Buttons
+	private JButton easyButton;
+	private JButton mediumButton;
+	private JButton hardButton;
 
 	//=================================================================//
 
@@ -283,11 +308,21 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		bCrabButton = new JButton("Blue Crab");
 		hCrabButton.setFocusable(false);
 		bCrabButton.setFocusable(false);
+		
+		easyButton = new JButton("Easy");
+		easyButton.setFocusable(false);
+		mediumButton = new JButton("Medium");
+		mediumButton.setFocusable(false);
+		hardButton = new JButton("Hard");
+		hardButton.setFocusable(false);
 
 		//StartScreen Visibility
 		startScreenVisible = true;
 		this.add(bCrabButton);
 		this.add(hCrabButton);
+		//this.add(easyButton);
+		//this.add(mediumButton);
+		//this.add(hardButton);
 
 		//Button Listeners
 		bCrabButton.addActionListener(new ActionListener(){
@@ -319,7 +354,27 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			}
 
 		});
+		
+		easyButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				boardInd = 0;
+				board = boardArr[boardInd];
+			}
+		});
 
+		mediumButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				boardInd = 1;
+				board = boardArr[boardInd];
+			}
+		});
+		
+		hardButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				boardInd = 2;
+				board = boardArr[boardInd];
+			}
+		});
 
 		//initialize key
 		addKeyListener(this);
@@ -580,15 +635,28 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 					p.remove();
 				}
 				else if(pu.getType() == 1){
-					xIncr += 2;
-					yIncr += 2;
+					powerUpTimer = 0;
+					xIncr = powerUpSpeed;
+					yIncr = powerUpSpeed;
 					p.remove();
 				}
 				else{
+					powerUpTimer = 0;
 					System.out.println("invincibility");
 					p.remove();
 				}
 			}
+		}
+		
+		//checks if power up is active
+		if(powerUpTimer < powerUpLimit){
+			powerUpTimer++;
+		}
+		
+		//sets power up stuff back to 0
+		if(powerUpTimer == powerUpLimit){
+			xIncr = testCrab.getXIncr();
+			yIncr = testCrab.getYIncr();
 		}
 
 		//checks for litter hits
