@@ -53,10 +53,10 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 	public BeachGameView(){
 
-		//Timer t = new Timer(10,this);
+		Timer t = new Timer(10,this);
 		//int timeRemaining = 120;
 		//int timeCheck = 0;
-		//t.start();
+		t.start();
 
 		//ImageIcon image = new ImageIcon("background/B3.jpg");
 		//JLabel label = new JLabel();
@@ -145,8 +145,9 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	public void actionPerformed(ActionEvent e) {
 		repaint();
 		if ((xVel < 0 && (crabimg.getXLoc() - crabimg.getXIncr() >= 0)) || 
-				((xVel > 0) && crabimg.getXLoc() + characterWidth + crabimg.getXIncr() <= screenWidth))
+				((xVel > 0) && crabimg.getXLoc() + characterWidth + crabimg.getXIncr() <= screenWidth)){
 			crabimg.moveHorizontal(xVel);
+		}
 
 
 	}
@@ -171,11 +172,9 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		int code = e.getKeyCode();
 		if(code == KeyEvent.VK_LEFT){
 			moveCrabLeft();
-			crabimg.moveHorizontal(crabimg.getXVel());
 		}
 		if(code == KeyEvent.VK_RIGHT){
 			moveCrabRight();
-			crabimg.moveHorizontal(crabimg.getXVel());
 		}
 	}
 
