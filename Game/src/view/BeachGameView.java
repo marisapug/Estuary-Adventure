@@ -1,6 +1,8 @@
 package view;
 
 import model.Barrier;
+import model.BeachBoard;
+import model.BeachCell;
 import model.Grass;
 import model.Seawall;
 import model.Shore;
@@ -41,7 +43,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	JButton ogButton = new JButton("Oyster Gabion");
 	JButton seawallButton = new JButton("Seawall");
 
-	BufferedImage bkg = createImage("background/B3.jpg");
+	BeachBoard board = new BeachBoard(10, 10, screenWidth, screenHeight);
 	Shore shore1 = new Shore();
 
 	ShoreCrab crabimg = new ShoreCrab(screenWidth/2, screenHeight/2-100); 
@@ -103,7 +105,21 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		//g.drawImage(crabImg, crabimg.getXLoc(), crabimg.getYLoc(), characterWidth, characterHeight, this);
 		//g.drawString("Time Remaining: ", timeRemainingLabelXLoc, timeRemainingLabelYLoc);
 		//g.drawString(""+timeRemaining, screenWidth/2 + 120, 10);
-		g.drawImage(bkg, 0,0,screenWidth,screenHeight, this);
+		
+		//drawing BeachBoard
+		for(int i = 0; i < 10; i++){
+			for (int j = 0; j < 10; j++){
+				BeachCell tmp = board.getGrid()[i][j];
+				if(tmp.getHeight() * j > crabimg.getYLoc())
+					g.setColor(Color.yellow);
+				else if(tmp.getHeight() * j < (screenHeight / 16))
+					g.setColor(Color.cyan);
+				else
+					g.setColor(Color.blue);
+				g.fillRect(tmp.getWidth() * i, tmp.getHeight() * j, tmp.getWidth(), tmp.getHeight());
+			}
+		}
+		
 		g.drawImage(crabImg, crabimg.getXLoc(), crabimg.getYLoc(), characterWidth, characterHeight, this);
 		//renderBarriers(g, crabimg);
 //		if (grassCheck == true){

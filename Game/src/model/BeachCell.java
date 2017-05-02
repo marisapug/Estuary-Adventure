@@ -9,11 +9,20 @@ public class BeachCell {
 	// int xLoc for pixels
 	//int yLoc for pixels
 
-	BeachCell(int xInp, int yInp, String matter){
+	BeachCell(int xInp, int yInp, int sWidth, int sHeight, String matter){
 		x = xInp;
 		y = yInp;
 		matterType = matter;
-		width = 200;
-		height = 200;
+		width = sWidth / 10; //magic num
+		height = sHeight / 10;
+	}
+	
+	//getters
+	public int getWidth(){
+		return width;
+	}
+	
+	public int getHeight(){
+		return height;
 	}
 }
