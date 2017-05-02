@@ -17,9 +17,6 @@ public class MazeBoard {
 	int screenWidth;
 	int screenHeight;
 	
-	// MazeCell endCell = board.getGrid()[board.getXIndex][board.getYIndex]
-	// endCell.getXLoc();
-	// endCell.getYLoc();
 	
 	ArrayList<MazeCell> stack = new ArrayList<MazeCell>();
 	ArrayList<MazeCell> correctPath = new ArrayList<MazeCell>();

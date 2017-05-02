@@ -10,7 +10,6 @@ import model.Predator;
 import model.Litter;
 
 import java.awt.BasicStroke;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -171,15 +170,15 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private BufferedImage bassPredUp = createImage("characters/fish_bass_up.png");
 	private BufferedImage bassPredDown = createImage("characters/fish_bass_down.png");
 
-	private BufferedImage groupPredRight = createImage("characters/fish_group_right.png");
-	private BufferedImage groupPredLeft = createImage("characters/fish_group_left.png");
-	private BufferedImage groupPredUp = createImage("characters/fish_group_up.png");
-	private BufferedImage groupPredDown = createImage("characters/fish_group_down.png");
+	private BufferedImage pickPredRight = createImage("characters/fish_pickerel_right.png");
+	private BufferedImage pickPredLeft = createImage("characters/fish_pickerel_left.png");
+	private BufferedImage pickPredUp = createImage("characters/fish_pickerel_up.png");
+	private BufferedImage pickPredDown = createImage("characters/fish_pickerel_down.png");
 
 	//Predator Pic Array,  0 = bass, 1 = group
 	private BufferedImage[][] preds = {
 			{bassPredUp,bassPredDown,bassPredRight,bassPredLeft},
-			{groupPredUp,groupPredDown,groupPredRight,groupPredLeft}
+			{pickPredUp,pickPredDown,pickPredRight,pickPredLeft}
 	};
 
 	//Features bar
@@ -243,8 +242,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	
 	private int powerUpSpeed = 8;
 	
-	private int powerUpLimit = 1000;
-	private int powerUpTimer = powerUpLimit;
+	private int powerUpSpeedLimit = 1000;
+	private int powerUpSpeedTimer = powerUpSpeedLimit;
+	
+	private int powerUpInvLimit = 500;
+	private int powerUpInvTimer = powerUpInvLimit;
 
 	//StartScreen
 	private boolean startScreenVisible;
@@ -590,7 +592,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 		}//else
 
-
 	}//paintComponent
 
 
@@ -616,6 +617,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			t.stop();
 		}
 
+		//Swim speed (rendering crab movement)
 		if(swimTimer > 0){
 			swimTimer--;
 		}
@@ -635,28 +637,33 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 					p.remove();
 				}
 				else if(pu.getType() == 1){
-					powerUpTimer = 0;
+					powerUpSpeedTimer = 0;
 					xIncr = powerUpSpeed;
 					yIncr = powerUpSpeed;
 					p.remove();
 				}
 				else{
-					powerUpTimer = 0;
+					powerUpInvTimer = 0;
 					System.out.println("invincibility");
 					p.remove();
 				}
 			}
 		}
 		
-		//checks if power up is active
-		if(powerUpTimer < powerUpLimit){
-			powerUpTimer++;
+		//checks if speed power up is active
+		if(powerUpSpeedTimer < powerUpSpeedLimit){
+			powerUpSpeedTimer++;
 		}
 		
-		//sets power up stuff back to 0
-		if(powerUpTimer == powerUpLimit){
+		//sets crabs speed back to initial (after power up)
+		if(powerUpSpeedTimer == powerUpSpeedLimit){
 			xIncr = testCrab.getXIncr();
 			yIncr = testCrab.getYIncr();
+		}
+		
+		//checks if invincibiltiy power up is active
+		if(powerUpInvTimer < powerUpInvLimit){
+			powerUpInvTimer++;
 		}
 
 		//checks for litter hits
@@ -671,6 +678,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			hitTimer = 0;
 		}
 
+		//checks if crab can be hit for this period of time
 		if(hitTimer < cantBeHitLim){
 			hitTimer++;
 		}
@@ -806,15 +814,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		litterIcons.add(createImage("MazeExtraImgs/soda.png"));
 		litterIcons.add(createImage("mazeExtraImgs/crumbledpaper.png"));
 		return litterIcons;
-	}
-
-
-	public ArrayList<BufferedImage> makePowerUps(){
-		ArrayList<BufferedImage> powerUps = new ArrayList<BufferedImage>();
-		powerUps.add(createImage("MazeExtraImgs/apple.png"));
-		powerUps.add(createImage("MazeExtraImgs/chipBag.png"));
-		powerUps.add(createImage("MazeExtraImgs/soda.png"));
-		return powerUps;
 	}
 
 
