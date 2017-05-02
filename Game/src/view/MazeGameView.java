@@ -295,6 +295,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private JButton easyButton;
 	private JButton mediumButton;
 	private JButton hardButton;
+	private JButton startButton;
 
 	//=================================================================//
 
@@ -317,7 +318,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		mediumButton.setFocusable(false);
 		hardButton = new JButton("Hard");
 		hardButton.setFocusable(false);
-
+		
+		startButton = new JButton("Start Game!");
+		startButton.setFocusable(false);
+		
 		//StartScreen Visibility
 		startScreenVisible = true;
 		this.add(bCrabButton);
@@ -325,7 +329,14 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		this.add(easyButton);
 		this.add(mediumButton);
 		this.add(hardButton);
-
+		this.add(startButton);
+		
+		//Button Visibility
+		easyButton.setVisible(false);
+		mediumButton.setVisible(false);
+		hardButton.setVisible(false);
+		startButton.setVisible(false);
+		
 		//Button Listeners
 		bCrabButton.addActionListener(new ActionListener(){
 			@Override
@@ -334,10 +345,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				testCrab.setType(1);
 				testCrab.setDir(0);
 				crabNumPics = 3;
-				remove(bCrabButton);
 				remove(hCrabButton);
-				startScreenVisible = false;
-				timeRemaining = totalTime;
+				remove(bCrabButton);
+				easyButton.setVisible(true);
+				mediumButton.setVisible(true);
+				hardButton.setVisible(true);
 			}
 
 		});
@@ -349,10 +361,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				testCrab.setType(0);
 				testCrab.setDir(2);
 				crabNumPics = 2;
-				remove(bCrabButton);
 				remove(hCrabButton);
-				startScreenVisible = false;
-				timeRemaining = totalTime;
+				remove(bCrabButton);
+				easyButton.setVisible(true);
+				mediumButton.setVisible(true);
+				hardButton.setVisible(true);
 			}
 
 		});
@@ -360,6 +373,35 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		easyButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				boardInd = 0;
+				remove(easyButton);
+				remove(mediumButton);
+				remove(hardButton);
+				startButton.setVisible(true);
+			}
+		});
+
+		mediumButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				boardInd = 1;
+				remove(easyButton);
+				remove(mediumButton);
+				remove(hardButton);
+				startButton.setVisible(true);
+			}
+		});
+		
+		hardButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				boardInd = 2;
+				remove(easyButton);
+				remove(mediumButton);
+				remove(hardButton);
+				startButton.setVisible(true);
+			}
+		});
+		
+		startButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
 				board = boardArr[boardInd];
 				grids = board.getGrid(); 
 				mazeWalls = board.getMazeWalls();
@@ -367,18 +409,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				numCols = board.getNumCols();
 				gameLitter = board.getGameLitter();
 				predators = board.getPredators();
-			}
-		});
-
-		mediumButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				boardInd = 1;
-			}
-		});
-		
-		hardButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				boardInd = 2;
+				gamePowerUps = board.getGamePowerUps();
+				endCell  = grids[board.getXEnd()][board.getYEnd()];
+				startScreenVisible = false;
+				remove(startButton);
+				timeRemaining = totalTime;
 			}
 		});
 
