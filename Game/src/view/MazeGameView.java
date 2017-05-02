@@ -9,6 +9,7 @@ import model.PowerUp;
 import model.Predator;
 import model.Litter;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -49,20 +50,14 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private BufferedImage backGroundImg = createImage("background/underwater2.png");
 	
 	//Maze Difficulties
-	private int easyNumRows = 10;
-	private int easyNumCols = 10;
-	private int mediumNumRows = 20;
-	private int mediumNumCols = 20;
-	private int hardNumRows = 25;
-	private int hardNumCols = 25;
-	
-	private int cellWidth = 200;
-	private int cellHeight = 200;
+
+	private int cellWidth;
+	private int cellHeight;
 	
 	//Maze Boards
-	private MazeBoard easyBoard = new MazeBoard(easyNumRows,easyNumCols, cellWidth, cellHeight,screenWidth,screenHeight);
-	private MazeBoard mediumBoard = new MazeBoard(mediumNumRows,mediumNumCols, cellWidth, cellHeight,screenWidth,screenHeight);
-	private MazeBoard hardBoard = new MazeBoard(hardNumRows,hardNumCols, cellWidth, cellHeight,screenWidth,screenHeight);
+	private MazeBoard easyBoard = new MazeBoard(0, screenWidth,screenHeight);
+	private MazeBoard mediumBoard = new MazeBoard(1, screenWidth,screenHeight);
+	private MazeBoard hardBoard = new MazeBoard(2, screenWidth,screenHeight);
 	private MazeBoard[] boardArr = {easyBoard, mediumBoard, hardBoard};
 	private int boardInd = 1;
 	
@@ -404,6 +399,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				mazeWalls = board.getMazeWalls();
 				numRows = board.getNumRows();
 				numCols = board.getNumCols();
+				cellWidth = board.getCellWidth();
+				cellHeight = board.getCellHeight();
 				gameLitter = board.getGameLitter();
 				litterWidth = gameLitter[0].getWidth();
 				litterHeight = gameLitter[0].getHeight();
@@ -607,8 +604,14 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 
 			//HIT BLINKING OF CRAB
-			if(hitTimer%(cantBeHitLim/20) == 0)
+			if(powerUpInvTimer != powerUpInvLimit){
+				g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float).5));
+			}else{
+				g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)1));
+			}
+			if(hitTimer%(cantBeHitLim/20) == 0){
 				g.drawImage(crabImg, testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight, this);
+			}
 
 
 			//END SCREEN DRAWING
@@ -687,7 +690,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				}
 				else{
 					powerUpInvTimer = 0;
-					System.out.println("invincibility");
 					p.remove();
 				}
 			}
@@ -710,15 +712,17 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		}
 
 		//checks for litter hits
-		if(board.hitAnyLitter(characterXLoc, characterYLoc, characterWidth, characterHeight) && hitTimer == cantBeHitLim){
-			health -= 1;
-			hitTimer = 0;
-		}
-
-		//checks for predator hits
-		if(board.hitAnyPreds(characterXLoc, characterYLoc, characterWidth, characterHeight) && hitTimer == cantBeHitLim){
-			health -= 1;
-			hitTimer = 0;
+		if(hitTimer == cantBeHitLim && powerUpInvTimer == powerUpInvLimit){
+			if(board.hitAnyLitter(characterXLoc, characterYLoc, characterWidth, characterHeight)){
+				health -= 1;
+				hitTimer = 0;
+			}
+	
+			//checks for predator hits
+			if(board.hitAnyPreds(characterXLoc, characterYLoc, characterWidth, characterHeight)){
+				health -= 1;
+				hitTimer = 0;
+			}
 		}
 
 		//checks if crab can be hit for this period of time

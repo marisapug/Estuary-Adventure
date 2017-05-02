@@ -6,16 +6,24 @@ import java.awt.Graphics2D;
 import java.util.*;
 
 public class MazeBoard {
-	int numRows;
-	int numCols;
-	int cellWidth;
-	int cellHeight;
-	int xStartIndex;
-	int yStartIndex;
-	int xEndIndex;
-	int yEndIndex;
-	int screenWidth;
-	int screenHeight;
+	private int numRows;
+	private int numCols;
+	private int xStartIndex;
+	private int yStartIndex;
+	private int xEndIndex;
+	private int yEndIndex;
+	private int screenWidth;
+	private int screenHeight;
+	private static int cellWidth = 200;
+	private static int cellHeight = 200;
+	
+	private int easyNumRows = 10;
+	private int easyNumCols = 10;
+	private int mediumNumRows = 20;
+	private int mediumNumCols = 20;
+	private int hardNumRows = 25;
+	private int hardNumCols = 25;
+	
 	
 	
 	ArrayList<MazeCell> stack = new ArrayList<MazeCell>();
@@ -42,15 +50,23 @@ public class MazeBoard {
 	private ArrayList<PowerUp> gamePowerUps = new ArrayList<PowerUp>();
 
 	//CONSTRUCTOR initializes board
-	public MazeBoard(int rows, int cols, int width, int height, int sWidth, int sHeight){
-		numRows = rows;
-		numCols = cols;
-		cellWidth = width;
-		cellHeight = height;
+	public MazeBoard(int dif, int sWidth, int sHeight){
+		
+		if(dif == 0){
+		numRows = easyNumRows;
+		numCols = easyNumCols;
+		}else if(dif == 1){
+		numRows = mediumNumRows;
+		numCols = mediumNumCols;
+		}else{
+		numRows = hardNumRows;
+		numCols = hardNumCols;
+		}
+		
 		xStartIndex = 0;
 		yStartIndex = 0;
-		xEndIndex = rows-1;
-		yEndIndex = cols-1;
+		xEndIndex = numRows-1;
+		yEndIndex = numCols-1;
 		//pixels the litter moves
 		
 		screenWidth = sWidth;
@@ -71,7 +87,7 @@ public class MazeBoard {
 		setWalls();
 		
 		//generates litter 
-		numLitter = rows;
+		numLitter = numRows;
 		gameLitter = generateLitter(numLitter);
 		
 		//power ups initialization
@@ -79,7 +95,7 @@ public class MazeBoard {
 		generatePowerUps(numPowerUps);
 		
 		//predator initialization
-		numPred = rows;
+		numPred = numRows;
 		predSpeed = 3;
 		predWidth = 70;
 		predHeight = 70;
@@ -515,6 +531,14 @@ public class MazeBoard {
 
 	public int getXEnd(){
 		return xEndIndex;
+	}
+	
+	public int getCellWidth(){
+		return cellWidth;
+	}
+	
+	public int getCellHeight(){
+		return cellHeight;
 	}
 	
 	public ArrayList<MazeCell> getCorrectPath(){
