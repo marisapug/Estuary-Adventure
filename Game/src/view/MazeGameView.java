@@ -67,11 +67,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int boardInd = 1;
 	
 	//create the maze board
-	private MazeBoard board = boardArr[boardInd];
-	private MazeCell[][] grids = board.getGrid(); 
-	private ArrayList<MazeWall> mazeWalls = board.getMazeWalls();
-	private int numRows = board.getNumRows();
-	private int numCols = board.getNumCols();
+	private MazeBoard board;// = boardArr[boardInd];
+	private MazeCell[][] grids;// = board.getGrid(); 
+	private ArrayList<MazeWall> mazeWalls;// = board.getMazeWalls();
+	private int numRows;// = board.getNumRows();
+	private int numCols;// = board.getNumCols();
 
 	//miniMap 
 	private MiniMap miniMap = new MiniMap();
@@ -189,15 +189,15 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	//Litter
 	private ArrayList<BufferedImage> litterTypes = makeLitterList();
 	Random rand = new Random();
-	Litter[] gameLitter = board.getGameLitter();
-	private int litterWidth = gameLitter[0].getWidth();
-	private int litterHeight = gameLitter[0].getHeight();
+	Litter[] gameLitter;// = board.getGameLitter();
+	private int litterWidth;// = gameLitter[0].getWidth();
+	private int litterHeight;// = gameLitter[0].getHeight();
 	private int xLitterMax = 0;
 	private int xLitterMin = 0;
 
 
 	//Predator Array List
-	private ArrayList<Predator> predators = board.getPredators();
+	private ArrayList<Predator> predators;// = board.getPredators();
 
 	//Time Remaining Label
 	private final String timeRemainingLabel = "Time Remaining: ";
@@ -221,9 +221,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private final int healthImgYLoc = 10;
 
 	//PowerUps
-	private ArrayList<PowerUp> gamePowerUps = board.getGamePowerUps();
-	private int powerUpWidth = gamePowerUps.get(0).getWidth();
-	private int powerUpHeight = gamePowerUps.get(0).getHeight();
+	private ArrayList<PowerUp> gamePowerUps;// = board.getGamePowerUps();
+	private int powerUpWidth;// = gamePowerUps.get(0).getWidth();
+	private int powerUpHeight;// = gamePowerUps.get(0).getHeight();
 	private BufferedImage powerUpImg = createImage("MazeExtraImgs/powerup.png");
 
 	private String powerHealthText = "Extra Life!";
@@ -279,7 +279,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int endLoseTextY = screenHeight/4 + 100;
 
 	//End Cell
-	private MazeCell endCell  = grids[board.getXEnd()][board.getYEnd()];
+	private MazeCell endCell;//  = grids[board.getXEnd()][board.getYEnd()];
 
 	private BufferedImage endGrassImg = createImage("MazeExtraImgs/seagrass.png");
 
@@ -302,9 +302,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 	//Constructor
 	public MazeGameView(){
-
-		//Start Timer
-		t.start();
 
 		//Buttons
 		hCrabButton = new JButton("Horshoe Crab");
@@ -408,12 +405,19 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				numRows = board.getNumRows();
 				numCols = board.getNumCols();
 				gameLitter = board.getGameLitter();
+				litterWidth = gameLitter[0].getWidth();
+				litterHeight = gameLitter[0].getHeight();
 				predators = board.getPredators();
 				gamePowerUps = board.getGamePowerUps();
+				powerUpWidth = gamePowerUps.get(0).getWidth();
+				powerUpHeight = gamePowerUps.get(0).getHeight();
 				endCell  = grids[board.getXEnd()][board.getYEnd()];
 				startScreenVisible = false;
 				remove(startButton);
 				timeRemaining = totalTime;
+				
+				//Start Timer
+				t.start();
 			}
 		});
 
@@ -615,7 +619,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				if(hasWon){
 					g.setColor(Color.BLUE);
 					g.drawString(endWinText, endTitleStringX, endTitleStringY);
-					g.drawString(endWinTimeText + (120 - timeRemaining) + " seconds", endWinTimeTextX, endWinTimeTextY);
+					g.drawString(endWinTimeText + (totalTime - timeRemaining) + " seconds", endWinTimeTextX, endWinTimeTextY);
 				}
 				else{
 					g.setColor(Color.RED);
@@ -635,7 +639,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 
 	public void actionPerformed(ActionEvent arg0) {
-
+		
 		timeCheck++;
 		if(timeCheck == 100){
 			timeRemaining--;
