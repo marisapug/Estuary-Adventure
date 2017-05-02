@@ -106,6 +106,13 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int salinityTitleFontSize = 15;
 	private String salinityTitleFontStyle = "TimesRoman";
 
+	//Salinity Warning
+	private String salinityWarningText = "Watch out! Make sure to monitor your salinity meter!";
+	private int salinityWarningTimeLimit = 500;
+	private int salinityWarningTimeTimer = salinityWarningTimeLimit;
+	private boolean firstTimeWrongSalinity = true;
+	private int salinityWarningTextX = screenWidth/2 - 300;
+	private int salinityWarningTextY = screenHeight/4 + 100;
 
 
 	//Horseshoe Crab images
@@ -583,6 +590,15 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			else{
 				g2.drawRect(redMeterX,meterY,meterWidth,meterHeight);
 				g.drawString(salinityTextArray[testCrab.getType()][1], wrongSalinityTextX, wrongSalinityTextY);
+				if(firstTimeWrongSalinity){
+					salinityWarningTimeTimer = 0;
+					firstTimeWrongSalinity = false;
+				}
+			}
+			if(salinityWarningTimeTimer != salinityWarningTimeLimit){
+				g.setColor(Color.WHITE);
+				g.setFont(new Font(endTitleFontStyle,Font.BOLD,endTitleFontSize));
+				g.drawString(salinityWarningText,salinityWarningTextX,salinityWarningTextY);
 			}
 
 
@@ -612,7 +628,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			if(hitTimer%(cantBeHitLim/20) == 0){
 				g.drawImage(crabImg, testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight, this);
 			}
-
 
 			//END SCREEN DRAWING
 			if(endScreenVisible){
@@ -647,6 +662,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		if(timeCheck == 100){
 			timeRemaining--;
 			timeCheck = 0;
+		}
+		
+		//salinityWarningTimeTimer Tick
+		if(salinityWarningTimeTimer != salinityWarningTimeLimit){
+			salinityWarningTimeTimer++;
 		}
 
 		//Checks if you lose
