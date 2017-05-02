@@ -64,14 +64,14 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private MazeBoard mediumBoard = new MazeBoard(mediumNumRows,mediumNumCols, cellWidth, cellHeight,screenWidth,screenHeight);
 	private MazeBoard hardBoard = new MazeBoard(hardNumRows,hardNumCols, cellWidth, cellHeight,screenWidth,screenHeight);
 	private MazeBoard[] boardArr = {easyBoard, mediumBoard, hardBoard};
-	private int boardInd = 0;
+	private int boardInd = 1;
 	
 	//create the maze board
-	private int numRows = 10;
-	private int numCols = 10;
 	private MazeBoard board = boardArr[boardInd];
 	private MazeCell[][] grids = board.getGrid(); 
 	private ArrayList<MazeWall> mazeWalls = board.getMazeWalls();
+	private int numRows = board.getNumRows();
+	private int numCols = board.getNumCols();
 
 	//miniMap 
 	private MiniMap miniMap = new MiniMap();
@@ -322,9 +322,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		startScreenVisible = true;
 		this.add(bCrabButton);
 		this.add(hCrabButton);
-		//this.add(easyButton);
-		//this.add(mediumButton);
-		//this.add(hardButton);
+		this.add(easyButton);
+		this.add(mediumButton);
+		this.add(hardButton);
 
 		//Button Listeners
 		bCrabButton.addActionListener(new ActionListener(){
@@ -361,20 +361,24 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			public void actionPerformed(ActionEvent e){
 				boardInd = 0;
 				board = boardArr[boardInd];
+				grids = board.getGrid(); 
+				mazeWalls = board.getMazeWalls();
+				numRows = board.getNumRows();
+				numCols = board.getNumCols();
+				gameLitter = board.getGameLitter();
+				predators = board.getPredators();
 			}
 		});
 
 		mediumButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				boardInd = 1;
-				board = boardArr[boardInd];
 			}
 		});
 		
 		hardButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				boardInd = 2;
-				board = boardArr[boardInd];
 			}
 		});
 
