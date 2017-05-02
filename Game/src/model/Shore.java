@@ -3,18 +3,42 @@ package model;
 import java.util.ArrayList;
 
 public class Shore {
-	ArrayList<Barrier> shore;
+	ArrayList<Grass> grassList = new ArrayList<Grass>();
+	ArrayList<Seawall> wallList = new ArrayList<Seawall>();
+	ArrayList<OysterGabion> gabionList = new ArrayList<OysterGabion>();
 
-	public void addBarr(Barrier b){
-		shore.add(b);
+	void remGrass(Grass g){ //update to make sure every "dead" barrier is being removed from the list
+		grassList.remove(g);
+	}
+	
+	void remWall(Seawall g){ //update to make sure every "dead" barrier is being removed from the list
+		grassList.remove(g);
+	}
+	
+	void remOyster(OysterGabion g){ //update to make sure every "dead" barrier is being removed from the list
+		grassList.remove(g);
 	}
 
-	void remBarr(Barrier b){ //update to make sure every "dead" barrier is being removed from the list
-		shore.remove(b);
+	public ArrayList<Grass> getGrass() {
+		return grassList;
 	}
-
-	public ArrayList<Barrier> getShore() {
-		return shore;
+	
+	public ArrayList<Seawall> getSeawall() {
+		return wallList;
+	}
+	
+	public ArrayList<OysterGabion> getGab() {
+		return gabionList;
+	}
+	
+	public void addGrass(int x, int y){
+		Grass g1 = new Grass(x,y);
+		grassList.add(g1);
+	}
+	
+	public void addWall(int x, int y){
+		Seawall s1 = new Seawall(x,y);
+		wallList.add(s1);
 	}
 
 }
