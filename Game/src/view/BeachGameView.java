@@ -6,6 +6,7 @@ import model.Seawall;
 import model.Shore;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -32,7 +33,10 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private static final long serialVersionUID = 1L;
 	int screenWidth = MainFrame.getFrameWidth();
 	int screenHeight = MainFrame.getFrameHeight();
-
+	boolean check = false;
+	boolean grassCheck = false;
+	boolean oyCheck = false;
+	boolean wallCheck = false;
 	JButton grassButton = new JButton("Grass");
 	JButton ogButton = new JButton("Oyster Gabion");
 	JButton seawallButton = new JButton("Seawall");
@@ -42,6 +46,8 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 	ShoreCrab crabimg = new ShoreCrab(screenWidth/2, screenHeight/2-100); 
 	BufferedImage crabImg = createImage("characters/lilcrab.png");
+	BufferedImage grassImg = createImage("characters/unnamed-1.png");
+	BufferedImage wallImg = createImage("characters/seawall.png");
 	int characterWidth = 100;
 	int characterHeight = 100;
 	int characterXLoc = crabimg.getXLoc();
@@ -50,29 +56,29 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	int xIncr = crabimg.getYIncr();
 	int xVel = crabimg.getXVel();
 	int yVel = crabimg.getYVel();
+	int timeRemaining = 120;
+	int timeCheck = 0;
 
 	public BeachGameView(){
 
 		Timer t = new Timer(10,this);
-		//int timeRemaining = 120;
-		//int timeCheck = 0;
 		t.start();
+		Shore s1 = new Shore();
+		
+		grassButton.setFocusable(false);
+		ogButton.setFocusable(false);
+		seawallButton.setFocusable(false);
 
-		//ImageIcon image = new ImageIcon("background/B3.jpg");
-		//JLabel label = new JLabel();
-		//ImageIcon bucket1 = new ImageIcon (getClass().getResource("lilcrab.png"));
-		//JLabel label2 = new JLabel(bucket1, JLabel.CENTER);
-		//label.setLayout(new FlowLayout());
 		JLabel score = new JLabel("Score: ");
 		JLabel time = new JLabel("Time: ");
-		//add(label);
 		add(score);
 		add(time);
 		add(grassButton, BorderLayout.SOUTH);
 		add(ogButton, BorderLayout.SOUTH);
 		add(seawallButton, BorderLayout.SOUTH);
-		//label.setVisible(true);
-		//label.add(label2, BorderLayout.NORTH);
+		setupListeners();
+		
+		
 
 		//t.start();
 		addKeyListener(this);
@@ -99,20 +105,34 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		//g.drawString(""+timeRemaining, screenWidth/2 + 120, 10);
 		g.drawImage(bkg, 0,0,screenWidth,screenHeight, this);
 		g.drawImage(crabImg, crabimg.getXLoc(), crabimg.getYLoc(), characterWidth, characterHeight, this);
-		//renderBarriers(shore1, g, crabimg);
-	}
-			
-		public void renderBarriers(Shore s, Graphics g, ShoreCrab c){
-			Barrier[] barrAr = (Barrier[]) s.getShore().toArray();
-			for (Barrier b : barrAr){
-				if (b instanceof Grass){
-					g.drawRect(c.getXLoc(),c.getYLoc(),100,100);
-				}
-				else if (b instanceof Seawall){
-					g.drawRect(c.getXLoc(),c.getYLoc(),200,200);
-				}
-				else return;
-			}
+		//renderBarriers(g, crabimg);
+//		if (grassCheck == true){
+//			g.drawRect(crabimg.getXLoc(),crabimg.getYLoc()+105,70,70);
+//		}
+//		if (wallCheck == true){
+//			g.drawRect(crabimg.getXLoc(),crabimg.getYLoc()+50,110,110);
+//		}
+//		if (grassCheck == true){
+//			while (shore1.getGrass().size() != 0)
+//				for (Grass k : shore1.getGrass()){
+//					g.drawRect(k.getXLoc(), k.getYLoc(), 100, 100);
+//				}
+//			}
+		for (int i = 0; i < shore1.getGrass().size(); i++){
+			int x = (shore1.getGrass().get(i)).getXLoc();
+			int y = (shore1.getGrass().get(i)).getYLoc();
+			g.drawImage(grassImg, x, y, 50,50, this);
+		}
+		for (int i = 0; i < shore1.getSeawall().size(); i++){
+			int x = (shore1.getSeawall().get(i)).getXLoc();
+			int y = (shore1.getSeawall().get(i)).getYLoc();
+			g.drawImage(wallImg, x, y, 75, 75, this);
+		}
+		
+		}
+		
+		public void renderBarriers(Graphics g, ShoreCrab c){
+			g.drawRect(c.getXLoc(),c.getYLoc()+105,70,70);
 		}
 
 	//Set Button Listeners 
@@ -120,22 +140,26 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		grassButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Grass g1 = new Grass();
-				shore1.addBarr(g1);
+				grassCheck = true;
+				shore1.addGrass(crabimg.getXLoc(), crabimg.getYLoc() + 100);
+				repaint();
+				
 			}
 		});
 		ogButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//tbd
+				ogButton.setFocusable(false);
+				repaint();
 			}
 		});
 		seawallButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// tbd
-				//Seawall s1 = new Seawall();
-				//shore1.addBarr(s1);
+				seawallButton.setFocusable(false);
+				wallCheck = true;
+				shore1.addWall(crabimg.getXLoc(), crabimg.getYLoc()+ 100);
+				repaint();
 			}
 		});
 
@@ -149,9 +173,22 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				((xVel > 0) && crabimg.getXLoc() + characterWidth + crabimg.getXIncr() <= screenWidth)){
 			crabimg.moveHorizontal(xVel);
 		}
+		if (e.getSource() == grassButton){
+			grassCheck = true;
+			repaint();
+		}
+		if(e.getSource() == ogButton){
+			oyCheck = true;
+			repaint();
+		}
+		if(e.getSource() == seawallButton){
+			wallCheck = true;
+			repaint();
+		}
 
 
 	}
+	
 
 	@Override
 	public void keyTyped(KeyEvent e) {
