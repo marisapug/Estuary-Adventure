@@ -370,9 +370,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		easyButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				boardInd = 0;
-				remove(easyButton);
-				remove(mediumButton);
-				remove(hardButton);
+				easyButton.setVisible(false);
+				mediumButton.setVisible(false);
+				hardButton.setVisible(false);
 				startButton.setVisible(true);
 			}
 		});
@@ -380,9 +380,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		mediumButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				boardInd = 1;
-				remove(easyButton);
-				remove(mediumButton);
-				remove(hardButton);
+				easyButton.setVisible(false);
+				mediumButton.setVisible(false);
+				hardButton.setVisible(false);
 				startButton.setVisible(true);
 			}
 		});
@@ -390,9 +390,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		hardButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				boardInd = 2;
-				remove(easyButton);
-				remove(mediumButton);
-				remove(hardButton);
+				easyButton.setVisible(false);
+				mediumButton.setVisible(false);
+				hardButton.setVisible(false);
 				startButton.setVisible(true);
 			}
 		});
