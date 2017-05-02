@@ -24,6 +24,9 @@ public class MazeBoard {
 	private int hardNumRows = 25;
 	private int hardNumCols = 25;
 	
+	private int characterW;
+	private int characterH;
+	
 	
 	
 	ArrayList<MazeCell> stack = new ArrayList<MazeCell>();
@@ -62,6 +65,9 @@ public class MazeBoard {
 		numRows = hardNumRows;
 		numCols = hardNumCols;
 		}
+		
+		characterW = cellWidth/4;
+		characterH = cellHeight/4;
 		
 		xStartIndex = 0;
 		yStartIndex = 0;
@@ -539,6 +545,14 @@ public class MazeBoard {
 	
 	public int getCellHeight(){
 		return cellHeight;
+	}
+	
+	public int getCharacterWidth(){
+		return characterW;
+	}
+	
+	public int getCharacterHeight(){
+		return characterH;
 	}
 	
 	public ArrayList<MazeCell> getCorrectPath(){

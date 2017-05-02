@@ -157,8 +157,14 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private Crab testCrab = new Crab(5,0,screenWidth/2 + 10 ,screenHeight/2 + 10); //health, age
 	private int crabDir;
 	private BufferedImage crabImg;
-	private int characterWidth = 50;
-	private int characterHeight = 50;
+	private int characterWidth;
+	private int characterHeight;
+	private int smallWidth;
+	private int smallHeight;
+	private int mediumWidth;
+	private int mediumHeight;
+	private int largeWidth;
+	private int largeHeight;
 	private int characterXLoc = testCrab.getXLoc();
 	private int characterYLoc = testCrab.getYLoc();
 	private int yIncr = testCrab.getXIncr();
@@ -298,6 +304,13 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private JButton mediumButton;
 	private JButton hardButton;
 	private JButton startButton;
+	
+	//Age State
+	private ArrayList<MazeCell> ageStateCells = new ArrayList<MazeCell>();
+	private int ageStateCellOriginalCount;
+	private int ageStateCellMediumCount;
+	private int ageStateCellLargeCount;
+	private int ageStateCellCurrentCount;
 
 	//=================================================================//
 
@@ -409,6 +422,16 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				cellWidth = board.getCellWidth();
 				cellHeight = board.getCellHeight();
 				gameLitter = board.getGameLitter();
+				
+				smallWidth = board.getCharacterWidth()/3;
+				smallHeight = board.getCharacterHeight()/3;
+				mediumWidth = board.getCharacterWidth()/2;
+				mediumHeight = board.getCharacterHeight()/2;
+				largeWidth = board.getCharacterWidth();
+				largeHeight = board.getCharacterHeight();
+				characterWidth = smallWidth;
+				characterHeight = smallHeight;
+				
 				litterWidth = gameLitter[0].getWidth();
 				litterHeight = gameLitter[0].getHeight();
 				predators = board.getPredators();
@@ -416,6 +439,14 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				powerUpWidth = gamePowerUps.get(0).getWidth();
 				powerUpHeight = gamePowerUps.get(0).getHeight();
 				endCell  = grids[board.getXEnd()][board.getYEnd()];
+				
+				for(MazeCell m: board.getCorrectPath())
+					ageStateCells.add(m);
+				
+				ageStateCellOriginalCount = board.getCorrectPath().size();
+				ageStateCellCurrentCount = ageStateCells.size();
+				ageStateCellMediumCount = ageStateCellOriginalCount/3 * 2;
+				ageStateCellLargeCount = ageStateCellOriginalCount/3;
 				startScreenVisible = false;
 				remove(startButton);
 				timeRemaining = totalTime;
@@ -664,6 +695,24 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			timeCheck = 0;
 		}
 		
+		//updates Age State
+		Iterator<MazeCell> m = ageStateCells.iterator();
+		while(m.hasNext()){
+			MazeCell temp = m.next();
+			if(board.inWhichCell(characterXLoc, characterYLoc) == temp){
+				m.remove();
+				ageStateCellCurrentCount--;
+			}
+		}
+
+		if(ageStateCellCurrentCount <= ageStateCellLargeCount && characterWidth != largeWidth){
+			characterWidth = largeWidth;
+			characterHeight = largeHeight;
+		} else if(ageStateCellCurrentCount <= ageStateCellMediumCount && characterWidth != mediumWidth){
+			characterWidth = mediumWidth;
+			characterHeight = mediumHeight;
+		}
+
 		//salinityWarningTimeTimer Tick
 		if(salinityWarningTimeTimer != salinityWarningTimeLimit){
 			salinityWarningTimeTimer++;
