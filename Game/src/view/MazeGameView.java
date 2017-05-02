@@ -708,7 +708,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		if(ageStateCellCurrentCount <= ageStateCellLargeCount && characterWidth != largeWidth){
 			characterWidth = largeWidth;
 			characterHeight = largeHeight;
-		} else if(ageStateCellCurrentCount <= ageStateCellMediumCount && characterWidth != mediumWidth){
+		} else if(ageStateCellCurrentCount <= ageStateCellMediumCount && characterWidth != mediumWidth && characterWidth != largeWidth){
 			characterWidth = mediumWidth;
 			characterHeight = mediumHeight;
 		}
