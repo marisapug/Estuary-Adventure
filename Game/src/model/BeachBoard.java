@@ -33,7 +33,8 @@ public class BeachBoard {
 	private int smallSpeed = 5;
 	
 	//Wave stuff
-	private boolean[][] waveCell;
+	private WaveCell[] waveCells;
+	private int waveCellWidth;
 	private ArrayList<Wave> gameWaves = new ArrayList<Wave>();
 	private int waveSpeed = 3;
 	
@@ -53,8 +54,9 @@ public class BeachBoard {
 		makeGrid(cellWidth, cellHeight);
 		
 		//initialize something
-		waveCell = new boolean[3][numCols];
-		setAllWaveCellTrue();
+		waveCells = new WaveCell[numRows];
+		initializeWaveCells();
+		waveCellWidth = waveCells[0].getWidth();
 		
 		initializeCells();
 	}
@@ -108,25 +110,71 @@ public class BeachBoard {
 		}
 	}
 	
+	public WaveCell inWhichWaveCell(int xl){
+		for(int i = 0; i < numRows;i++){
+			if(xl > waveCells[i].getXLoc() && xl < waveCells[i].getXLoc() + waveCellWidth)
+				return waveCells[i];
+		}
+		return null;
+	}
+	
 	
 	//MODIFY AF
 	public void makeWaves(Boat b){
-		BeachCell tempCell = inWhichCell(b.getXLoc() + b.getWidth()/2, screenHeight/2 +10);
+		WaveCell tempCell = inWhichWaveCell(b.getXLoc() + b.getWidth()/2);
 		if(tempCell!=null){
-			Wave tempWave = new Wave(tempCell.getXLoc(), b.getYLoc(), b.getSize(), b.getWidth());
-			if(waveCell[b.getSize()][tempCell.getY()]){
-//				waveCell[b.getSize()][tempCell.getY()] = false;
+			Wave tempWave = new Wave((tempCell.getXLoc() + tempCell.getWidth()/2 - b.getWidth()/2), b.getYLoc(), b.getSize(), b.getWidth());
+			if((b.getSize() == 0 && !tempCell.getHasSmallWave())){
 				gameWaves.add(tempWave);
+				tempCell.setHasSmallWave(true);
+			}
+			else if(b.getSize() == 1 && !tempCell.getHasMediumWave()){
+				gameWaves.add(tempWave);
+				tempCell.setHasMediumWave(true);
+			}
+			else if(b.getSize() == 2 && !tempCell.getHasLargeWave()){
+				gameWaves.add(tempWave);
+				tempCell.setHasLargeWave(true);
+			}
+		}
+	}
+
+	public void resetWaveBasedOnBoatSize(WaveCell cell, int size){
+		if(cell != null){
+			if(size == 0){
+				cell.setHasSmallWave(false);
+			}
+			else if(size == 1){
+				cell.setHasMediumWave(false);
+			}
+			else if(size == 2){
+				cell.setHasLargeWave(false);
+			}
+		}
+	}
+
+	public void resetWaves(Boat b){
+		WaveCell centerCell = inWhichWaveCell(b.getXLoc() + b.getWidth()/2);
+		if(centerCell != null){
+			if(b.getDirection() == 0){
+				WaveCell backCell = inWhichWaveCell(b.getXLoc());
+				if(backCell != centerCell){
+					resetWaveBasedOnBoatSize(backCell, b.getSize());
+				}
+			}
+			else if(b.getDirection() ==1){
+				WaveCell backCell = inWhichWaveCell(b.getXLoc() + b.getWidth());
+				if(backCell != centerCell){
+					resetWaveBasedOnBoatSize(backCell, b.getSize());
+				}
 			}
 		}
 	}
 	
 		//initializes waveCell to false
-	public void setAllWaveCellTrue(){
-		for(int i = 0; i < numCols; i++){
-			for(int j = 0; j < 3; j++){
-			waveCell[j][i] = true;
-			}
+	public void initializeWaveCells(){
+		for(int i = 0; i < numRows; i++){
+			waveCells[i] = new WaveCell(cellWidth, i);
 		}
 	}
 	
@@ -193,8 +241,8 @@ public class BeachBoard {
 		return cellHeight;
 	}
 	
-	public boolean[][] getWaveCell(){
-		return waveCell;
+	public WaveCell[] getWaveCells(){
+		return waveCells;
 	}
 	
 	public int getWaveSpeed(){
