@@ -7,7 +7,7 @@ public class BeachCell {
 	private int yLoc; //location in pixels
 	private int width;
 	private int height;
-	private int cellType; //0 = sand
+	private int cellType; //0 = sand, // 1 = ocean
 	private boolean canHoldGrass = false;
 	private boolean canHoldBarrier = false;
 	private boolean hasGrass = false;
