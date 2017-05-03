@@ -1,7 +1,9 @@
 package model;
 
-public class Grass extends Barrier{
-	boolean isHit;
+public class Grass {
+	private boolean isHit;
+	private int xLoc;
+	private int yLoc;
 	
 	public Grass(int x, int y){
 		isHit = false;
@@ -9,6 +11,7 @@ public class Grass extends Barrier{
 		yLoc = y;
 	}
 	
+	//GETTERS
 	public int getXLoc(){
 		return xLoc;
 	}
@@ -17,6 +20,4 @@ public class Grass extends Barrier{
 		return yLoc;
 	}
 	
-	void die(){}
-
 }

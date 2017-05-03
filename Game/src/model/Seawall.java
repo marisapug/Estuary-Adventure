@@ -8,13 +8,5 @@ public class Seawall extends Barrier {
 		xLoc = x;
 		yLoc = y;
 	}
-
-	public int getXLoc(){
-		return xLoc;
-	}
-	
-	public int getYLoc(){
-		return yLoc;
-	}
 	
 }

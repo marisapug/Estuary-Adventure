@@ -1,11 +1,27 @@
 package model;
 
-public class Barrier extends GameFigure {
-	String barrType;
-	int health;
-	boolean isHit;
+public class Barrier {
+	protected String barrType;
+	protected int health;
+	protected int xLoc;
+	protected int yLoc;
+	protected int width;
+	protected int height;
 	
-	void loseHealth(){}
+	public int getXLoc(){
+		return xLoc;
+	}
 	
-	void breakBarrier(){}
+	public int getYLoc(){
+		return yLoc;
+	}
+	
+	public void setWidth(int w){
+		width = w;
+	}
+	
+	public void setHeight(int h){
+		height = h;
+	}
+	
 }

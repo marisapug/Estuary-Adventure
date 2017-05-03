@@ -6,6 +6,9 @@ public class ShoreCrab extends GameFigure {
 		xLoc = xl;
 		yLoc = yl;
 		xIncr = 6;
+		yIncr = 6;
+		width = 50;
+		height = 50;
 	}
 
 	public int getXLoc() {
@@ -23,10 +26,21 @@ public class ShoreCrab extends GameFigure {
 	public int getYLoc() {
 		return yLoc;
 	}
-
-	public void moveHorizontal(int xVel) {
-		xLoc = xLoc + xVel;
+	
+	public int getWidth(){
+		return width;
 	}
+	
+	public int getHeight(){
+		return height;
+	}
+	
+
+	public void move(int xVel, int yVel) {
+		xLoc = xLoc + xVel;
+		yLoc = yLoc + yVel;
+	}
+	
 	
 	
 

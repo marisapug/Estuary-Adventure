@@ -4,8 +4,8 @@ import model.Barrier;
 import model.BeachBoard;
 import model.BeachCell;
 import model.Grass;
+import model.OysterGabion;
 import model.Seawall;
-import model.Shore;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -33,210 +33,278 @@ import model.ShoreCrab;
 public class BeachGameView extends JPanel implements KeyListener, ActionListener {
 
 	private static final long serialVersionUID = 1L;
+	
+	//=======================================================================//
+	
 	int screenWidth = MainFrame.getFrameWidth();
 	int screenHeight = MainFrame.getFrameHeight();
-	boolean check = false;
-	boolean grassCheck = false;
-	boolean oyCheck = false;
-	boolean wallCheck = false;
-	JButton grassButton = new JButton("Grass");
-	JButton ogButton = new JButton("Oyster Gabion");
-	JButton seawallButton = new JButton("Seawall");
 
-	BeachBoard board = new BeachBoard(10, 10, screenWidth, screenHeight);
-	Shore shore1 = new Shore();
+	int numRows = 10;
+	int numCols = 7;
+	
+	//Timer
+	Timer t = new Timer(10,this);
 
-	ShoreCrab crabimg = new ShoreCrab(screenWidth/2, screenHeight/2-100); 
-	BufferedImage crabImg = createImage("characters/lilcrab.png");
-	BufferedImage grassImg = createImage("characters/unnamed-1.png");
-	BufferedImage wallImg = createImage("characters/seawall.png");
-	int characterWidth = 100;
-	int characterHeight = 100;
-	int characterXLoc = crabimg.getXLoc();
-	int characterYLoc = crabimg.getYLoc();
-	int yIncr = crabimg.getXIncr();
-	int xIncr = crabimg.getYIncr();
-	int xVel = crabimg.getXVel();
-	int yVel = crabimg.getYVel();
-	int timeRemaining = 120;
-	int timeCheck = 0;
+	//BeachBoard
+	private BeachBoard board;
 
+	//BeachGrid
+	private BeachCell[][] grid;
+	private BeachCell crabStartCell;
+	private BeachCell crabTopLeftCell;
+	private BeachCell crabBottomLeftCell;
+	private int cellWidth;
+	private int cellHeight;
+	
+	//Grass and Barrier Images
+	private BufferedImage grassImg = createImage("beachImages/grass.png");
+	private BufferedImage wallImg = createImage("beachImages/seawall.png");
+	private int barrierImgWidth;
+	private int barrierImgHeight;
+	private int grassImgWidth;
+	private int grassImgHeight;
+
+	//ShoreCrab
+	private ShoreCrab crab;
+	
+	private int crabGridStartX;
+	private int crabGridStartY;
+	private int crabGridTopX;
+	private int crabGridTopY;
+	private int crabGridBottomX;
+	private int crabGridBottomY;
+	
+	private BufferedImage crabImg = createImage("characters/bluecrab_0.png");
+	private int crabXVel;
+	private int crabYVel;
+	
+	//JButtons
+	JButton plantButton;
+	JButton gabionButton;
+	JButton seawallButton;
+	
+	//=======================================================================//
+
+	//CONSTRUCTOR
 	public BeachGameView(){
-
-		Timer t = new Timer(10,this);
-		t.start();
-		Shore s1 = new Shore();
-		
-		grassButton.setFocusable(false);
-		ogButton.setFocusable(false);
-		seawallButton.setFocusable(false);
-
-		JLabel score = new JLabel("Score: ");
-		JLabel time = new JLabel("Time: ");
-		add(score);
-		add(time);
-		add(grassButton, BorderLayout.SOUTH);
-		add(ogButton, BorderLayout.SOUTH);
-		add(seawallButton, BorderLayout.SOUTH);
-		setupListeners();
-		
-		
-
-		//t.start();
 		addKeyListener(this);
 		setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
+		
+		
+		//game stuff
+		board = new BeachBoard(numRows,numCols,screenWidth,screenHeight);
+		grid = board.getGrid();
+		crabGridStartX = numRows/2 - 1;
+		crabGridStartY = numCols/2;
+		crabStartCell = grid[crabGridStartX][crabGridStartY];
+		
+		cellWidth = board.getCellWidth();
+		cellHeight = board.getCellHeight();
+		
+		crabGridTopX = 1;
+		crabGridTopY = 0;
+		crabTopLeftCell = grid[crabGridTopX][crabGridTopY];
+		
+		crabGridBottomX = numRows-1;
+		crabGridBottomY = 0;
+		crabBottomLeftCell = grid[crabGridBottomX][crabGridBottomY];
+		
+		crab = new ShoreCrab(crabStartCell.getXLoc(),crabStartCell.getYLoc());
+		crabXVel = crab.getXVel();
+		crabYVel = crab.getYVel();
+		
+		barrierImgWidth = cellWidth;
+		barrierImgHeight = cellHeight;
+		
+		grassImgWidth = cellWidth/3;
+		grassImgHeight = cellWidth/3;
+	
+		//button initialization
+		plantButton = new JButton("Plant Grass");
+		gabionButton = new JButton("Place Oyster Gabion");
+		seawallButton = new JButton("Place Sea Wall");
+		this.add(plantButton);
+		this.add(gabionButton);
+		this.add(seawallButton);
+		plantButton.setFocusable(false);
+		gabionButton.setFocusable(false);
+		seawallButton.setFocusable(false);
+		
+		//button listeners
+		plantButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				BeachCell tempCell = board.inWhichCell(crab.getXLoc() + (crab.getWidth())/2, crab.getYLoc() + (crab.getHeight())/2);
+				if(tempCell.getCanHoldGrass())
+					board.addGrass(tempCell.getXLoc(), tempCell.getYLoc());
+			}
+		});
+		
+		seawallButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				BeachCell tempCell = board.inWhichCell(crab.getXLoc() + (crab.getWidth())/2, crab.getYLoc() + (crab.getHeight())/2);
+				if(tempCell.getCanHoldBarrier()){
+					board.addWall(tempCell.getXLoc(), tempCell.getYLoc());
+					
+					if(tempCell.getX() > 0 ){
+						board.getGrid()[tempCell.getX() - 1][tempCell.getY()].setCanHoldBarrier(false);
 
+					}
+					if(tempCell.getX() < numRows-1){
+						board.getGrid()[tempCell.getX() + 1][tempCell.getY()].setCanHoldBarrier(false);
+
+					}
+				}
+			}
+		});
+		
+		gabionButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				BeachCell tempCell = board.inWhichCell(crab.getXLoc() + (crab.getWidth())/2, crab.getYLoc() + (crab.getHeight())/2);
+				if(tempCell.getCanHoldBarrier()){
+					board.addGabion(tempCell.getXLoc(), tempCell.getYLoc());
+					
+					if(tempCell.getX() > 0 ){
+						board.getGrid()[tempCell.getX() - 1][tempCell.getY()].setCanHoldBarrier(false);
+					}
+					if(tempCell.getX() < numRows-1){
+						board.getGrid()[tempCell.getX() + 1][tempCell.getY()].setCanHoldBarrier(false);
+					}
+				}
+			}
+		});
+		
+		//start timer
+		t.start();
 	}
 
-	public BufferedImage createImage(String fileName){
-		BufferedImage img = null;
-		try {
-			img = ImageIO.read(new File(fileName));
-		} catch (IOException e) {
-			System.out.println("no");
-		}
-		return img;
-	}
 
-
+	//PAINT COMPONENT
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		//g.drawImage(crabImg, crabimg.getXLoc(), crabimg.getYLoc(), characterWidth, characterHeight, this);
-		//g.drawString("Time Remaining: ", timeRemainingLabelXLoc, timeRemainingLabelYLoc);
-		//g.drawString(""+timeRemaining, screenWidth/2 + 120, 10);
+
+		//ocean drawing
+		g.setColor(Color.CYAN);
+		g.drawRect(0, 0, screenWidth, screenHeight);
+		g.fillRect(0, 0, screenWidth, screenHeight);
 		
-		//drawing BeachBoard
-		for(int i = 0; i < 10; i++){
-			for (int j = 0; j < 10; j++){
-				BeachCell tmp = board.getGrid()[i][j];
-				if(tmp.getHeight() * j > crabimg.getYLoc())
-					g.setColor(Color.yellow);
-				else if(tmp.getHeight() * j < (screenHeight / 16))
-					g.setColor(Color.cyan);
-				else
-					g.setColor(Color.blue);
-				g.fillRect(tmp.getWidth() * i, tmp.getHeight() * j, tmp.getWidth(), tmp.getHeight());
+		g.setColor(Color.YELLOW);
+		g.drawRect(0, screenHeight-cellHeight, screenWidth, screenHeight);
+		g.fillRect(0, screenHeight-cellHeight, screenWidth, screenHeight);
+
+		//paints board
+		for(int i = 0; i < numRows; i++){
+			for(int j = 2; j < numCols; j++){
+				BeachCell tempBC = board.getGrid()[i][j];
+				g.setColor(Color.YELLOW);
+				g.fillRect(tempBC.getXLoc(), tempBC.getYLoc(), tempBC.getWidth(), tempBC.getHeight());
+			}
+		}
+		for(int i = 0; i < numRows; i++){
+			for(int j = 0; j < numCols; j++){
+				BeachCell tempBC = board.getGrid()[i][j];
+				g.setColor(Color.BLACK);
+				g.drawRect(tempBC.getXLoc(), tempBC.getYLoc(), tempBC.getWidth(), tempBC.getHeight());
 			}
 		}
 		
-		g.drawImage(crabImg, crabimg.getXLoc(), crabimg.getYLoc(), characterWidth, characterHeight, this);
-		//renderBarriers(g, crabimg);
-//		if (grassCheck == true){
-//			g.drawRect(crabimg.getXLoc(),crabimg.getYLoc()+105,70,70);
-//		}
-//		if (wallCheck == true){
-//			g.drawRect(crabimg.getXLoc(),crabimg.getYLoc()+50,110,110);
-//		}
-//		if (grassCheck == true){
-//			while (shore1.getGrass().size() != 0)
-//				for (Grass k : shore1.getGrass()){
-//					g.drawRect(k.getXLoc(), k.getYLoc(), 100, 100);
-//				}
-//			}
-		for (int i = 0; i < shore1.getGrass().size(); i++){
-			int x = (shore1.getGrass().get(i)).getXLoc();
-			int y = (shore1.getGrass().get(i)).getYLoc();
-			g.drawImage(grassImg, x, y, 50,50, this);
-		}
-		for (int i = 0; i < shore1.getSeawall().size(); i++){
-			int x = (shore1.getSeawall().get(i)).getXLoc();
-			int y = (shore1.getSeawall().get(i)).getYLoc();
-			g.drawImage(wallImg, x, y, 75, 75, this);
+		//paints walls
+		for(Seawall s: board.getGameSeawalls()){
+			g.drawImage(wallImg, s.getXLoc(), s.getYLoc(), barrierImgWidth, barrierImgHeight, this);
 		}
 		
+		//paints gabions
+		g.setColor(Color.MAGENTA);
+		for(OysterGabion og: board.getGameGabs()){
+			g.fillRect(og.getXLoc(), og.getYLoc(), barrierImgWidth, barrierImgHeight);
 		}
 		
-		public void renderBarriers(Graphics g, ShoreCrab c){
-			g.drawRect(c.getXLoc(),c.getYLoc()+105,70,70);
+		//paints grass
+		for(Grass grass: board.getGameGrass()){
+			g.drawImage(grassImg,grass.getXLoc() + cellWidth/2 - (grassImgWidth/2), 
+					grass.getYLoc() + cellHeight/2 - (grassImgHeight/2), grassImgWidth, grassImgHeight, this);
 		}
 
-	//Set Button Listeners 
-	void setupListeners() {
-		grassButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				grassCheck = true;
-				shore1.addGrass(crabimg.getXLoc(), crabimg.getYLoc() + 100);
-				repaint();
-				
-			}
-		});
-		ogButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				ogButton.setFocusable(false);
-				repaint();
-			}
-		});
-		seawallButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				seawallButton.setFocusable(false);
-				wallCheck = true;
-				shore1.addWall(crabimg.getXLoc(), crabimg.getYLoc()+ 100);
-				repaint();
-			}
-		});
-
-
+		//draws crab
+		g.drawImage(crabImg,crab.getXLoc(),crab.getYLoc(),crab.getWidth(),crab.getHeight(),this);
+		
 	}
 
+
+	//ACTION PERFORMED
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		repaint();
-		if ((xVel < 0 && (crabimg.getXLoc() - crabimg.getXIncr() >= 0)) || 
-				((xVel > 0) && crabimg.getXLoc() + characterWidth + crabimg.getXIncr() <= screenWidth)){
-			crabimg.moveHorizontal(xVel);
+		if (
+				((crabXVel < 0) && (crab.getXLoc() - crab.getXIncr() >= 0)) || 
+				((crabXVel > 0) && (crab.getXLoc() + crab.getWidth() + crab.getXIncr() <= screenWidth)) ||
+				((crabYVel < 0) && (crab.getYLoc() - crab.getYIncr() >= crabTopLeftCell.getYLoc())) ||
+				((crabYVel > 0) && (crab.getYLoc() + crab.getYIncr() + crab.getHeight() <= screenHeight - screenHeight/20))
+				){
+			crab.move(crabXVel,crabYVel);
 		}
-		if (e.getSource() == grassButton){
-			grassCheck = true;
-			repaint();
-		}
-		if(e.getSource() == ogButton){
-			oyCheck = true;
-			repaint();
-		}
-		if(e.getSource() == seawallButton){
-			wallCheck = true;
-			repaint();
-		}
-
 
 	}
-	
 
+	
+	//MOVE CRAB IMAGE
+	public void moveCrabImgUp(){
+		crabXVel = 0;
+		crabYVel = -crab.getYIncr();
+	}
+	public void moveCrabImgDown(){
+		crabXVel = 0;
+		crabYVel = crab.getYIncr();
+	}
+	public void moveCrabImgLeft(){
+		crabXVel = -crab.getXIncr();
+		crabYVel = 0;
+	}
+	public void moveCrabImgRight(){
+		crabXVel = crab.getXIncr();
+		crabYVel = 0;
+	}
+
+
+
+	//KEY METHODS
 	@Override
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void moveCrabLeft(){
-		xVel = -crabimg.getXIncr();
-
-	}
-	public void moveCrabRight(){
-		xVel = crabimg.getXIncr();
 
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int code = e.getKeyCode();
+		if(code == KeyEvent.VK_UP){
+			moveCrabImgUp();
+		}
+		if(code == KeyEvent.VK_DOWN){
+			moveCrabImgDown();
+		}
 		if(code == KeyEvent.VK_LEFT){
-			moveCrabLeft();
+			moveCrabImgLeft();
 		}
 		if(code == KeyEvent.VK_RIGHT){
-			moveCrabRight();
+			moveCrabImgRight();
 		}
 	}
-
-
 	@Override
 	public void keyReleased(KeyEvent e) {
-		xVel = 0;
-		yVel = 0;
+		crabXVel = 0;
+		crabYVel = 0;
 	}
 
-}
+	//CREATE IMAGE
+	public BufferedImage createImage(String fileName){
+		BufferedImage bufferedImage;
+		try {
+			bufferedImage = ImageIO.read(new File(fileName)); 
+			return bufferedImage;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+}//END CLASS
