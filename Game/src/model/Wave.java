@@ -3,36 +3,38 @@ package model;
 import java.util.Random;
 
 public class Wave {
-	int strength; // 1 = small, 2 = medium, 3 = large
-	int x;
-	int y;
+	private int strength; // 0 = small, 1 = medium, 2 = large
+	private int xLoc;
+	private int yLoc;
+	private int width;
 
-	Wave(int s, int xc, int yc) {
+	Wave(int xc, int yc, int s, int w) {
 		strength = s;
-		xc = x;
-		yc = y;
+		xLoc = xc;
+		yLoc = yc;
+		width = w;
 	}
+	
+	public void move(int speed){
+		yLoc += speed;
+	}
+	
 
+	//getters
 	public int getStrength() {
 		return this.strength;
 	}
-
-	public int getX() {
-		return this.x;
+	
+	public int getWidth(){
+		return width;
 	}
 
-	public int getY() {
-		return this.y;
+	public int getXLoc(){
+		return xLoc;
 	}
-
-	public Wave createWave(Boat b) {
-		Wave w = new Wave(b.getSize(), b.getXLoc(), b.getYLoc()); // should we
-																	// just
-																	// initialize
-																	// y
-																	// location
-																	// of boats?
-		return w;
+	
+	public int getYLoc(){
+		return yLoc;
 	}
 
 }

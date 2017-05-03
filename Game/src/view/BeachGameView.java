@@ -3,6 +3,7 @@ package view;
 import model.Barrier;
 import model.BeachBoard;
 import model.BeachCell;
+import model.Boat;
 import model.Grass;
 import model.OysterGabion;
 import model.Seawall;
@@ -19,6 +20,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -29,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import model.ShoreCrab;
+import model.Wave;
 
 public class BeachGameView extends JPanel implements KeyListener, ActionListener {
 
@@ -78,6 +81,15 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private int crabXVel;
 	private int crabYVel;
 	
+	//BoatStuff
+	private ArrayList<Boat> gameBoats;
+	private int newBoatTimer;
+	private int newBoatTimerTime;
+	
+	//wave stuff
+	private ArrayList<Wave> gameWaves;
+	private int waveSpeed;
+	
 	//JButtons
 	JButton plantButton;
 	JButton gabionButton;
@@ -119,6 +131,13 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		
 		grassImgWidth = cellWidth/3;
 		grassImgHeight = cellWidth/3;
+		
+		gameBoats = board.getGameBoats();
+		newBoatTimer = 100;
+		newBoatTimerTime = 0;
+		
+		gameWaves = board.getGameWaves();
+		waveSpeed = board.getWaveSpeed();
 	
 		//button initialization
 		plantButton = new JButton("Plant Grass");
@@ -135,7 +154,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		plantButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				BeachCell tempCell = board.inWhichCell(crab.getXLoc() + (crab.getWidth())/2, crab.getYLoc() + (crab.getHeight())/2);
-				if(tempCell.getCanHoldGrass())
+				if(tempCell != null && tempCell.getCanHoldGrass())
 					board.addGrass(tempCell.getXLoc(), tempCell.getYLoc());
 			}
 		});
@@ -143,9 +162,9 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		seawallButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				BeachCell tempCell = board.inWhichCell(crab.getXLoc() + (crab.getWidth())/2, crab.getYLoc() + (crab.getHeight())/2);
-				if(tempCell.getCanHoldBarrier()){
+				if(tempCell != null && tempCell.getCanHoldBarrier()){
 					board.addWall(tempCell.getXLoc(), tempCell.getYLoc());
-					
+					tempCell.setCanHoldBarrier(false);
 					if(tempCell.getX() > 0 ){
 						board.getGrid()[tempCell.getX() - 1][tempCell.getY()].setCanHoldBarrier(false);
 
@@ -161,9 +180,9 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		gabionButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				BeachCell tempCell = board.inWhichCell(crab.getXLoc() + (crab.getWidth())/2, crab.getYLoc() + (crab.getHeight())/2);
-				if(tempCell.getCanHoldBarrier()){
+				if(tempCell != null && tempCell.getCanHoldBarrier()){
 					board.addGabion(tempCell.getXLoc(), tempCell.getYLoc());
-					
+					tempCell.setCanHoldBarrier(false);
 					if(tempCell.getX() > 0 ){
 						board.getGrid()[tempCell.getX() - 1][tempCell.getY()].setCanHoldBarrier(false);
 					}
@@ -208,6 +227,18 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			}
 		}
 		
+		//paint waves
+		g.setColor(Color.BLUE);
+		for(Wave w: gameWaves){
+			g.drawLine(w.getXLoc(),w.getYLoc(),w.getXLoc() + w.getWidth(), w.getYLoc());
+		}
+		
+		//paints boats
+		g.setColor(Color.RED);
+		for(Boat b: board.getGameBoats()){
+			g.fillRect(b.getXLoc(),b.getYLoc(),b.getWidth(),b.getHeight());
+		}
+		
 		//paints walls
 		for(Seawall s: board.getGameSeawalls()){
 			g.drawImage(wallImg, s.getXLoc(), s.getYLoc(), barrierImgWidth, barrierImgHeight, this);
@@ -243,6 +274,28 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				){
 			crab.move(crabXVel,crabYVel);
 		}
+		
+		//Boat timer increment
+		 if(newBoatTimerTime < newBoatTimer){
+			 newBoatTimerTime++;
+		 }else{
+			 board.generateRandomBoat();
+			 newBoatTimerTime = 0;
+		 }
+		 
+		 for(Boat bt: gameBoats){
+			 bt.move();
+		 }
+		 
+		 for(Boat bt: gameBoats){
+			 board.makeWaves(bt);
+		 }
+
+		 
+		 for(Wave wv: gameWaves){
+			 wv.move(waveSpeed);
+		 }
+		 
 
 	}
 

@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class BeachBoard {
 	
@@ -18,7 +19,25 @@ public class BeachBoard {
 	private ArrayList<Seawall> gameWalls = new ArrayList<Seawall>();
 	private ArrayList<OysterGabion> gameGabions = new ArrayList<OysterGabion>();
 	
-	BeachCell[][] grid;
+	//boat stuff
+	private ArrayList<Boat> gameBoats = new ArrayList<Boat>();
+	private int largeWidth = 100;
+	private int largeHeight = 40;
+	private int mediumWidth = 60;
+	private int mediumHeight = 40;
+	private int smallWidth = 30;
+	private int smallHeight = 20;
+	
+	private int largeSpeed = 1;
+	private int mediumSpeed = 3;
+	private int smallSpeed = 5;
+	
+	//Wave stuff
+	private boolean[][] waveCell;
+	private ArrayList<Wave> gameWaves = new ArrayList<Wave>();
+	private int waveSpeed = 3;
+	
+	private BeachCell[][] grid;
 	
 	public BeachBoard(int rows, int cols, int sWidth, int sHeight){
 		numRows = rows;
@@ -32,6 +51,10 @@ public class BeachBoard {
 		//initialize grid
 		grid = new BeachCell[numRows][numCols];
 		makeGrid(cellWidth, cellHeight);
+		
+		//initialize something
+		waveCell = new boolean[3][numCols];
+		setAllWaveCellTrue();
 		
 		initializeCells();
 	}
@@ -63,10 +86,52 @@ public class BeachBoard {
 				}
 			}
 		}
-		return grid[0][0];
+		return null;
 	}
 	
-	//
+	//BOAT STUFF
+	public void generateRandomBoat(){
+		Random rand = new Random();
+		int boatType = rand.nextInt(30);
+		Boat tempBoat;
+		if(boatType < 15){
+			tempBoat = new Boat(screenWidth, largeHeight + mediumHeight, 0, 1, smallSpeed,smallWidth,smallHeight);
+			gameBoats.add(tempBoat);
+		}
+		else if(boatType < 25){
+			tempBoat = new Boat(-mediumWidth, largeHeight, 1, 0, mediumSpeed,mediumWidth,mediumHeight);
+			gameBoats.add(tempBoat);
+		}
+		else if(boatType <= 30){
+			tempBoat = new Boat(screenWidth, 0, 2, 1, largeSpeed,largeWidth,largeHeight);
+			gameBoats.add(tempBoat);
+		}
+	}
+	
+	
+	//MODIFY AF
+	public void makeWaves(Boat b){
+		BeachCell tempCell = inWhichCell(b.getXLoc() + b.getWidth()/2, screenHeight/2 +10);
+		if(tempCell!=null){
+			Wave tempWave = new Wave(tempCell.getXLoc(), b.getYLoc(), b.getSize(), b.getWidth());
+			if(waveCell[b.getSize()][tempCell.getY()]){
+//				waveCell[b.getSize()][tempCell.getY()] = false;
+				gameWaves.add(tempWave);
+			}
+		}
+	}
+	
+		//initializes waveCell to false
+	public void setAllWaveCellTrue(){
+		for(int i = 0; i < numCols; i++){
+			for(int j = 0; j < 3; j++){
+			waveCell[j][i] = true;
+			}
+		}
+	}
+	
+	
+	//modifying arraylists
 	void remGrass(Grass g) { 
 		gameGrass.remove(g);
 	}
@@ -112,12 +177,28 @@ public class BeachBoard {
 		return gameGabions;
 	}
 	
+	public ArrayList<Boat> getGameBoats() {
+		return gameBoats;
+	}
+	
+	public ArrayList<Wave> getGameWaves() {
+		return gameWaves;
+	}
+	
 	public int getCellWidth(){
 		return this.cellWidth;
 	}
 	
 	public int getCellHeight(){
 		return cellHeight;
+	}
+	
+	public boolean[][] getWaveCell(){
+		return waveCell;
+	}
+	
+	public int getWaveSpeed(){
+		return waveSpeed;
 	}
 	
 }
