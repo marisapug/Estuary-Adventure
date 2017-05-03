@@ -87,15 +87,17 @@ public class DiceGameView extends JPanel implements ActionListener {
 		storyButton = new JButton("Submit Story");
 		rollDiceButton.setFocusable(false);
 		storyButton.setFocusable(false);
+		storyButton.setVisible(false);
 
 		storyText = new JTextField("Enter Story Here");
+		storyText.setVisible(false);
 
 		this.add(rollDiceButton);
 		this.add(storyText);
 		this.add(storyButton);
 		this.setupListeners();
 
-		//setDiceImgs();
+		// setDiceImgs();
 		diceTimer.start();
 	}
 
@@ -122,7 +124,7 @@ public class DiceGameView extends JPanel implements ActionListener {
 	// Creates all possible images
 	public void makeImages() {
 		System.out.println("makeImages called");
-		if(!isRolled)
+		if (!isRolled)
 			dgame.setDice();
 		for (int i = 0; i < dgame.getNumImgs(); i++) {
 			BufferedImage temp = createImage(imgStrings[i]);
@@ -233,6 +235,7 @@ public class DiceGameView extends JPanel implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				rollDice(); // roll dice function
+				rollDiceButton.setVisible(false);
 			}
 		});
 		storyButton.addActionListener(new ActionListener() {
@@ -253,15 +256,18 @@ public class DiceGameView extends JPanel implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		//System.out.println("Timer called");
 		if (numAnimations < animsToDo) {
 			if (isRolled && !isAnimDone) {
 				animDice();
 				repaint();
-				System.out.println("Timer called");
+				numAnimations++;
 			}
-			numAnimations++;
-		} else
+		} else {
 			isAnimDone = true;
+			storyButton.setVisible(true);
+			storyText.setVisible(true);
+		}
 	}
 
 }
