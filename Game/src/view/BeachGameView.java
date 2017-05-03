@@ -133,7 +133,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		grassImgHeight = cellWidth/3;
 		
 		gameBoats = board.getGameBoats();
-		newBoatTimer = 100;
+		newBoatTimer = 400;
 		newBoatTimerTime = 0;
 		
 		gameWaves = board.getGameWaves();
@@ -289,6 +289,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		 
 		 for(Boat bt: gameBoats){
 			 board.makeWaves(bt);
+			 board.resetWaves(bt);
 		 }
 
 		 

@@ -138,9 +138,37 @@ public class BeachBoard {
 			}
 		}
 	}
-	
+
+	public void resetWaveBasedOnBoatSize(WaveCell cell, int size){
+		if(cell != null){
+			if(size == 0){
+				cell.setHasSmallWave(false);
+			}
+			else if(size == 1){
+				cell.setHasMediumWave(false);
+			}
+			else if(size == 2){
+				cell.setHasLargeWave(false);
+			}
+		}
+	}
+
 	public void resetWaves(Boat b){
-		
+		WaveCell centerCell = inWhichWaveCell(b.getXLoc() + b.getWidth()/2);
+		if(centerCell != null){
+			if(b.getDirection() == 0){
+				WaveCell backCell = inWhichWaveCell(b.getXLoc());
+				if(backCell != centerCell){
+					resetWaveBasedOnBoatSize(backCell, b.getSize());
+				}
+			}
+			else if(b.getDirection() ==1){
+				WaveCell backCell = inWhichWaveCell(b.getXLoc() + b.getWidth());
+				if(backCell != centerCell){
+					resetWaveBasedOnBoatSize(backCell, b.getSize());
+				}
+			}
+		}
 	}
 	
 		//initializes waveCell to false
