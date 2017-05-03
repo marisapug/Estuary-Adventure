@@ -4,18 +4,35 @@ import java.util.Random;
 
 
 public class Boat extends GameFigure {
-	int size; //0 (small), 1 (medium), 2 (large)
-	int direction; //0 (right) or 1 (left)
-	int speed; // 0 (slow), 1 (medium), 2 (fast)
+	private int size; //0 (small), 1 (medium), 2 (large)
+	private int direction; //0 (right) or 1 (left)
+	private int speed; // 0 (slow), 1 (medium), 2 (fast)
+	private int damage;
+	private int xLoc;
+	private int yLoc;
+	private int width;
+	private int height;
 
-	Boat(int size, int direction, int speed, int x, int y){
+	Boat(int x, int y, int size, int direction, int speed, int w, int h){
 		this.size = size;
 		this.direction = direction;
 		this.speed = speed;
 		this.xLoc = x;
 		this.yLoc = y;
+		width = w;
+		height = h;
 	}
-
+	
+	public void move(){
+		if (getDirection() == 0){
+			xLoc += speed;
+		}
+		if (getDirection() == 1){
+			xLoc -= speed;
+		}
+	}
+	
+	//getters
 	public int getSize(){
 		return size;
 	}
@@ -27,57 +44,35 @@ public class Boat extends GameFigure {
 	public int getXLoc(){
 		return this.xLoc;
 	}
-
-	public void setXLoc(int xc){
-		this.xLoc = xc;
-	}
 	
 	public int getYLoc(){
 		return this.yLoc;
 	}
-
-	public void setYLoc(int yc){
-		this.yLoc = yc;
+	
+	public int getWidth(){
+		return width;
+	}
+	
+	public int getHeight(){
+		return height;
 	}
 
 	public int getSpeed(){
 		return this.speed;
 	}
 
+	
+	//setters
+	public void setXLoc(int xc){
+		this.xLoc = xc;
+	}
+	
+	public void setYLoc(int yc){
+		this.yLoc = yc;
+	}
+	
 	public void setSpeed(int speed){
 		this.speed = speed;
-	}
-
-	public void launchWave(){
-
-	}
-
-	public Boat createBoat(){
-
-		Boat b;
-		
-		Random rand = new Random();
-		int n = rand.nextInt(3)+1;
-
-		if (n == 1){
-			b = new Boat(0, 0, 5, 0, 0);
-		} 
-		else if (n == 2){
-			b = new Boat(1, 0, 3, 0, 0);
-		} 
-		else
-			b = new Boat(2, 1, 1, 0, 0);
-
-		return b;
-	}
-
-	public void move(){
-		if (getDirection() == 0){
-			setXLoc(getXLoc() + getSpeed());
-		}
-		if (getDirection() == 1){
-			setXLoc(getXLoc() - getSpeed());
-		}
 	}
 
 

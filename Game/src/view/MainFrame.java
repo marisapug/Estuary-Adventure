@@ -55,7 +55,7 @@ public class MainFrame extends JFrame {
 		currDicePanel = new DiceGameView();
 		currBeachPanel = new BeachGameView();
 		
-		addKeyListener(currMazePanel);
+//		addKeyListener(currMazePanel);
 		EventQueue.invokeLater(new Runnable(){
 			public void run(){
 			}
