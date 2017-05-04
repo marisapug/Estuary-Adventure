@@ -7,6 +7,7 @@ public class Wave {
 	private int xLoc;
 	private int yLoc;
 	private int width;
+	private boolean hasHit = false;
 
 	Wave(int xc, int yc, int s, int w) {
 		strength = s;
@@ -35,6 +36,15 @@ public class Wave {
 	
 	public int getYLoc(){
 		return yLoc;
+	}
+	
+	public boolean getHasHit(){
+		return hasHit;
+	}
+	
+	//setters
+	public void setHasHit(boolean b){
+		hasHit = b;
 	}
 
 }
