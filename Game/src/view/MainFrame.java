@@ -20,7 +20,7 @@ public class MainFrame extends JFrame {
 
 	//Frame
 	private final static int frameWidth = 900;
-	private final static int frameHeight = 700;
+	private final static int frameHeight = 500;
 
 	//Main Layout
 	private BorderLayout mainLayout = new BorderLayout();
