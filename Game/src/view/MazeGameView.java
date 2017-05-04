@@ -405,10 +405,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				cellHeight = board.getCellHeight();
 				gameLitter = board.getGameLitter();
 
-				smallWidth = board.getCharacterWidth()/3;
-				smallHeight = board.getCharacterHeight()/3;
-				mediumWidth = board.getCharacterWidth()/2;
-				mediumHeight = board.getCharacterHeight()/2;
+				smallWidth = board.getCharacterWidth()/2;
+				smallHeight = board.getCharacterHeight()/2;
+				mediumWidth = board.getCharacterWidth()*3/4;
+				mediumHeight = board.getCharacterHeight()*3/4;
 				largeWidth = board.getCharacterWidth();
 				largeHeight = board.getCharacterHeight();
 				characterWidth = smallWidth;
@@ -742,10 +742,12 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			}
 		}
 
-		if(ageStateCellCurrentCount <= ageStateCellLargeCount && characterWidth != largeWidth){
+		if(ageStateCellCurrentCount <= ageStateCellLargeCount && characterWidth != largeWidth && 
+				!board.isHittingAnyWalls(characterXLoc - xVel, characterYLoc - yVel, largeWidth, largeHeight)){
 			characterWidth = largeWidth;
 			characterHeight = largeHeight;
-		} else if(ageStateCellCurrentCount <= ageStateCellMediumCount && characterWidth != mediumWidth && characterWidth != largeWidth){
+		} else if(ageStateCellCurrentCount <= ageStateCellMediumCount && characterWidth != mediumWidth && characterWidth != largeWidth &&
+				!board.isHittingAnyWalls(characterXLoc - xVel, characterYLoc - yVel, mediumWidth, mediumHeight)){
 			characterWidth = mediumWidth;
 			characterHeight = mediumHeight;
 		}
