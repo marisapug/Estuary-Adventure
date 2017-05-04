@@ -21,6 +21,7 @@ public class BeachBoard {
 	//grid
 	private BeachCell[][] grid;
 
+	//ArrayList of objects
 	private ArrayList<Grass> gameGrass = new ArrayList<Grass>();
 	private ArrayList<Seawall> gameWalls = new ArrayList<Seawall>();
 	private ArrayList<OysterGabion> gameGabions = new ArrayList<OysterGabion>();
@@ -46,10 +47,18 @@ public class BeachBoard {
 	private int totalSandHealth = 100;
 	private int grassHealIncr = 1;
 	
-	//start cell
+	//specific cells
 	private int crabGridStartX;
 	private int crabGridStartY;
 	private BeachCell crabStartCell;
+	
+	private int crabGridTopX;
+	private int crabGridTopY;
+	private BeachCell crabTopLeftCell;
+	
+	private int crabGridBottomX;
+	private int crabGridBottomY;
+	private BeachCell crabBottomLeftCell;
 	
 	//crab
 	ShoreCrab gameCrab;
@@ -81,6 +90,14 @@ public class BeachBoard {
 		crabGridStartX = numRows/2 - 1;
 		crabGridStartY = numCols/2;
 		crabStartCell = grid[crabGridStartX][crabGridStartY];
+		
+		crabGridTopX = 1;
+		crabGridTopY = 0;
+		crabTopLeftCell = grid[crabGridTopX][crabGridTopY];
+		
+		crabGridBottomX = numRows-1;
+		crabGridBottomY = 0;
+		crabBottomLeftCell = grid[crabGridBottomX][crabGridBottomY];
 		
 		//initialize crab
 		gameCrab = new ShoreCrab(crabStartCell.getXLoc(),crabStartCell.getYLoc());
@@ -155,10 +172,10 @@ public class BeachBoard {
 		Iterator<Boat> bt = gameBoats.iterator();
 		while(bt.hasNext()){
 			Boat currBoat = bt.next();
-			if(currBoat.getDirection() == 0 && currBoat.getXLoc() > screenWidth){
+			if(currBoat.getDirection() == 0 && currBoat.getXLoc() > screenWidth + currBoat.getWidth()){
 				bt.remove();
 			}
-			else if(currBoat.getDirection() == 1 && (currBoat.getXLoc() + currBoat.getWidth()) < 0){
+			else if(currBoat.getDirection() == 1 && (currBoat.getXLoc() + currBoat.getWidth()) < -currBoat.getWidth()){
 				bt.remove();
 			}
 		}
@@ -167,7 +184,7 @@ public class BeachBoard {
 
 	public WaveCell inWhichWaveCell(int xl){
 		for(int i = 0; i < numRows;i++){
-			if(xl > waveCells[i].getXLoc() && xl < waveCells[i].getXLoc() + waveCellWidth)
+			if(xl >= waveCells[i].getXLoc() && xl < waveCells[i].getXLoc() + waveCellWidth)
 				return waveCells[i];
 		}
 		return null;
@@ -228,6 +245,7 @@ public class BeachBoard {
 				BeachCell tempCell = inWhichCell(xL + width/2, yL + height/2 + (i * cellHeight));
 				if(tempCell != null && tempCell.getCanHoldGrass() && !tempCell.getHasGrass()){
 					addGrass(tempCell.getXLoc(), tempCell.getYLoc());
+					gameCrab.setCurrObject(0);
 					tempCell.setHasGrass(true);
 				}
 			}
@@ -238,6 +256,7 @@ public class BeachBoard {
 				BeachCell tempCell = inWhichCell(xL + width/2, yL + height/2 + (i * cellHeight));
 				if(tempCell != null && tempCell.getCanHoldBarrier() && !tempCell.getHasBarrier()){
 					addWall(tempCell.getXLoc(), tempCell.getYLoc());
+					gameCrab.setCurrObject(0);
 					tempCell.setCanHoldBarrier(false);
 					tempCell.setHasBarrier(true);
 					tempCell.setHealth(totalSeawallHealth);
@@ -258,6 +277,7 @@ public class BeachBoard {
 				BeachCell tempCell = inWhichCell(xL + width/2, yL + height/2 + (i * cellHeight));
 				if(tempCell != null && tempCell.getCanHoldBarrier() && !tempCell.getHasBarrier()){
 					addGabion(tempCell.getXLoc(), tempCell.getYLoc());
+					gameCrab.setCurrObject(0);
 					tempCell.setCanHoldBarrier(false);
 					tempCell.setHasBarrier(true);
 					tempCell.setHealth(totalGabionHealth);
@@ -339,9 +359,11 @@ public class BeachBoard {
 		}
 		else if(b.getDirection() == 1){
 			WaveCell forwardCell = inWhichWaveCell(b.getXLoc() + b.getWidth() + cellWidth);
-			WaveCell backCell = inWhichWaveCell(b.getXLoc() + b.getWidth() + b.getSpeed() + cellWidth);
+			WaveCell backCell = inWhichWaveCell(b.getXLoc() + b.getWidth() + b.getSpeed() + cellWidth );
 			if(backCell != forwardCell){
 				resetWaveBasedOnBoatSize(backCell, b.getSize());
+			}else if(backCell == null){
+				resetWaveBasedOnBoatSize(waveCells[0], b.getSize());
 			}
 		}
 	}
@@ -529,6 +551,14 @@ public class BeachBoard {
 	
 	public int getCrabGridStartY(){
 		return crabGridStartY;
+	}
+	
+	public BeachCell getCrabTopLeftCell(){
+		return crabTopLeftCell;
+	}
+	
+	public BeachCell getCrabBottomLeftCell(){
+		return crabBottomLeftCell;
 	}
 
 }

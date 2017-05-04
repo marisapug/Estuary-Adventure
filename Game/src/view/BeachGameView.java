@@ -28,15 +28,15 @@ import model.Wave;
 public class BeachGameView extends JPanel implements KeyListener, ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	//=======================================================================//
-	
+
 	int screenWidth = MainFrame.getFrameWidth();
 	int screenHeight = MainFrame.getFrameHeight();
 
 	int numRows = 15;
 	int numCols = 10;
-	
+
 	//Timer
 	Timer t = new Timer(10,this);
 
@@ -45,13 +45,11 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 	//BeachGrid
 	private BeachCell[][] grid;
-	private BeachCell crabTopLeftCell;
-	private BeachCell crabBottomLeftCell;
 	private int cellWidth;
 	private int cellHeight;
-	
+
 	private int totalSandHealth;
-	
+
 	//Grass and Barrier Images
 	private BufferedImage grassImg = createImage("beachImages/grass.png");
 	private BufferedImage wallImg = createImage("beachImages/seawall.png");
@@ -59,7 +57,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private int barrierImgHeight;
 	private int grassImgWidth;
 	private int grassImgHeight;
-	
+
 	private int totalSeawallHealth;
 	private int totalGabionHealth;
 
@@ -69,32 +67,32 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private int crabGridTopY;
 	private int crabGridBottomX;
 	private int crabGridBottomY;
-	
+
 	private BufferedImage crabImg = createImage("characters/bluecrab_0.png");
 	private int crabXVel;
 	private int crabYVel;
-	
+
 	//Grass
 	private int grassTimerTick;
 	private int grassTimer;
-	
+
 	//BoatStuff
 	private ArrayList<Boat> gameBoats;
 	private int newBoatTimer;
 	private int newBoatTimerTime;
-	
+
 	//wave stuff
 	private ArrayList<Wave> gameWaves;
 	private int waveSpeed;
-	
+
 	//Current Object
 	private String currObjectHeader = "Current Object: ";
 	private int currObjectHeaderX = screenWidth/2;
 	private int currObjectHeaderY = screenHeight - (screenHeight*3)/4;
-	
+
 	private int currObjectTypeX = currObjectHeaderX + 100;
 	private int currObjectTypeY = currObjectHeaderY;
-	
+
 	//=======================================================================//
 
 	//CONSTRUCTOR
@@ -102,46 +100,38 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		addKeyListener(this);
 		setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
-		
-		
+
+
 		//game stuff
 		board = new BeachBoard(numRows,numCols,screenWidth,screenHeight);
 		grid = board.getGrid();
-		
+
 		cellWidth = board.getCellWidth();
 		cellHeight = board.getCellHeight();
-		
-		crabGridTopX = 1;
-		crabGridTopY = 0;
-		crabTopLeftCell = grid[crabGridTopX][crabGridTopY];
-		
-		crabGridBottomX = numRows-1;
-		crabGridBottomY = 0;
-		crabBottomLeftCell = grid[crabGridBottomX][crabGridBottomY];
-		
+
 		crab = board.getGameCrab();
 		crabXVel = crab.getXVel();
 		crabYVel = crab.getYVel();
-		
+
 		barrierImgWidth = cellWidth;
 		barrierImgHeight = cellHeight;
-		
+
 		totalSeawallHealth = board.getTotalSeawallHealth();
 		totalGabionHealth = board.getTotalGabionHealth();
 		totalSandHealth = board.getTotalSandHealth();
-		
+
 		grassImgWidth = cellWidth/3;
 		grassImgHeight = cellWidth/3;
 		grassTimerTick = 100;
 		grassTimer = 0;
-		
+
 		gameBoats = board.getGameBoats();
 		newBoatTimer = 200;
 		newBoatTimerTime = 0;
-		
+
 		gameWaves = board.getGameWaves();
 		waveSpeed = board.getWaveSpeed();
-		
+
 		//start timer
 		t.start();
 	}
@@ -155,7 +145,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		g.setColor(Color.CYAN);
 		g.drawRect(0, 0, screenWidth, screenHeight);
 		g.fillRect(0, 0, screenWidth, screenHeight);
-		
+
 		g.setColor(Color.YELLOW);
 		g.drawRect(0, screenHeight-cellHeight, screenWidth, screenHeight);
 		g.fillRect(0, screenHeight-cellHeight, screenWidth, screenHeight);
@@ -190,24 +180,24 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		for(Wave w: gameWaves){
 			g.drawLine(w.getXLoc(),w.getYLoc(),w.getXLoc() + w.getWidth(), w.getYLoc());
 		}
-		
+
 		//paints boats
 		g.setColor(Color.RED);
 		for(Boat b: board.getGameBoats()){
 			g.fillRect(b.getXLoc(),b.getYLoc(),b.getWidth(),b.getHeight());
 		}
-		
+
 		//paints walls
 		for(Seawall s: board.getGameSeawalls()){
 			g.drawImage(wallImg, s.getXLoc(), s.getYLoc(), barrierImgWidth, barrierImgHeight, this);
 		}
-		
+
 		//paints gabions
 		g.setColor(Color.MAGENTA);
 		for(OysterGabion og: board.getGameGabs()){
 			g.fillRect(og.getXLoc(), og.getYLoc(), barrierImgWidth, barrierImgHeight);
 		}
-		
+
 		//paints grass
 		for(Grass grass: board.getGameGrass()){
 			g.drawImage(grassImg,grass.getXLoc() + cellWidth/2 - (grassImgWidth/2), 
@@ -216,11 +206,11 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 		//draws crab
 		g.drawImage(crabImg,crab.getXLoc(),crab.getYLoc(),crab.getWidth(),crab.getHeight(),this);
-		
+
 		//currObject drawing
 		g.drawString(currObjectHeader, currObjectHeaderX, currObjectHeaderY);
 		g.drawString(Integer.toString(crab.getCurrObject()), currObjectTypeX, currObjectTypeY);
-		
+
 	}
 
 
@@ -231,12 +221,12 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		if (
 				((crabXVel < 0) && (crab.getXLoc() - crab.getXIncr() >= 0)) || 
 				((crabXVel > 0) && (crab.getXLoc() + crab.getWidth() + crab.getXIncr() <= screenWidth)) ||
-				((crabYVel < 0) && (crab.getYLoc() - crab.getYIncr() >= crabTopLeftCell.getYLoc())) ||
+				((crabYVel < 0) && (crab.getYLoc() - crab.getYIncr() >= board.getCrabTopLeftCell().getYLoc())) ||
 				((crabYVel > 0) && (crab.getYLoc() + crab.getYIncr() + crab.getHeight() <= screenHeight - screenHeight/20))
 				){
 			crab.move(crabXVel,crabYVel);
 		}
-		
+
 		//shore stuff
 		if(grassTimer >= grassTimerTick){
 			board.healCellsAboveGrass();
@@ -245,35 +235,35 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		else{
 			grassTimer++;
 		}
-	
-	//BOAT STUFF
-		//Boat timer increment
-		 if(newBoatTimerTime < newBoatTimer){
-			 newBoatTimerTime++;
-		 }else{
-			 board.generateRandomBoat();
-			 newBoatTimerTime = 0;
-		 }
-		 
-		 //Boat Ticks
-		 for(Boat bt: gameBoats){
-			 bt.move();
-			 board.makeWaves(bt);
-			 board.resetWaves(bt);
-		 }
-		 board.removeBoatsOffScreen();
-		 board.sandToOcean();
 
-	//Wave 
-		 for(Wave wv: gameWaves){
-			 wv.move(waveSpeed);
-		 }
-		 board.removeHitWaves();
-		 board.removeDeadBarriers();
+		//BOAT STUFF
+		//Boat timer increment
+		if(newBoatTimerTime < newBoatTimer){
+			newBoatTimerTime++;
+		}else{
+			board.generateRandomBoat();
+			newBoatTimerTime = 0;
+		}
+
+		//Boat Ticks
+		for(Boat bt: gameBoats){
+			bt.move();
+			board.makeWaves(bt);
+			board.resetWaves(bt);
+		}
+		board.removeBoatsOffScreen();
+		board.sandToOcean();
+
+		//Wave 
+		for(Wave wv: gameWaves){
+			wv.move(waveSpeed);
+		}
+		board.removeHitWaves();
+		board.removeDeadBarriers();
 
 	}
 
-	
+
 	//MOVE CRAB IMAGE
 	public void moveCrabImgUp(){
 		crabXVel = 0;
@@ -291,7 +281,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		crabXVel = crab.getXIncr();
 		crabYVel = 0;
 	}
-	
+
 
 
 	//KEY METHODS
@@ -306,26 +296,27 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		if(code == KeyEvent.VK_UP){
 			moveCrabImgUp();
 		}
-		if(code == KeyEvent.VK_DOWN){
+		else if(code == KeyEvent.VK_DOWN){
 			moveCrabImgDown();
 		}
-		if(code == KeyEvent.VK_LEFT){
+		else if(code == KeyEvent.VK_LEFT){
 			moveCrabImgLeft();
 		}
-		if(code == KeyEvent.VK_RIGHT){
+		else if(code == KeyEvent.VK_RIGHT){
 			moveCrabImgRight();
 		}
-		if(code == KeyEvent.VK_1){
+
+		else if(code == KeyEvent.VK_1){
 			crab.setCurrObject(1);
-			System.out.println("set to grass");
 		}
-		if(code == KeyEvent.VK_2);{
+		else if(code == KeyEvent.VK_2){
 			crab.setCurrObject(2);
 		}
-		if(code == KeyEvent.VK_3){
+
+		else if(code == KeyEvent.VK_3){
 			crab.setCurrObject(3);
 		}
-		if(code == KeyEvent.VK_SPACE){
+		else if(code == KeyEvent.VK_SPACE){
 			board.placeObject(crab.getCurrObject(), crab.getXLoc(), crab.getYLoc(), crab.getWidth(), crab.getHeight());
 		}
 	}
