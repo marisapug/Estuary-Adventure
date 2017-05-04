@@ -122,11 +122,11 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 		grassImgWidth = cellWidth/3;
 		grassImgHeight = cellWidth/3;
-		grassTimerTick = 100;
+		grassTimerTick = 50;
 		grassTimer = 0;
 
 		gameBoats = board.getGameBoats();
-		newBoatTimer = 200;
+		newBoatTimer = 1000;
 		newBoatTimerTime = 0;
 
 		gameWaves = board.getGameWaves();
@@ -186,7 +186,16 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		for(Boat b: board.getGameBoats()){
 			g.fillRect(b.getXLoc(),b.getYLoc(),b.getWidth(),b.getHeight());
 		}
-
+		
+		//paints buckets
+		g.setColor(Color.GREEN);
+		g.fillRect(board.getGrassBucketXLoc(),board.getGrassBucketYLoc(),board.getGrassBucketWidth(),board.getGrassBucketHeight());
+		g.setColor(Color.GRAY);
+		g.fillRect(board.getSeawallBucketXLoc(),board.getSeawallBucketYLoc(),board.getSeawallBucketWidth(),board.getSeawallBucketHeight());
+		g.setColor(Color.MAGENTA);
+		g.fillRect(board.getGabionBucketXLoc(),board.getGabionBucketYLoc(),board.getGabionBucketWidth(),board.getGabionBucketHeight());
+		
+		
 		//paints walls
 		for(Seawall s: board.getGameSeawalls()){
 			g.drawImage(wallImg, s.getXLoc(), s.getYLoc(), barrierImgWidth, barrierImgHeight, this);
@@ -235,6 +244,8 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		else{
 			grassTimer++;
 		}
+		
+		board.sandToOcean();
 
 		//BOAT STUFF
 		//Boat timer increment
@@ -252,7 +263,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			board.resetWaves(bt);
 		}
 		board.removeBoatsOffScreen();
-		board.sandToOcean();
+		
 
 		//Wave 
 		for(Wave wv: gameWaves){
@@ -261,6 +272,8 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		board.removeHitWaves();
 		board.removeDeadBarriers();
 
+		//bucket stuff
+		board.setObjectFromBucket();
 	}
 
 
@@ -306,24 +319,25 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			moveCrabImgRight();
 		}
 
-		else if(code == KeyEvent.VK_1){
-			crab.setCurrObject(1);
-		}
-		else if(code == KeyEvent.VK_2){
-			crab.setCurrObject(2);
-		}
-
-		else if(code == KeyEvent.VK_3){
-			crab.setCurrObject(3);
-		}
 		else if(code == KeyEvent.VK_SPACE){
 			board.placeObject(crab.getCurrObject(), crab.getXLoc(), crab.getYLoc(), crab.getWidth(), crab.getHeight());
 		}
 	}
 	@Override
 	public void keyReleased(KeyEvent e) {
-		crabXVel = 0;
-		crabYVel = 0;
+		int code = e.getKeyCode();
+		if(code == KeyEvent.VK_UP){
+			crabYVel = 0;
+		}
+		else if(code == KeyEvent.VK_DOWN){
+			crabYVel = 0;
+		}
+		else if(code == KeyEvent.VK_LEFT){
+			crabXVel = 0;
+		}
+		else if(code == KeyEvent.VK_RIGHT){
+			crabXVel = 0;
+		}
 	}
 
 	//CREATE IMAGE

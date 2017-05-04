@@ -72,8 +72,27 @@ public class BeachBoard {
 	private int largeStrength = 40;
 	private int mediumStrength = 25;
 	private int smallStrength = 10;
+	
+	//Buckets Stuff
+		//grass
+	private int grassBucketXLoc;
+	private int grassBucketYLoc;
+	private int grassBucketWidth;
+	private int grassBucketHeight;
+		//seawall
+	private int seawallBucketXLoc;
+	private int seawallBucketYLoc;
+	private int seawallBucketWidth;
+	private int seawallBucketHeight;
+		//gabion
+	private int gabionBucketXLoc;
+	private int gabionBucketYLoc;
+	private int gabionBucketWidth;
+	private int gabionBucketHeight;
+	
+	
 
-
+	//CONSTRUCTOR
 	public BeachBoard(int rows, int cols, int sWidth, int sHeight){
 		numRows = rows;
 		numCols = cols;
@@ -108,6 +127,23 @@ public class BeachBoard {
 		waveCellWidth = waveCells[0].getWidth();
 
 		initializeCells();
+		
+		//set up Bucket locations and sizes
+			//grass
+		seawallBucketXLoc = 0;
+		seawallBucketYLoc = grid[numRows-1][numCols-3].getYLoc();// - 2*screenHeight/10;
+		seawallBucketWidth = screenWidth/5;
+		seawallBucketHeight = screenHeight/10;
+			//seawall
+		grassBucketXLoc = seawallBucketXLoc + 2*seawallBucketWidth;
+		grassBucketYLoc = seawallBucketYLoc;
+		grassBucketWidth = screenWidth/5;
+		grassBucketHeight = seawallBucketHeight;
+			//gabion
+		gabionBucketXLoc = grassBucketXLoc + 2*grassBucketWidth;
+		gabionBucketYLoc = grassBucketYLoc;
+		gabionBucketWidth = screenWidth/5;
+		gabionBucketHeight = grassBucketHeight;
 	}
 
 	//creates beach board grid
@@ -155,15 +191,15 @@ public class BeachBoard {
 		int boatType = rand.nextInt(30);
 		Boat tempBoat;
 		if(boatType < 15){
-			tempBoat = new Boat(screenWidth, largeHeight + mediumHeight, 0, 1, smallSpeed,smallWidth,smallHeight);
+			tempBoat = new Boat(-smallWidth, largeHeight + mediumHeight, 0, 0, smallSpeed,smallWidth,smallHeight);
 			gameBoats.add(tempBoat);
 		}
 		else if(boatType < 25){
-			tempBoat = new Boat(-mediumWidth, largeHeight, 1, 0, mediumSpeed,mediumWidth,mediumHeight);
+			tempBoat = new Boat(screenWidth, largeHeight, 1, 1, mediumSpeed,mediumWidth,mediumHeight);
 			gameBoats.add(tempBoat);
 		}
 		else if(boatType <= 30){
-			tempBoat = new Boat(screenWidth, 0, 2, 1, largeSpeed,largeWidth,largeHeight);
+			tempBoat = new Boat(-largeWidth, 0, 2, 0, largeSpeed,largeWidth,largeHeight);
 			gameBoats.add(tempBoat);
 		}
 	}
@@ -175,7 +211,7 @@ public class BeachBoard {
 			if(currBoat.getDirection() == 0 && currBoat.getXLoc() > screenWidth + currBoat.getWidth()){
 				bt.remove();
 			}
-			else if(currBoat.getDirection() == 1 && (currBoat.getXLoc() + currBoat.getWidth()) < -currBoat.getWidth()){
+			else if(currBoat.getDirection() == 1 && (currBoat.getXLoc() + currBoat.getWidth()) < -(currBoat.getWidth() + cellWidth)){
 				bt.remove();
 			}
 		}
@@ -236,8 +272,8 @@ public class BeachBoard {
 		}
 	}
 
-
-	//PLACE OBJECT STUFF
+	//OBJECT STUFF
+		//PLACE OBJECT
 	public void placeObject(int object, int xL, int yL, int width, int height){
 		switch(object){
 		case 1: //GRASS
@@ -293,6 +329,32 @@ public class BeachBoard {
 		}//switch
 
 	}//method
+	
+	//SET OBJECT
+	public void setObjectFromBucket(){
+		//grassBucket = 1
+		int width = gameCrab.getWidth();
+		int height = gameCrab.getHeight();
+		int xL = gameCrab.getXLoc() + width/2;
+		int yL = gameCrab.getYLoc() + height/2;
+		
+
+		//grassBucket = 1
+		if(xL >= grassBucketXLoc && xL <= grassBucketXLoc + grassBucketWidth && 
+				yL >= grassBucketYLoc && yL <= grassBucketYLoc + grassBucketHeight){
+			gameCrab.setCurrObject(1);
+		}
+		//seawallBucket = 2
+		else if(xL >= seawallBucketXLoc && xL <= seawallBucketXLoc + seawallBucketWidth && 
+				yL >= seawallBucketYLoc && yL <= seawallBucketYLoc + seawallBucketHeight){
+			gameCrab.setCurrObject(2);
+		}
+		//gabionBucket = 2
+		else if(xL >= gabionBucketXLoc && xL <= gabionBucketXLoc + gabionBucketWidth && 
+				yL >= gabionBucketYLoc && yL <= gabionBucketYLoc + gabionBucketHeight){
+			gameCrab.setCurrObject(3);
+		}
+	}
 
 
 	//WAVE STUFF
@@ -300,7 +362,6 @@ public class BeachBoard {
 	//makes waves per cell per boat
 	public void makeWaves(Boat b){
 		WaveCell tempCell;
-		//FIX THIS MAAZ
 		if(b.getDirection() == 0){
 			tempCell = inWhichWaveCell(b.getXLoc());
 		}else{
@@ -354,7 +415,7 @@ public class BeachBoard {
 			WaveCell forwardCell = inWhichWaveCell(b.getXLoc());
 			WaveCell backCell = inWhichWaveCell(b.getXLoc() - b.getSpeed());
 			if(backCell != forwardCell){
-				resetWaveBasedOnBoatSize(backCell, b.getSize());
+				resetWaveBasedOnBoatSize(forwardCell, b.getSize());
 			}
 		}
 		else if(b.getDirection() == 1){
@@ -362,8 +423,6 @@ public class BeachBoard {
 			WaveCell backCell = inWhichWaveCell(b.getXLoc() + b.getWidth() + b.getSpeed() + cellWidth );
 			if(backCell != forwardCell){
 				resetWaveBasedOnBoatSize(backCell, b.getSize());
-			}else if(backCell == null){
-				resetWaveBasedOnBoatSize(waveCells[0], b.getSize());
 			}
 		}
 	}
@@ -559,6 +618,57 @@ public class BeachBoard {
 	
 	public BeachCell getCrabBottomLeftCell(){
 		return crabBottomLeftCell;
+	}
+
+
+	public int getSeawallBucketXLoc(){
+		return seawallBucketXLoc;
+	}
+	
+	public int getSeawallBucketYLoc(){
+		return seawallBucketYLoc;
+	}
+	
+	public int getSeawallBucketWidth(){
+		return seawallBucketWidth;
+	}
+	
+	public int getSeawallBucketHeight(){
+		return seawallBucketHeight;
+	}
+	
+
+	public int getGrassBucketXLoc(){
+		return grassBucketXLoc;
+	}
+	
+	public int getGrassBucketYLoc(){
+		return grassBucketYLoc;
+	}
+	
+	public int getGrassBucketWidth(){
+		return grassBucketWidth;
+	}
+	
+	public int getGrassBucketHeight(){
+		return grassBucketHeight;
+	}
+	
+
+	public int getGabionBucketXLoc(){
+		return gabionBucketXLoc;
+	}
+	
+	public int getGabionBucketYLoc(){
+		return gabionBucketYLoc;
+	}
+	
+	public int getGabionBucketWidth(){
+		return gabionBucketWidth;
+	}
+	
+	public int getGabionBucketHeight(){
+		return gabionBucketHeight;
 	}
 
 }

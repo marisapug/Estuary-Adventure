@@ -2,9 +2,9 @@ package model;
 
 public class WaveCell {
 
-	private boolean hasSmallWave = false;
+	private boolean hasSmallWave = true;
 	private boolean hasMediumWave = false;
-	private boolean hasLargeWave = false;
+	private boolean hasLargeWave = true;
 	private int width;
 	private int xLoc;
 	

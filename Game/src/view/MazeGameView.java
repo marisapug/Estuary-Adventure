@@ -930,23 +930,34 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		if(code == KeyEvent.VK_UP){
 			up();
 		}
-		if(code == KeyEvent.VK_DOWN){
+		else if(code == KeyEvent.VK_DOWN){
 			down();
 		}
-		if(code == KeyEvent.VK_LEFT){
+		else if(code == KeyEvent.VK_LEFT){
 			left();
 		}
-		if(code == KeyEvent.VK_RIGHT){
+		else if(code == KeyEvent.VK_RIGHT){
 			right();
 		}
 	}
 
 	@Override
-	public void keyReleased(KeyEvent arg0) {
+	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
 		crabIsMoving = false;
-		xVel = 0;
-		yVel = 0;
+		int code = e.getKeyCode();
+		if(code == KeyEvent.VK_UP){
+			yVel = 0;
+		}
+		else if(code == KeyEvent.VK_DOWN){
+			yVel = 0;
+		}
+		else if(code == KeyEvent.VK_LEFT){
+			xVel = 0;
+		}
+		else if(code == KeyEvent.VK_RIGHT){
+			xVel = 0;
+		}
 	}
 
 	@Override
