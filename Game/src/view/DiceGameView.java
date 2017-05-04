@@ -52,6 +52,9 @@ public class DiceGameView extends JPanel implements ActionListener {
 			"diceimages/dogpoopbag.png", "diceimages/fishtag.png", "diceimages/flagFull.png" };
 	private BufferedImage[] possibleDiceImgs;
 	private BufferedImage[] diceImages;
+	private int[] xCoordinates;
+	private int[] yCoordinates;
+	private int[] storyboardX;
 
 	// Dice Rolling Animation
 	int numAnimations = 0;
@@ -74,6 +77,9 @@ public class DiceGameView extends JPanel implements ActionListener {
 
 		possibleDiceImgs = new BufferedImage[dgame.getNumImgs()];
 		diceImages = new BufferedImage[dgame.getNumDice()];
+		xCoordinates = new int[dgame.getNumDice()];
+		yCoordinates = new int[dgame.getNumDice()];
+		storyboardX = new int[dgame.getNumDice()];
 
 		betweenDice = diceWidth + 10;
 		diceStartX = (screenWidth - (dgame.getNumDice() / 2 * diceWidth + (dgame.getNumDice() / 2 - 1) * betweenDice))
@@ -97,7 +103,7 @@ public class DiceGameView extends JPanel implements ActionListener {
 		this.add(storyButton);
 		this.setupListeners();
 
-		// setDiceImgs();
+		initializeCoordinates();
 		diceTimer.start();
 	}
 
@@ -108,6 +114,21 @@ public class DiceGameView extends JPanel implements ActionListener {
 
 	public int getScreenHeight() {
 		return this.screenHeight;
+	}
+
+	// Set Initial Coordinates for Images
+	// TODO
+	public void initializeCoordinates() {
+		for (int i = 0; i < dgame.getNumDice(); i++) {
+			if (i < 3) {
+				xCoordinates[i] = diceStartX + (diceWidth + betweenDice) * i - (diceWidth + betweenDice) / 2;
+				yCoordinates[i] = diceStartY;
+			} else {
+				xCoordinates[i] = diceStartX + (diceWidth + betweenDice) * (i % (dgame.getNumDice() / 2));
+				yCoordinates[i] = screenHeight - diceStartY - diceWidth;
+			}
+			storyboardX[i] = storyStartX + (diceWidth + betweenStory) * i;
+		}
 	}
 
 	// To Create BufferedImages
@@ -147,17 +168,10 @@ public class DiceGameView extends JPanel implements ActionListener {
 		super.paintComponent(g);
 
 		g.drawImage(oceanBackground, 0, 0, screenWidth, screenHeight, this);
-		// g.drawImage(testDie1, 40, 40, 100, 100, this);
 
 		// Dice
 		for (int i = 0; i < dgame.getNumDice(); i++) {
-			if (i < 3) {
-				g.drawRect(diceStartX + (diceWidth + betweenDice) * i - (diceWidth + betweenDice) / 2, diceStartY,
-						diceWidth, diceWidth);
-			} else {
-				g.drawRect(diceStartX + (diceWidth + betweenDice) * (i % (dgame.getNumDice() / 2)),
-						screenHeight - diceStartY - diceWidth, diceWidth, diceWidth);
-			}
+			g.drawRect(xCoordinates[i], yCoordinates[i], diceWidth, diceWidth);
 			if (isRolled) {
 				if (isAnimDone) {
 					System.out.println("animation done");
@@ -168,25 +182,9 @@ public class DiceGameView extends JPanel implements ActionListener {
 					dgame.setAnimNum(dgame.imgNums[i]);
 				}
 				// Storyboard Slots
-				g.drawRect(storyStartX + (diceWidth + betweenStory) * i, storyStartY, diceWidth, diceWidth);
-				// Numbers -- to be images
-				if (i < 3)
-					g.drawImage(diceImages[i],
-							diceStartX + (diceWidth + betweenDice) * i - (diceWidth + betweenDice) / 2, diceStartY,
-							diceWidth, diceWidth, this);
-				/*
-				 * g.drawString("" + dgame.getAnimNum(), diceStartX + diceWidth
-				 * / 2 + (diceWidth + betweenDice) * i - (diceWidth +
-				 * betweenDice) / 2, diceStartY + diceWidth / 2);
-				 */
-				else
-					g.drawImage(diceImages[i], diceStartX + (diceWidth + betweenDice) * (i % (dgame.getNumDice() / 2)),
-							screenHeight - diceStartY - diceWidth, diceWidth, diceWidth, this);
-				/*
-				 * g.drawString("" + dgame.getAnimNum(), diceStartX + (diceWidth
-				 * + betweenDice) * (i % (dgame.getNumDice() / 2)) + diceWidth /
-				 * 2, screenHeight - diceStartY - diceWidth + diceWidth / 2);
-				 */
+				g.drawRect(storyboardX[i], storyStartY, diceWidth, diceWidth);
+				// Images
+				g.drawImage(diceImages[i], xCoordinates[i], yCoordinates[i], diceWidth, diceWidth, this);
 			}
 			if (isStorySaved) {
 				// Story Text
@@ -203,7 +201,6 @@ public class DiceGameView extends JPanel implements ActionListener {
 		System.out.println("rollDice called");
 		makeImages();
 		animDice();
-		setDiceImgs();
 		isRolled = true;
 		repaint();
 	}
@@ -212,21 +209,6 @@ public class DiceGameView extends JPanel implements ActionListener {
 		dgame.diceStory = storyText.getText();
 		isStorySaved = true;
 	}
-
-	/*
-	 * public void animateDice(){ Random rand = new Random(); int animsDone = 0;
-	 * Timer timer = new Timer(50, new ActionListener() {
-	 * 
-	 * @Override public void actionPerformed(ActionEvent ae){ int animsToDo =
-	 * 100; //if(!isAnimDone && isRolled){ System.out.println("timer");
-	 * dgame.setAnimNum(rand.nextInt(dgame.getNumImgs())); repaint(); } });
-	 * timer.start(); }
-	 */
-
-	/*
-	 * void animateDice(){ for(int i = 0; i < 200000; i++){ repaint(); }
-	 * isAnimDone = true; }
-	 */
 
 	// Set Button Listeners
 	void setupListeners() {
@@ -256,7 +238,6 @@ public class DiceGameView extends JPanel implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		//System.out.println("Timer called");
 		if (numAnimations < animsToDo) {
 			if (isRolled && !isAnimDone) {
 				animDice();
@@ -265,6 +246,9 @@ public class DiceGameView extends JPanel implements ActionListener {
 			}
 		} else {
 			isAnimDone = true;
+			System.out.println("setDiceImgs called after animation");
+			setDiceImgs();
+			repaint();
 			storyButton.setVisible(true);
 			storyText.setVisible(true);
 		}
