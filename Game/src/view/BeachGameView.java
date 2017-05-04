@@ -159,29 +159,35 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		//button listeners
 		plantButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				BeachCell tempCell = board.inWhichCell(crab.getXLoc() + (crab.getWidth())/2, crab.getYLoc() + (crab.getHeight())/2);
-				if(tempCell != null && tempCell.getCanHoldGrass() && !tempCell.getHasGrass()){
-					board.addGrass(tempCell.getXLoc(), tempCell.getYLoc());
-					tempCell.setHasGrass(true);
+				for(int i = -1; i < 2; i++){
+					BeachCell tempCell = board.inWhichCell(crab.getXLoc() + (crab.getWidth())/2, crab.getYLoc() + (crab.getHeight())/2 + (i * cellHeight));
+					if(tempCell != null && tempCell.getCanHoldGrass() && !tempCell.getHasGrass()){
+						board.addGrass(tempCell.getXLoc(), tempCell.getYLoc());
+						tempCell.setHasGrass(true);
+					}
 				}
+
 			}
 		});
 		
 		seawallButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				BeachCell tempCell = board.inWhichCell(crab.getXLoc() + (crab.getWidth())/2, crab.getYLoc() + (crab.getHeight())/2);
-				if(tempCell != null && tempCell.getCanHoldBarrier() && !tempCell.getHasBarrier()){
-					board.addWall(tempCell.getXLoc(), tempCell.getYLoc());
-					tempCell.setCanHoldBarrier(false);
-					tempCell.setHasBarrier(true);
-					tempCell.setHealth(seawallHealth);
-					if(tempCell.getX() > 0 ){
-						board.getGrid()[tempCell.getX() - 1][tempCell.getY()].setCanHoldBarrier(false);
+				//checks cell and cell above to place seaWall
+				for(int i = -1; i < 1; i++){
+					BeachCell tempCell = board.inWhichCell(crab.getXLoc() + (crab.getWidth())/2, crab.getYLoc() + (crab.getHeight())/2 + (i * cellHeight));
+					if(tempCell != null && tempCell.getCanHoldBarrier() && !tempCell.getHasBarrier()){
+						board.addWall(tempCell.getXLoc(), tempCell.getYLoc());
+						tempCell.setCanHoldBarrier(false);
+						tempCell.setHasBarrier(true);
+						tempCell.setHealth(seawallHealth);
+						if(tempCell.getX() > 0 ){
+							board.getGrid()[tempCell.getX() - 1][tempCell.getY()].setCanHoldBarrier(false);
 
-					}
-					if(tempCell.getX() < numRows-1){
-						board.getGrid()[tempCell.getX() + 1][tempCell.getY()].setCanHoldBarrier(false);
+						}
+						if(tempCell.getX() < numRows-1){
+							board.getGrid()[tempCell.getX() + 1][tempCell.getY()].setCanHoldBarrier(false);
 
+						}
 					}
 				}
 			}
@@ -189,17 +195,21 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		
 		gabionButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				BeachCell tempCell = board.inWhichCell(crab.getXLoc() + (crab.getWidth())/2, crab.getYLoc() + (crab.getHeight())/2);
-				if(tempCell != null && tempCell.getCanHoldBarrier() && !tempCell.getHasBarrier()){
-					board.addGabion(tempCell.getXLoc(), tempCell.getYLoc());
-					tempCell.setCanHoldBarrier(false);
-					tempCell.setHasBarrier(true);
-					tempCell.setHealth(gabionHealth);
-					if(tempCell.getX() > 0 ){
-						board.getGrid()[tempCell.getX() - 1][tempCell.getY()].setCanHoldBarrier(false);
-					}
-					if(tempCell.getX() < numRows-1){
-						board.getGrid()[tempCell.getX() + 1][tempCell.getY()].setCanHoldBarrier(false);
+				//checks cell and cell above to place babion
+
+				for(int i = -1; i < 1; i++){
+					BeachCell tempCell = board.inWhichCell(crab.getXLoc() + (crab.getWidth())/2, crab.getYLoc() + (crab.getHeight())/2 + (i * cellHeight));
+					if(tempCell != null && tempCell.getCanHoldBarrier() && !tempCell.getHasBarrier()){
+						board.addGabion(tempCell.getXLoc(), tempCell.getYLoc());
+						tempCell.setCanHoldBarrier(false);
+						tempCell.setHasBarrier(true);
+						tempCell.setHealth(gabionHealth);
+						if(tempCell.getX() > 0 ){
+							board.getGrid()[tempCell.getX() - 1][tempCell.getY()].setCanHoldBarrier(false);
+						}
+						if(tempCell.getX() < numRows-1){
+							board.getGrid()[tempCell.getX() + 1][tempCell.getY()].setCanHoldBarrier(false);
+						}
 					}
 				}
 			}
@@ -231,7 +241,8 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				if(tempBC.getType() == 0){
 					g.fillRect(tempBC.getXLoc(), tempBC.getYLoc(), tempBC.getWidth(), tempBC.getHeight());
 					g.setColor(Color.BLACK);
-					g.drawString(Integer.toString(tempBC.getHealth()),tempBC.getXLoc(), tempBC.getYLoc() + cellHeight/2);
+					// remove after testing
+					g.drawString(Integer.toString(tempBC.getHealth()) + " " + Boolean.toString(tempBC.getCanHoldGrass()),tempBC.getXLoc(), tempBC.getYLoc() + cellHeight/2);
 				}
 				else
 					g.drawString(Integer.toString(tempBC.getHealth()) + Boolean.toString(tempBC.getHasBarrier()),tempBC.getXLoc(), tempBC.getYLoc() + cellHeight/2);

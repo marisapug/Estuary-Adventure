@@ -81,10 +81,10 @@ public class BeachBoard {
 		}
 	}
 
-	//intitialzes what type of item a cell can hold
+	//intitialzes what type of item a cell can hold and the type of the cell
 	private void initializeCells(){
 		for(int i = 0; i < numRows; i++){
-			grid[i][2].setCanHoldGrass(true);
+			grid[i][3].setCanHoldGrass(true);
 			grid[i][0].setCanHoldBarrier(true);
 			for(int j = 2; j < numCols; j++){
 				grid[i][j].setType(0);
@@ -157,12 +157,19 @@ public class BeachBoard {
 		for(int i = 0; i < numRows; i++){
 			for(int j = 0; j < numCols-1; j++){
 				BeachCell tempCell = grid[i][j];
-				if(tempCell.getHealth() <= 0){
+				if(tempCell.getHealth() <= 0 && tempCell.getType() == 0){
 					tempCell.setType(1);
 					tempCell.setCanHoldGrass(false);
-					grid[i][j+1].setCanHoldGrass(true);
-					removeDestroyedGrass(tempCell.getXLoc(), tempCell.getYLoc());
-					tempCell.setHasGrass(false);
+					//shifts can hold grass down if at least two from bottom
+					if((numCols - 1) - j > 2){
+						grid[i][j+2].setCanHoldGrass(true);
+					}
+					if((numCols - 1) - j > 1){
+						BeachCell remGrassCell = grid[i][j+1];
+						removeDestroyedGrass(remGrassCell.getXLoc(), remGrassCell.getYLoc());
+						remGrassCell.setHasGrass(false);
+						remGrassCell.setCanHoldGrass(false);
+					}
 				}
 			}
 		}
