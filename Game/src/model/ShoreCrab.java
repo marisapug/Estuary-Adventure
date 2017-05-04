@@ -2,6 +2,8 @@ package model;
 
 public class ShoreCrab extends GameFigure {
 	
+	private int currObject; //0 nothing, 1 grass, 2 wall, 3 gabion
+	
 	public ShoreCrab(int xl, int yl){
 		xLoc = xl;
 		yLoc = yl;
@@ -9,6 +11,7 @@ public class ShoreCrab extends GameFigure {
 		yIncr = 6;
 		width = 50;
 		height = 50;
+		currObject = 0;
 	}
 
 	public int getXLoc() {
@@ -33,6 +36,14 @@ public class ShoreCrab extends GameFigure {
 	
 	public int getHeight(){
 		return height;
+	}
+	
+	public int getCurrObject(){
+		return currObject;
+	}
+	
+	public void setCurrObject(int curr){
+		currObject = curr;
 	}
 	
 

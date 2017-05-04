@@ -1,6 +1,5 @@
 package view;
 
-import model.Barrier;
 import model.BeachBoard;
 import model.BeachCell;
 import model.Boat;
@@ -8,10 +7,8 @@ import model.Grass;
 import model.OysterGabion;
 import model.Seawall;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -19,14 +16,9 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -53,7 +45,6 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 	//BeachGrid
 	private BeachCell[][] grid;
-	private BeachCell crabStartCell;
 	private BeachCell crabTopLeftCell;
 	private BeachCell crabBottomLeftCell;
 	private int cellWidth;
@@ -74,9 +65,6 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 	//ShoreCrab
 	private ShoreCrab crab;
-	
-	private int crabGridStartX;
-	private int crabGridStartY;
 	private int crabGridTopX;
 	private int crabGridTopY;
 	private int crabGridBottomX;
@@ -99,11 +87,13 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private ArrayList<Wave> gameWaves;
 	private int waveSpeed;
 	
+	//Current Object
+	private String currObjectHeader = "Current Object: ";
+	private int currObjectHeaderX = screenWidth/2;
+	private int currObjectHeaderY = screenHeight - (screenHeight*3)/4;
 	
-	//JButtons
-	JButton plantButton;
-	JButton gabionButton;
-	JButton seawallButton;
+	private int currObjectTypeX = currObjectHeaderX + 100;
+	private int currObjectTypeY = currObjectHeaderY;
 	
 	//=======================================================================//
 
@@ -117,9 +107,6 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		//game stuff
 		board = new BeachBoard(numRows,numCols,screenWidth,screenHeight);
 		grid = board.getGrid();
-		crabGridStartX = numRows/2 - 1;
-		crabGridStartY = numCols/2;
-		crabStartCell = grid[crabGridStartX][crabGridStartY];
 		
 		cellWidth = board.getCellWidth();
 		cellHeight = board.getCellHeight();
@@ -132,7 +119,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		crabGridBottomY = 0;
 		crabBottomLeftCell = grid[crabGridBottomX][crabGridBottomY];
 		
-		crab = new ShoreCrab(crabStartCell.getXLoc(),crabStartCell.getYLoc());
+		crab = board.getGameCrab();
 		crabXVel = crab.getXVel();
 		crabYVel = crab.getYVel();
 		
@@ -154,76 +141,6 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		
 		gameWaves = board.getGameWaves();
 		waveSpeed = board.getWaveSpeed();
-	
-		//button initialization
-		plantButton = new JButton("Plant Grass");
-		gabionButton = new JButton("Place Oyster Gabion");
-		seawallButton = new JButton("Place Sea Wall");
-		this.add(plantButton);
-		this.add(gabionButton);
-		this.add(seawallButton);
-		plantButton.setFocusable(false);
-		gabionButton.setFocusable(false);
-		seawallButton.setFocusable(false);
-		
-		//button listeners
-		plantButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				for(int i = -1; i < 2; i++){
-					BeachCell tempCell = board.inWhichCell(crab.getXLoc() + (crab.getWidth())/2, crab.getYLoc() + (crab.getHeight())/2 + (i * cellHeight));
-					if(tempCell != null && tempCell.getCanHoldGrass() && !tempCell.getHasGrass()){
-						board.addGrass(tempCell.getXLoc(), tempCell.getYLoc());
-						tempCell.setHasGrass(true);
-					}
-				}
-
-			}
-		});
-		
-		seawallButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				//checks cell and cell above to place seaWall
-				for(int i = -1; i < 1; i++){
-					BeachCell tempCell = board.inWhichCell(crab.getXLoc() + (crab.getWidth())/2, crab.getYLoc() + (crab.getHeight())/2 + (i * cellHeight));
-					if(tempCell != null && tempCell.getCanHoldBarrier() && !tempCell.getHasBarrier()){
-						board.addWall(tempCell.getXLoc(), tempCell.getYLoc());
-						tempCell.setCanHoldBarrier(false);
-						tempCell.setHasBarrier(true);
-						tempCell.setHealth(totalSeawallHealth);
-						if(tempCell.getX() > 0 ){
-							board.getGrid()[tempCell.getX() - 1][tempCell.getY()].setCanHoldBarrier(false);
-
-						}
-						if(tempCell.getX() < numRows-1){
-							board.getGrid()[tempCell.getX() + 1][tempCell.getY()].setCanHoldBarrier(false);
-
-						}
-					}
-				}
-			}
-		});
-		
-		gabionButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				//checks cell and cell above to place babion
-
-				for(int i = -1; i < 1; i++){
-					BeachCell tempCell = board.inWhichCell(crab.getXLoc() + (crab.getWidth())/2, crab.getYLoc() + (crab.getHeight())/2 + (i * cellHeight));
-					if(tempCell != null && tempCell.getCanHoldBarrier() && !tempCell.getHasBarrier()){
-						board.addGabion(tempCell.getXLoc(), tempCell.getYLoc());
-						tempCell.setCanHoldBarrier(false);
-						tempCell.setHasBarrier(true);
-						tempCell.setHealth(totalGabionHealth);
-						if(tempCell.getX() > 0 ){
-							board.getGrid()[tempCell.getX() - 1][tempCell.getY()].setCanHoldBarrier(false);
-						}
-						if(tempCell.getX() < numRows-1){
-							board.getGrid()[tempCell.getX() + 1][tempCell.getY()].setCanHoldBarrier(false);
-						}
-					}
-				}
-			}
-		});
 		
 		//start timer
 		t.start();
@@ -300,6 +217,10 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		//draws crab
 		g.drawImage(crabImg,crab.getXLoc(),crab.getYLoc(),crab.getWidth(),crab.getHeight(),this);
 		
+		//currObject drawing
+		g.drawString(currObjectHeader, currObjectHeaderX, currObjectHeaderY);
+		g.drawString(Integer.toString(crab.getCurrObject()), currObjectTypeX, currObjectTypeY);
+		
 	}
 
 
@@ -370,7 +291,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		crabXVel = crab.getXIncr();
 		crabYVel = 0;
 	}
-
+	
 
 
 	//KEY METHODS
@@ -393,6 +314,19 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		}
 		if(code == KeyEvent.VK_RIGHT){
 			moveCrabImgRight();
+		}
+		if(code == KeyEvent.VK_1){
+			crab.setCurrObject(1);
+			System.out.println("set to grass");
+		}
+		if(code == KeyEvent.VK_2);{
+			crab.setCurrObject(2);
+		}
+		if(code == KeyEvent.VK_3){
+			crab.setCurrObject(3);
+		}
+		if(code == KeyEvent.VK_SPACE){
+			board.placeObject(crab.getCurrObject(), crab.getXLoc(), crab.getYLoc(), crab.getWidth(), crab.getHeight());
 		}
 	}
 	@Override
