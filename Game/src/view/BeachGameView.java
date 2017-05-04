@@ -42,8 +42,8 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	int screenWidth = MainFrame.getFrameWidth();
 	int screenHeight = MainFrame.getFrameHeight();
 
-	int numRows = 10;
-	int numCols = 7;
+	int numRows = 15;
+	int numCols = 10;
 	
 	//Timer
 	Timer t = new Timer(10,this);
@@ -59,6 +59,8 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private int cellWidth;
 	private int cellHeight;
 	
+	private int totalSandHealth;
+	
 	//Grass and Barrier Images
 	private BufferedImage grassImg = createImage("beachImages/grass.png");
 	private BufferedImage wallImg = createImage("beachImages/seawall.png");
@@ -66,8 +68,9 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private int barrierImgHeight;
 	private int grassImgWidth;
 	private int grassImgHeight;
-	private int seawallHealth;
-	private int gabionHealth;
+	
+	private int totalSeawallHealth;
+	private int totalGabionHealth;
 
 	//ShoreCrab
 	private ShoreCrab crab;
@@ -82,6 +85,10 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private BufferedImage crabImg = createImage("characters/bluecrab_0.png");
 	private int crabXVel;
 	private int crabYVel;
+	
+	//Grass
+	private int grassTimerTick;
+	private int grassTimer;
 	
 	//BoatStuff
 	private ArrayList<Boat> gameBoats;
@@ -132,11 +139,14 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		barrierImgWidth = cellWidth;
 		barrierImgHeight = cellHeight;
 		
-		seawallHealth = board.getSeawallHealth();
-		gabionHealth = board.getGabionHealth();
+		totalSeawallHealth = board.getTotalSeawallHealth();
+		totalGabionHealth = board.getTotalGabionHealth();
+		totalSandHealth = board.getTotalSandHealth();
 		
 		grassImgWidth = cellWidth/3;
 		grassImgHeight = cellWidth/3;
+		grassTimerTick = 100;
+		grassTimer = 0;
 		
 		gameBoats = board.getGameBoats();
 		newBoatTimer = 200;
@@ -179,7 +189,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 						board.addWall(tempCell.getXLoc(), tempCell.getYLoc());
 						tempCell.setCanHoldBarrier(false);
 						tempCell.setHasBarrier(true);
-						tempCell.setHealth(seawallHealth);
+						tempCell.setHealth(totalSeawallHealth);
 						if(tempCell.getX() > 0 ){
 							board.getGrid()[tempCell.getX() - 1][tempCell.getY()].setCanHoldBarrier(false);
 
@@ -203,7 +213,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 						board.addGabion(tempCell.getXLoc(), tempCell.getYLoc());
 						tempCell.setCanHoldBarrier(false);
 						tempCell.setHasBarrier(true);
-						tempCell.setHealth(gabionHealth);
+						tempCell.setHealth(totalGabionHealth);
 						if(tempCell.getX() > 0 ){
 							board.getGrid()[tempCell.getX() - 1][tempCell.getY()].setCanHoldBarrier(false);
 						}
@@ -239,7 +249,9 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				BeachCell tempBC = board.getGrid()[i][j];
 				g.setColor(Color.YELLOW);
 				if(tempBC.getType() == 0){
-					g.fillRect(tempBC.getXLoc(), tempBC.getYLoc(), tempBC.getWidth(), tempBC.getHeight());
+					int tempHeight = (int)(tempBC.getHeight() * ((double)tempBC.getHealth()/(double)totalSandHealth));
+					int tempYLoc = tempBC.getYLoc() + (cellHeight - tempHeight);
+					g.fillRect(tempBC.getXLoc(), tempYLoc, tempBC.getWidth(), tempHeight);
 					g.setColor(Color.BLACK);
 					// remove after testing
 					g.drawString(Integer.toString(tempBC.getHealth()) + " " + Boolean.toString(tempBC.getCanHoldGrass()),tempBC.getXLoc(), tempBC.getYLoc() + cellHeight/2);
@@ -302,6 +314,15 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				((crabYVel > 0) && (crab.getYLoc() + crab.getYIncr() + crab.getHeight() <= screenHeight - screenHeight/20))
 				){
 			crab.move(crabXVel,crabYVel);
+		}
+		
+		//shore stuff
+		if(grassTimer >= grassTimerTick){
+			board.healCellsAboveGrass();
+			grassTimer = 0;
+		}
+		else{
+			grassTimer++;
 		}
 	
 	//BOAT STUFF

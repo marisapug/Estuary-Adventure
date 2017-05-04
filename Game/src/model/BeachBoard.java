@@ -30,15 +30,16 @@ public class BeachBoard {
 	private int smallHeight = 20;
 
 	private int largeSpeed = 1;
-	private int mediumSpeed = 3;
-	private int smallSpeed = 5;
+	private int mediumSpeed = 2;
+	private int smallSpeed = 3;
 
 	//barrier
-	private int gabionHealth = 300;
-	private int seawallHealth = 100;
+	private int totalGabionHealth = 300;
+	private int totalSeawallHealth = 100;
 
 	//sand
-	private int sandHealth = 100;
+	private int totalSandHealth = 100;
+	private int grassHealIncr = 1;
 
 	//Wave stuff
 	private WaveCell[] waveCells;
@@ -88,7 +89,7 @@ public class BeachBoard {
 			grid[i][0].setCanHoldBarrier(true);
 			for(int j = 2; j < numCols; j++){
 				grid[i][j].setType(0);
-				grid[i][j].setHealth(sandHealth);
+				grid[i][j].setHealth(totalSandHealth);
 			}
 			for(int j = 0; j < 2; j++){
 				grid[i][j].setType(1);
@@ -174,12 +175,42 @@ public class BeachBoard {
 			}
 		}
 	}
+	
+	//removes grass given a xL and yL; called in sandToOcean method
+	public void removeDestroyedGrass(int xL, int yL){
+		Iterator<Grass> grassI = gameGrass.iterator();
+		while(grassI.hasNext()){
+			Grass currGrass = grassI.next();
+			if(currGrass.getXLoc() == xL && currGrass.getYLoc() == yL){
+				grassI.remove();
+			}
+		}
+	}
+	
+	//heals the cell above a grass cell
+	public void healCellsAboveGrass(){
+		for(Grass gr: gameGrass){
+			BeachCell healCell = inWhichCell(gr.getXLoc()+1, gr.getYLoc()-1);
+			if(healCell.getHealth() < totalSandHealth - grassHealIncr){
+				healCell.setHealth(healCell.getHealth() + grassHealIncr);
+			}else{
+				healCell.setHealth(totalSandHealth);
+			}
+		}
+	}
+	
 
 	//WAVE STUFF
 
 	//makes waves per cell per boat
 	public void makeWaves(Boat b){
-		WaveCell tempCell = inWhichWaveCell(b.getXLoc() + b.getWidth()/2);
+		WaveCell tempCell;
+		//FIX THIS MAAZ
+		if(b.getDirection() == 0){
+			tempCell = inWhichWaveCell(b.getXLoc());
+		}else{
+			tempCell = inWhichWaveCell(b.getXLoc() + cellWidth);
+		}
 		if(tempCell!=null){
 			int tempStrength;
 			if(b.getSize() == 0){
@@ -225,21 +256,22 @@ public class BeachBoard {
 	//resets a cell once a boat passes
 	public void resetWaves(Boat b){
 		if(b.getDirection() == 0){
-			WaveCell forwardCell = inWhichWaveCell(b.getXLoc() + b.getSpeed());
-			WaveCell backCell = inWhichWaveCell(b.getXLoc());
+			WaveCell forwardCell = inWhichWaveCell(b.getXLoc());
+			WaveCell backCell = inWhichWaveCell(b.getXLoc() - b.getSpeed());
 			if(backCell != forwardCell){
 				resetWaveBasedOnBoatSize(backCell, b.getSize());
 			}
 		}
-		else if(b.getDirection() ==1){
-			WaveCell forwardCell = inWhichWaveCell(b.getXLoc() + b.getWidth() - b.getSpeed());
-			WaveCell backCell = inWhichWaveCell(b.getXLoc() + b.getWidth());
+		else if(b.getDirection() == 1){
+			WaveCell forwardCell = inWhichWaveCell(b.getXLoc() + b.getWidth() + cellWidth);
+			WaveCell backCell = inWhichWaveCell(b.getXLoc() + b.getWidth() + b.getSpeed() + cellWidth);
 			if(backCell != forwardCell){
 				resetWaveBasedOnBoatSize(backCell, b.getSize());
 			}
 		}
 	}
 
+	//removes a wave from the list when it has hit a sand cell
 	public void removeHitWaves(){
 		Iterator<Wave> wv = gameWaves.iterator();
 		while(wv.hasNext()){
@@ -255,6 +287,7 @@ public class BeachBoard {
 		}
 	}
 
+	//removes a barrier gives the xLoc and yLoc of the cell (same as its own xLoc and yLoc)
 	public void removeBarrier(int xL, int yL){
 		Iterator<OysterGabion> gi = gameGabions.iterator();
 		Iterator<Seawall> si = gameWalls.iterator();
@@ -274,15 +307,6 @@ public class BeachBoard {
 
 	}
 	
-	public void removeDestroyedGrass(int xL, int yL){
-		Iterator<Grass> grassI = gameGrass.iterator();
-		while(grassI.hasNext()){
-			Grass currGrass = grassI.next();
-			if(currGrass.getXLoc() == xL && currGrass.getYLoc() == yL){
-				grassI.remove();
-			}
-		}
-	}
 	
 	//removes barriers with zero-health barriers, updates cells that can hold barriers/has barriers
 	public void removeDeadBarriers(){
@@ -407,13 +431,17 @@ public class BeachBoard {
 	public int getWaveSpeed(){
 		return waveSpeed;
 	}
-
-	public int getSeawallHealth(){
-		return seawallHealth;
+	
+	public int getTotalSandHealth(){
+		return totalSandHealth;
 	}
 
-	public int getGabionHealth(){
-		return gabionHealth;
+	public int getTotalSeawallHealth(){
+		return totalSeawallHealth;
+	}
+
+	public int getTotalGabionHealth(){
+		return totalGabionHealth;
 	}
 
 }
