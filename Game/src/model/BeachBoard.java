@@ -155,9 +155,15 @@ public class BeachBoard {
 	//shore stuff
 	public void sandToOcean(){
 		for(int i = 0; i < numRows; i++){
-			for(int j = 0; j < numCols; j++){
-				if(grid[i][j].getHealth() <= 0)
-					grid[i][j].setType(1);
+			for(int j = 0; j < numCols-1; j++){
+				BeachCell tempCell = grid[i][j];
+				if(tempCell.getHealth() <= 0){
+					tempCell.setType(1);
+					tempCell.setCanHoldGrass(false);
+					grid[i][j+1].setCanHoldGrass(true);
+					removeDestroyedGrass(tempCell.getXLoc(), tempCell.getYLoc());
+					tempCell.setHasGrass(false);
+				}
 			}
 		}
 	}
@@ -260,7 +266,18 @@ public class BeachBoard {
 		}
 
 	}
-
+	
+	public void removeDestroyedGrass(int xL, int yL){
+		Iterator<Grass> grassI = gameGrass.iterator();
+		while(grassI.hasNext()){
+			Grass currGrass = grassI.next();
+			if(currGrass.getXLoc() == xL && currGrass.getYLoc() == yL){
+				grassI.remove();
+			}
+		}
+	}
+	
+	//removes barriers with zero-health barriers, updates cells that can hold barriers/has barriers
 	public void removeDeadBarriers(){
 		Iterator<Wave> wv = gameWaves.iterator();
 		while(wv.hasNext()){
@@ -280,6 +297,7 @@ public class BeachBoard {
 		}
 	}
 	
+	//sets what cells can hold barriers
 	public void setAdjacent(BeachCell tempCell){
 		if(tempCell.getX() == 1){
 			grid[tempCell.getX()-1][tempCell.getY()].setCanHoldBarrier(true);

@@ -160,8 +160,10 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		plantButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				BeachCell tempCell = board.inWhichCell(crab.getXLoc() + (crab.getWidth())/2, crab.getYLoc() + (crab.getHeight())/2);
-				if(tempCell != null && tempCell.getCanHoldGrass())
+				if(tempCell != null && tempCell.getCanHoldGrass() && !tempCell.getHasGrass()){
 					board.addGrass(tempCell.getXLoc(), tempCell.getYLoc());
+					tempCell.setHasGrass(true);
+				}
 			}
 		});
 		

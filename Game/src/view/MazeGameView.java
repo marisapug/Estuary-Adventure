@@ -261,7 +261,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 	private String endWinTimeText = "Your Time: ";
 	private int endWinTimeTextX = endTitleStringX;
-	private int endWinTimeTextY = screenHeight/4;
+	private int endWinTimeTextY = screenHeight/4 + endTitleFontSize;;
 
 	private String endLoseTextHealth = "You have no more health!";
 	private String endLoseTextTime = "You have no more time left!";
