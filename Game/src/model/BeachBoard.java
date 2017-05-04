@@ -75,6 +75,13 @@ public class BeachBoard {
 		for(int i = 0; i < numRows; i++){
 			grid[i][2].setCanHoldGrass(true);
 			grid[i][0].setCanHoldBarrier(true);
+			for(int j = 2; j < numCols; j++){
+				grid[i][j].setType(0);
+			}
+			for(int j = 0; j < 2; j++){
+				grid[i][j].setType(1);
+			}
+			
 		}
 	}
 
@@ -133,6 +140,9 @@ public class BeachBoard {
 		return null;
 	}
 	
+	
+	//WAVE STUFF
+	
 	//makes waves per cell per boat
 	public void makeWaves(Boat b){
 		WaveCell tempCell = inWhichWaveCell(b.getXLoc() + b.getWidth()/2);
@@ -182,6 +192,17 @@ public class BeachBoard {
 			WaveCell backCell = inWhichWaveCell(b.getXLoc() + b.getWidth());
 			if(backCell != forwardCell){
 				resetWaveBasedOnBoatSize(backCell, b.getSize());
+			}
+		}
+	}
+	
+	public void removeHitWaves(){
+		Iterator<Wave> wv = gameWaves.iterator();
+		while(wv.hasNext()){
+			Wave currWave = wv.next();
+			BeachCell tempCell = inWhichCell(currWave.getXLoc() + currWave.getWidth()/2, currWave.getYLoc());
+			if(tempCell != null && tempCell.getType() == 0){
+				wv.remove();
 			}
 		}
 	}

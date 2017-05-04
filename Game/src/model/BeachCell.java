@@ -49,6 +49,10 @@ public class BeachCell {
 		return y;
 	}
 	
+	public int getType(){
+		return cellType;
+	}
+	
 	public boolean getCanHoldGrass(){
 		return canHoldGrass;
 	}
@@ -80,6 +84,10 @@ public class BeachCell {
 	
 	public void setHasBarrier(boolean b){
 		hasBarrier = b;
+	}
+	
+	public void setType(int t){
+		cellType = t;
 	}
 	
 	
