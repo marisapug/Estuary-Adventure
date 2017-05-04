@@ -5,13 +5,17 @@ import java.util.Random;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.awt.Component;
+import java.awt.Point;
 
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.Timer;
+import javax.swing.event.MouseInputListener;
 import javax.swing.*;
 
 import model.*;
@@ -70,6 +74,10 @@ public class DiceGameView extends JPanel implements ActionListener {
 	// Images
 	BufferedImage oceanBackground = createImage("background/dicebackground.jpg");
 
+	// Mouse Listener
+	DiceListener listener = new DiceListener();
+	Point currPoint = listener.point;
+
 	// Constructor
 	public DiceGameView() {
 
@@ -102,6 +110,7 @@ public class DiceGameView extends JPanel implements ActionListener {
 		this.add(storyText);
 		this.add(storyButton);
 		this.setupListeners();
+		this.setupMouseListener(listener);
 
 		initializeCoordinates();
 		diceTimer.start();
@@ -117,7 +126,6 @@ public class DiceGameView extends JPanel implements ActionListener {
 	}
 
 	// Set Initial Coordinates for Images
-	// TODO
 	public void initializeCoordinates() {
 		for (int i = 0; i < dgame.getNumDice(); i++) {
 			if (i < 3) {
@@ -167,6 +175,12 @@ public class DiceGameView extends JPanel implements ActionListener {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
+		boolean isImgClicked = false;
+		int clickedIndex = 0;
+		BufferedImage clickedImg = diceImages[0];
+		if (listener.pressing)
+			currPoint = listener.point;
+
 		g.drawImage(oceanBackground, 0, 0, screenWidth, screenHeight, this);
 
 		// Dice
@@ -185,13 +199,33 @@ public class DiceGameView extends JPanel implements ActionListener {
 				g.drawRect(storyboardX[i], storyStartY, diceWidth, diceWidth);
 				// Images
 				g.drawImage(diceImages[i], xCoordinates[i], yCoordinates[i], diceWidth, diceWidth, this);
+				if (currPoint.x > xCoordinates[i] && currPoint.x < (xCoordinates[i] + diceWidth)) {
+					if (currPoint.y > yCoordinates[i] && currPoint.y < (yCoordinates[i] + diceWidth)) {
+						clickedImg = diceImages[i];
+						clickedIndex = i;
+						isImgClicked = true;
+					}
+				}
 			}
 			if (isStorySaved) {
+				// maybe do a text box?
+				g.fillRect(diceWidth, diceWidth, screenWidth - 2 * diceWidth, screenHeight - 2 * diceWidth);
+
 				// Story Text
 				g.drawString(dgame.getDiceStory(), storyTextX, storyTextY);
 			} // if
 		} // for loop
-
+		if (isImgClicked) {
+			Point nextPoint = listener.tmpPoint;
+			for (int i = 0; i < dgame.getNumDice(); i++) {
+				if (nextPoint.x > storyboardX[i] && nextPoint.x < (storyboardX[i] + diceWidth)) {
+					if (nextPoint.y > storyStartY && nextPoint.y < (storyStartY + diceWidth)) {
+						xCoordinates[clickedIndex] = storyboardX[i];
+						yCoordinates[clickedIndex] = storyStartY;
+					}
+				}
+			}
+		}
 		// testing
 		g.drawString(".", screenWidth, screenHeight);
 	}
@@ -215,7 +249,6 @@ public class DiceGameView extends JPanel implements ActionListener {
 		rollDiceButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				rollDice(); // roll dice function
 				rollDiceButton.setVisible(false);
 			}
@@ -223,7 +256,6 @@ public class DiceGameView extends JPanel implements ActionListener {
 		storyButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				repaint(); // print story function
 				saveStory(); // save story function
 			}
@@ -254,4 +286,65 @@ public class DiceGameView extends JPanel implements ActionListener {
 		}
 	}
 
+	// Set up mouse listener
+	private Component getMouseTarget() {
+		return this;
+	}
+
+	void setupMouseListener(MouseInputListener listener) {
+		getMouseTarget().addMouseListener(listener);
+		getMouseTarget().addMouseMotionListener(listener);
+	}
+
+	// MouseInputListener class
+
+	public class DiceListener implements MouseInputListener {
+		boolean pressing = false;
+		Point point = new Point(0, 0);
+		Point tmpPoint = new Point(0, 0);
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			if (pressing) {
+				tmpPoint = e.getPoint();
+			} else {
+				pressing = true;
+				point = e.getPoint();
+			}
+			// repaint();
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			pressing = false;
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+
+		}
+
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			// System.out.println(point);
+			tmpPoint = e.getPoint();
+			repaint();
+		}
+
+		@Override
+		public void mouseMoved(MouseEvent e) {
+
+		}
+
+	}
 }
