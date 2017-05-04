@@ -133,7 +133,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		grassImgHeight = cellWidth/3;
 		
 		gameBoats = board.getGameBoats();
-		newBoatTimer = 400;
+		newBoatTimer = 200;
 		newBoatTimerTime = 0;
 		
 		gameWaves = board.getGameWaves();
@@ -213,10 +213,12 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 		//paints board
 		for(int i = 0; i < numRows; i++){
-			for(int j = 2; j < numCols; j++){
+			for(int j = 0; j < numCols; j++){
 				BeachCell tempBC = board.getGrid()[i][j];
 				g.setColor(Color.YELLOW);
-				g.fillRect(tempBC.getXLoc(), tempBC.getYLoc(), tempBC.getWidth(), tempBC.getHeight());
+				if(tempBC.getType() == 0){
+					g.fillRect(tempBC.getXLoc(), tempBC.getYLoc(), tempBC.getWidth(), tempBC.getHeight());
+				}
 			}
 		}
 		for(int i = 0; i < numRows; i++){
@@ -274,7 +276,8 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				){
 			crab.move(crabXVel,crabYVel);
 		}
-		
+	
+	//BOAT STUFF
 		//Boat timer increment
 		 if(newBoatTimerTime < newBoatTimer){
 			 newBoatTimerTime++;
@@ -283,19 +286,19 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			 newBoatTimerTime = 0;
 		 }
 		 
+		 //Boat Ticks
 		 for(Boat bt: gameBoats){
 			 bt.move();
-		 }
-		 
-		 for(Boat bt: gameBoats){
 			 board.makeWaves(bt);
 			 board.resetWaves(bt);
 		 }
+		 board.removeBoatsOffScreen();
 
-		 
+	//Wave 
 		 for(Wave wv: gameWaves){
 			 wv.move(waveSpeed);
 		 }
+		 board.removeHitWaves();
 		 
 
 	}

@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 public class BeachBoard {
@@ -74,6 +75,13 @@ public class BeachBoard {
 		for(int i = 0; i < numRows; i++){
 			grid[i][2].setCanHoldGrass(true);
 			grid[i][0].setCanHoldBarrier(true);
+			for(int j = 2; j < numCols; j++){
+				grid[i][j].setType(0);
+			}
+			for(int j = 0; j < 2; j++){
+				grid[i][j].setType(1);
+			}
+			
 		}
 	}
 
@@ -110,6 +118,20 @@ public class BeachBoard {
 		}
 	}
 	
+	public void removeBoatsOffScreen(){
+		Iterator<Boat> bt = gameBoats.iterator();
+		while(bt.hasNext()){
+			Boat currBoat = bt.next();
+			if(currBoat.getDirection() == 0 && currBoat.getXLoc() > screenWidth){
+				bt.remove();
+			}
+			else if(currBoat.getDirection() == 1 && (currBoat.getXLoc() + currBoat.getWidth()) < 0){
+				bt.remove();
+			}
+		}
+		
+	}
+	
 	public WaveCell inWhichWaveCell(int xl){
 		for(int i = 0; i < numRows;i++){
 			if(xl > waveCells[i].getXLoc() && xl < waveCells[i].getXLoc() + waveCellWidth)
@@ -119,7 +141,9 @@ public class BeachBoard {
 	}
 	
 	
-	//MODIFY AF
+	//WAVE STUFF
+	
+	//makes waves per cell per boat
 	public void makeWaves(Boat b){
 		WaveCell tempCell = inWhichWaveCell(b.getXLoc() + b.getWidth()/2);
 		if(tempCell!=null){
@@ -139,6 +163,7 @@ public class BeachBoard {
 		}
 	}
 
+	//resets hasWave for a cell
 	public void resetWaveBasedOnBoatSize(WaveCell cell, int size){
 		if(cell != null){
 			if(size == 0){
@@ -153,20 +178,31 @@ public class BeachBoard {
 		}
 	}
 
+	//resets a cell once a boat passes
 	public void resetWaves(Boat b){
-		WaveCell centerCell = inWhichWaveCell(b.getXLoc() + b.getWidth()/2);
-		if(centerCell != null){
-			if(b.getDirection() == 0){
-				WaveCell backCell = inWhichWaveCell(b.getXLoc());
-				if(backCell != centerCell){
-					resetWaveBasedOnBoatSize(backCell, b.getSize());
-				}
+		if(b.getDirection() == 0){
+			WaveCell forwardCell = inWhichWaveCell(b.getXLoc() + b.getSpeed());
+			WaveCell backCell = inWhichWaveCell(b.getXLoc());
+			if(backCell != forwardCell){
+				resetWaveBasedOnBoatSize(backCell, b.getSize());
 			}
-			else if(b.getDirection() ==1){
-				WaveCell backCell = inWhichWaveCell(b.getXLoc() + b.getWidth());
-				if(backCell != centerCell){
-					resetWaveBasedOnBoatSize(backCell, b.getSize());
-				}
+		}
+		else if(b.getDirection() ==1){
+			WaveCell forwardCell = inWhichWaveCell(b.getXLoc() + b.getWidth() - b.getSpeed());
+			WaveCell backCell = inWhichWaveCell(b.getXLoc() + b.getWidth());
+			if(backCell != forwardCell){
+				resetWaveBasedOnBoatSize(backCell, b.getSize());
+			}
+		}
+	}
+	
+	public void removeHitWaves(){
+		Iterator<Wave> wv = gameWaves.iterator();
+		while(wv.hasNext()){
+			Wave currWave = wv.next();
+			BeachCell tempCell = inWhichCell(currWave.getXLoc() + currWave.getWidth()/2, currWave.getYLoc());
+			if(tempCell != null && tempCell.getType() == 0){
+				wv.remove();
 			}
 		}
 	}

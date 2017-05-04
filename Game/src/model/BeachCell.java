@@ -7,7 +7,7 @@ public class BeachCell {
 	private int yLoc; //location in pixels
 	private int width;
 	private int height;
-	private int cellType; //0 = sand
+	private int cellType; //0 = sand, // 1 = ocean
 	private boolean canHoldGrass = false;
 	private boolean canHoldBarrier = false;
 	private boolean hasGrass = false;
@@ -49,6 +49,10 @@ public class BeachCell {
 		return y;
 	}
 	
+	public int getType(){
+		return cellType;
+	}
+	
 	public boolean getCanHoldGrass(){
 		return canHoldGrass;
 	}
@@ -80,6 +84,10 @@ public class BeachCell {
 	
 	public void setHasBarrier(boolean b){
 		hasBarrier = b;
+	}
+	
+	public void setType(int t){
+		cellType = t;
 	}
 	
 	
