@@ -17,7 +17,7 @@ public class BeachBoard {
 	private int cellWidth;
 	private int cellHeight;
 	private int shoreStartYLoc;
-	
+
 	//grid
 	private BeachCell[][] grid;
 
@@ -35,7 +35,7 @@ public class BeachBoard {
 	private int mediumHeight = 40;
 	private int smallWidth = 30;
 	private int smallHeight = 20;
-	
+
 	private int largeBoatY = 0;
 	private int mediumBoatY = largeBoatY + largeHeight;
 	private int smallBoatY = mediumBoatY + mediumHeight;
@@ -51,23 +51,23 @@ public class BeachBoard {
 	//sand
 	private int totalSandHealth = 100;
 	private int grassHealIncr = 1;
-	
+
 	//specific cells
 	private int crabGridStartX;
 	private int crabGridStartY;
 	private BeachCell crabStartCell;
-	
+
 	private int crabGridTopX;
 	private int crabGridTopY;
 	private BeachCell crabTopLeftCell;
-	
+
 	private int crabGridBottomX;
 	private int crabGridBottomY;
 	private BeachCell crabBottomLeftCell;
-	
+
 	//crab
 	ShoreCrab gameCrab;
-	
+
 	//Wave stuff
 	private WaveCell[] waveCells;
 	private int waveCellWidth;
@@ -77,26 +77,26 @@ public class BeachBoard {
 	private int largeStrength = 40;
 	private int mediumStrength = 25;
 	private int smallStrength = 10;
-	
+
 	//Buckets Stuff
-		//seawall
+	//seawall
 	private BeachCell seawallStartCell;
 	private int seawallBucketXLoc;
 	private int seawallBucketYLoc;
 	private int seawallBucketWidth;
 	private int seawallBucketHeight;
-		//grass
+	//grass
 	private int grassBucketXLoc;
 	private int grassBucketYLoc;
 	private int grassBucketWidth;
 	private int grassBucketHeight;
-		//gabion
+	//gabion
 	private int gabionBucketXLoc;
 	private int gabionBucketYLoc;
 	private int gabionBucketWidth;
 	private int gabionBucketHeight;
-	
-	
+
+
 
 	//CONSTRUCTOR
 	public BeachBoard(int rows, int cols, int sWidth, int sHeight){
@@ -111,19 +111,19 @@ public class BeachBoard {
 		//initialize grid
 		grid = new BeachCell[numRows][numCols];
 		makeGrid(cellWidth, cellHeight);
-		
+
 		crabGridStartX = numRows/2 - 1;
 		crabGridStartY = numCols/2;
 		crabStartCell = grid[crabGridStartX][crabGridStartY];
-		
+
 		crabGridTopX = 1;
 		crabGridTopY = 0;
 		crabTopLeftCell = grid[crabGridTopX][crabGridTopY];
-		
+
 		crabGridBottomX = numRows-1;
 		crabGridBottomY = 0;
 		crabBottomLeftCell = grid[crabGridBottomX][crabGridBottomY];
-		
+
 		//initialize crab
 		gameCrab = new ShoreCrab(crabStartCell.getXLoc(),crabStartCell.getYLoc());
 
@@ -133,20 +133,20 @@ public class BeachBoard {
 		waveCellWidth = waveCells[0].getWidth();
 
 		initializeCells();
-		
+
 		//set up Bucket locations and sizes
-			//grass
+		//grass
 		seawallStartCell = grid[numRows-1][numCols-3];
 		seawallBucketXLoc = 0;
 		seawallBucketYLoc = seawallStartCell.getYLoc();// - 2*screenHeight/10;
 		seawallBucketWidth = screenWidth/5;
 		seawallBucketHeight = screenHeight/10;
-			//seawall
+		//seawall
 		grassBucketXLoc = seawallBucketXLoc + 2*seawallBucketWidth;
 		grassBucketYLoc = seawallBucketYLoc;
 		grassBucketWidth = screenWidth/5;
 		grassBucketHeight = seawallBucketHeight;
-			//gabion
+		//gabion
 		gabionBucketXLoc = grassBucketXLoc + 2*grassBucketWidth;
 		gabionBucketYLoc = grassBucketYLoc;
 		gabionBucketWidth = screenWidth/5;
@@ -286,7 +286,7 @@ public class BeachBoard {
 	}
 
 	//OBJECT STUFF
-		//PLACE OBJECT
+	//PLACE OBJECT
 	public void placeObject(int object, int xL, int yL, int width, int height){
 		switch(object){
 		case 1: //GRASS
@@ -320,7 +320,7 @@ public class BeachBoard {
 				}
 			}
 			break;
-		
+
 		case 3: //GABION
 			for(int i = -1; i < 1; i++){
 				BeachCell tempCell = inWhichCell(xL + width/2, yL + height/2 + (i * cellHeight));
@@ -343,7 +343,7 @@ public class BeachBoard {
 		}//switch
 
 	}//method
-	
+
 	//SET OBJECT
 	public void setObjectFromBucket(){
 		//grassBucket = 1
@@ -351,7 +351,7 @@ public class BeachBoard {
 		int height = gameCrab.getHeight();
 		int xL = gameCrab.getXLoc() + width/2;
 		int yL = gameCrab.getYLoc() + height/2;
-		
+
 
 		//grassBucket = 1
 		if(xL >= grassBucketXLoc && xL <= grassBucketXLoc + grassBucketWidth && 
@@ -545,6 +545,32 @@ public class BeachBoard {
 		}
 	}
 
+	//removes oysters from the list
+	public void removeOyster(ShoreCrab s){
+		Iterator<Oyster> it = gameOysters.iterator();
+		int xL = s.getXLoc();
+		int yL = s.getYLoc();
+		int w = s.getWidth();
+		int h = s.getHeight() ;
+		while(it.hasNext()) {
+			Oyster bye = it.next();
+			int xLoc = bye.getXLoc();
+			int yLoc = bye.getYLoc();
+			int width = bye.getWidth();
+			int height = bye.getHeight();
+			if((
+					(xL > xLoc && xL < xLoc + width)   || (xL + w > xLoc && xL + w < xLoc + width)) &&
+					((yL > yLoc && yL < yLoc + height) || (yL + h > yLoc && yL + h < yLoc + height))
+					||
+					((xLoc > xL && xLoc < xL + w )|| (xLoc + width > xL && xLoc + width < xL + w)) &&
+					((yLoc > yL && yLoc < yL + h) ||(yLoc + height > yL && yLoc + height < yL + h))
+					){
+				it.remove();
+				gameCrab.setNumOysters(gameCrab.getNumOysters() + 1);
+			}
+		}
+	}
+
 
 	//modifying arraylists
 	void remGrass(Grass g) { 
@@ -587,7 +613,7 @@ public class BeachBoard {
 	public ArrayList<Seawall> getGameSeawalls() {
 		return gameWalls;
 	}
-	
+
 	public ArrayList<Oyster> getGameOysters(){
 		return gameOysters;
 	}
@@ -631,23 +657,23 @@ public class BeachBoard {
 	public int getTotalGabionHealth(){
 		return totalGabionHealth;
 	}
-	
+
 	public ShoreCrab getGameCrab(){
 		return gameCrab;
 	}
-	
+
 	public int getCrabGridStartX(){
 		return crabGridStartX;
 	}
-	
+
 	public int getCrabGridStartY(){
 		return crabGridStartY;
 	}
-	
+
 	public BeachCell getCrabTopLeftCell(){
 		return crabTopLeftCell;
 	}
-	
+
 	public BeachCell getCrabBottomLeftCell(){
 		return crabBottomLeftCell;
 	}
@@ -656,49 +682,49 @@ public class BeachBoard {
 	public int getSeawallBucketXLoc(){
 		return seawallBucketXLoc;
 	}
-	
+
 	public int getSeawallBucketYLoc(){
 		return seawallBucketYLoc;
 	}
-	
+
 	public int getSeawallBucketWidth(){
 		return seawallBucketWidth;
 	}
-	
+
 	public int getSeawallBucketHeight(){
 		return seawallBucketHeight;
 	}
-	
+
 
 	public int getGrassBucketXLoc(){
 		return grassBucketXLoc;
 	}
-	
+
 	public int getGrassBucketYLoc(){
 		return grassBucketYLoc;
 	}
-	
+
 	public int getGrassBucketWidth(){
 		return grassBucketWidth;
 	}
-	
+
 	public int getGrassBucketHeight(){
 		return grassBucketHeight;
 	}
-	
+
 
 	public int getGabionBucketXLoc(){
 		return gabionBucketXLoc;
 	}
-	
+
 	public int getGabionBucketYLoc(){
 		return gabionBucketYLoc;
 	}
-	
+
 	public int getGabionBucketWidth(){
 		return gabionBucketWidth;
 	}
-	
+
 	public int getGabionBucketHeight(){
 		return gabionBucketHeight;
 	}

@@ -286,6 +286,8 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		}else{
 			oysterSpawnTimer++;
 		}
+		board.removeOyster(crab);
+		
 	}
 
 
