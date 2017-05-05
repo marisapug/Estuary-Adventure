@@ -5,11 +5,12 @@ import java.util.Random;
 public class Oyster {
 	int xLoc;
 	int yLoc;
+	static int width = 30;
+	static int height = 30;
 	
 	public Oyster(int x, int y){
-		Random r = new Random();
-		xLoc = r.nextInt(x);
-		yLoc = r.nextInt(y) + 350;
+		xLoc = x;
+		yLoc = y;
 	}
 	
 	public int getXLoc(){
@@ -20,5 +21,13 @@ public class Oyster {
 		return yLoc;
 	}
 	
+	public int getWidth(){
+		return width;
+	}
+	
+	public int getHeight(){
+		return height;
+	}
+
 	
 }

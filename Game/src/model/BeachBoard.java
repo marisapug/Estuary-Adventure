@@ -25,6 +25,7 @@ public class BeachBoard {
 	private ArrayList<Grass> gameGrass = new ArrayList<Grass>();
 	private ArrayList<Seawall> gameWalls = new ArrayList<Seawall>();
 	private ArrayList<OysterGabion> gameGabions = new ArrayList<OysterGabion>();
+	private ArrayList<Oyster> gameOysters = new ArrayList<Oyster>();
 
 	//boat stuff
 	private ArrayList<Boat> gameBoats = new ArrayList<Boat>();
@@ -34,6 +35,10 @@ public class BeachBoard {
 	private int mediumHeight = 40;
 	private int smallWidth = 30;
 	private int smallHeight = 20;
+	
+	private int largeBoatY = 0;
+	private int mediumBoatY = largeBoatY + largeHeight;
+	private int smallBoatY = mediumBoatY + mediumHeight;
 
 	private int largeSpeed = 1;
 	private int mediumSpeed = 2;
@@ -74,16 +79,17 @@ public class BeachBoard {
 	private int smallStrength = 10;
 	
 	//Buckets Stuff
+		//seawall
+	private BeachCell seawallStartCell;
+	private int seawallBucketXLoc;
+	private int seawallBucketYLoc;
+	private int seawallBucketWidth;
+	private int seawallBucketHeight;
 		//grass
 	private int grassBucketXLoc;
 	private int grassBucketYLoc;
 	private int grassBucketWidth;
 	private int grassBucketHeight;
-		//seawall
-	private int seawallBucketXLoc;
-	private int seawallBucketYLoc;
-	private int seawallBucketWidth;
-	private int seawallBucketHeight;
 		//gabion
 	private int gabionBucketXLoc;
 	private int gabionBucketYLoc;
@@ -130,8 +136,9 @@ public class BeachBoard {
 		
 		//set up Bucket locations and sizes
 			//grass
+		seawallStartCell = grid[numRows-1][numCols-3];
 		seawallBucketXLoc = 0;
-		seawallBucketYLoc = grid[numRows-1][numCols-3].getYLoc();// - 2*screenHeight/10;
+		seawallBucketYLoc = seawallStartCell.getYLoc();// - 2*screenHeight/10;
 		seawallBucketWidth = screenWidth/5;
 		seawallBucketHeight = screenHeight/10;
 			//seawall
@@ -167,6 +174,9 @@ public class BeachBoard {
 			for(int j = 0; j < 2; j++){
 				grid[i][j].setType(1);
 			}
+			for(int j = 3; j < numCols; j++){
+				grid[i][j].setCanHoldOyster(true);
+			}
 
 		}
 	}
@@ -191,15 +201,15 @@ public class BeachBoard {
 		int boatType = rand.nextInt(30);
 		Boat tempBoat;
 		if(boatType < 15){
-			tempBoat = new Boat(-smallWidth, largeHeight + mediumHeight, 0, 0, smallSpeed,smallWidth,smallHeight);
+			tempBoat = new Boat(-smallWidth, smallBoatY, 0, 0, smallSpeed,smallWidth,smallHeight);
 			gameBoats.add(tempBoat);
 		}
 		else if(boatType < 25){
-			tempBoat = new Boat(screenWidth, largeHeight, 1, 1, mediumSpeed,mediumWidth,mediumHeight);
+			tempBoat = new Boat(screenWidth, mediumBoatY, 1, 1, mediumSpeed,mediumWidth,mediumHeight);
 			gameBoats.add(tempBoat);
 		}
 		else if(boatType <= 30){
-			tempBoat = new Boat(-largeWidth, 0, 2, 0, largeSpeed,largeWidth,largeHeight);
+			tempBoat = new Boat(-largeWidth, largeBoatY, 2, 0, largeSpeed,largeWidth,largeHeight);
 			gameBoats.add(tempBoat);
 		}
 	}
@@ -237,6 +247,9 @@ public class BeachBoard {
 					//shifts can hold grass down if at least two from bottom
 					if((numCols - 1) - j > 2){
 						grid[i][j+2].setCanHoldGrass(true);
+					}
+					if((numCols - 1) - j > 3){
+						grid[i][j+3].setCanHoldOyster(true);
 					}
 					if((numCols - 1) - j > 1){
 						BeachCell remGrassCell = grid[i][j+1];
@@ -311,12 +324,13 @@ public class BeachBoard {
 		case 3: //GABION
 			for(int i = -1; i < 1; i++){
 				BeachCell tempCell = inWhichCell(xL + width/2, yL + height/2 + (i * cellHeight));
-				if(tempCell != null && tempCell.getCanHoldBarrier() && !tempCell.getHasBarrier()){
+				if(tempCell != null && tempCell.getCanHoldBarrier() && !tempCell.getHasBarrier() && gameCrab.getNumOysters() >= 3){
 					addGabion(tempCell.getXLoc(), tempCell.getYLoc());
 					gameCrab.setCurrObject(0);
 					tempCell.setCanHoldBarrier(false);
 					tempCell.setHasBarrier(true);
 					tempCell.setHealth(totalGabionHealth);
+					gameCrab.setNumOysters(gameCrab.getNumOysters() - 3);
 					if(tempCell.getX() > 0 ){
 						grid[tempCell.getX() - 1][tempCell.getY()].setCanHoldBarrier(false);
 					}
@@ -357,7 +371,21 @@ public class BeachBoard {
 	}
 
 
-	//WAVE STUFF
+	//Oyster stuff
+	public void spawnOyster(){
+		Random rand = new Random();
+		boolean spawned = false;
+		while(!spawned){
+			int randNumRows = rand.nextInt(numRows-1);
+			int randNumCols = rand.nextInt(seawallStartCell.getY());
+			BeachCell tempCell = grid[randNumRows][randNumCols];
+			if(tempCell.getCanHoldOyster()){
+				Oyster tempO = new Oyster(tempCell.getXLoc(), tempCell.getYLoc());
+				gameOysters.add(tempO);
+				spawned = true;
+			}	
+		}
+	}
 
 	//makes waves per cell per boat
 	public void makeWaves(Boat b){
@@ -558,6 +586,10 @@ public class BeachBoard {
 
 	public ArrayList<Seawall> getGameSeawalls() {
 		return gameWalls;
+	}
+	
+	public ArrayList<Oyster> getGameOysters(){
+		return gameOysters;
 	}
 
 	public ArrayList<OysterGabion> getGameGabs() {

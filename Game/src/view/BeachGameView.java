@@ -4,6 +4,7 @@ import model.BeachBoard;
 import model.BeachCell;
 import model.Boat;
 import model.Grass;
+import model.Oyster;
 import model.OysterGabion;
 import model.Seawall;
 
@@ -38,7 +39,8 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	int numCols = 10;
 
 	//Timer
-	Timer t = new Timer(10,this);
+	private int timerSpeed = 10;
+	Timer t = new Timer(timerSpeed,this);
 
 	//BeachBoard
 	private BeachBoard board;
@@ -72,6 +74,11 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private int crabXVel;
 	private int crabYVel;
 
+	//Oysters
+	private int oysterSpawnTimer;
+	private int oysterSpawnTick;
+	private BufferedImage oysterImg = createImage("beachImages/oyster.png");
+	
 	//Grass
 	private int grassTimerTick;
 	private int grassTimer;
@@ -85,13 +92,6 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private ArrayList<Wave> gameWaves;
 	private int waveSpeed;
 
-	//Current Object
-	private String currObjectHeader = "Current Object: ";
-	private int currObjectHeaderX = screenWidth/2;
-	private int currObjectHeaderY = screenHeight - (screenHeight*3)/4;
-
-	private int currObjectTypeX = currObjectHeaderX + 100;
-	private int currObjectTypeY = currObjectHeaderY;
 
 	//=======================================================================//
 
@@ -122,11 +122,14 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 		grassImgWidth = cellWidth/3;
 		grassImgHeight = cellWidth/3;
-		grassTimerTick = 50;
+		grassTimerTick = 50; //half a second
 		grassTimer = 0;
+		
+		oysterSpawnTimer = 0; 
+		oysterSpawnTick = 100; // 5 seconds
 
 		gameBoats = board.getGameBoats();
-		newBoatTimer = 1000;
+		newBoatTimer = 100;
 		newBoatTimerTime = 0;
 
 		gameWaves = board.getGameWaves();
@@ -161,7 +164,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 					g.fillRect(tempBC.getXLoc(), tempYLoc, tempBC.getWidth(), tempHeight);
 					g.setColor(Color.BLACK);
 					// remove after testing
-					g.drawString(Integer.toString(tempBC.getHealth()) + " " + Boolean.toString(tempBC.getCanHoldGrass()),tempBC.getXLoc(), tempBC.getYLoc() + cellHeight/2);
+					g.drawString(Integer.toString(tempBC.getHealth()) + " " + Boolean.toString(tempBC.getCanHoldOyster()),tempBC.getXLoc(), tempBC.getYLoc() + cellHeight/2);
 				}
 				else
 					g.drawString(Integer.toString(tempBC.getHealth()) + Boolean.toString(tempBC.getHasBarrier()),tempBC.getXLoc(), tempBC.getYLoc() + cellHeight/2);
@@ -200,6 +203,11 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		for(Seawall s: board.getGameSeawalls()){
 			g.drawImage(wallImg, s.getXLoc(), s.getYLoc(), barrierImgWidth, barrierImgHeight, this);
 		}
+		
+		//draw oysters
+		for(Oyster o : board.getGameOysters()){
+			g.drawImage(oysterImg,o.getXLoc(),o.getYLoc(),o.getWidth(),o.getHeight(),this);
+		}
 
 		//paints gabions
 		g.setColor(Color.MAGENTA);
@@ -215,10 +223,6 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 		//draws crab
 		g.drawImage(crabImg,crab.getXLoc(),crab.getYLoc(),crab.getWidth(),crab.getHeight(),this);
-
-		//currObject drawing
-		g.drawString(currObjectHeader, currObjectHeaderX, currObjectHeaderY);
-		g.drawString(Integer.toString(crab.getCurrObject()), currObjectTypeX, currObjectTypeY);
 
 	}
 
@@ -274,6 +278,14 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 		//bucket stuff
 		board.setObjectFromBucket();
+		
+		//oysterStuff
+		if(oysterSpawnTimer >= oysterSpawnTick){
+			board.spawnOyster();
+			oysterSpawnTimer = 0;
+		}else{
+			oysterSpawnTimer++;
+		}
 	}
 
 

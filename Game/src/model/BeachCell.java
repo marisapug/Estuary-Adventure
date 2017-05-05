@@ -11,6 +11,7 @@ public class BeachCell {
 	private int cellType; //0 = sand, // 1 = ocean
 	private boolean canHoldGrass = false;
 	private boolean canHoldBarrier = false;
+	private boolean canHoldOyster = false;
 	private boolean hasGrass = false;
 	private boolean hasBarrier = false;
 
@@ -74,6 +75,10 @@ public class BeachCell {
 		return hasBarrier;
 	}
 	
+	public boolean getCanHoldOyster(){
+		return canHoldOyster;
+	}
+	
 	//Setters
 	public void setCanHoldGrass(boolean b){
 		canHoldGrass = b;
@@ -97,6 +102,10 @@ public class BeachCell {
 	
 	public void setHealth(int h){
 		health = h;
+	}
+	
+	public void setCanHoldOyster(boolean b){
+		canHoldOyster = b;
 	}
 	
 	
