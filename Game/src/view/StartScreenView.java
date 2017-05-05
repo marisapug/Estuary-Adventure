@@ -12,7 +12,6 @@ public class StartScreenView extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
-	
 	//Labels
 	//private JLabel welcomeMessage  = new JLabel("Welcome to Estuary Adventure!");
 	//private JLabel selectMessage = new JLabel("Please select a game mode.");

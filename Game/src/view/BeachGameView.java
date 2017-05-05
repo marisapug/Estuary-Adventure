@@ -51,6 +51,9 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private int cellHeight;
 
 	private int totalSandHealth;
+	
+	//Shore Health Stuff
+//	private int 
 
 	//Grass and Barrier Images
 	private BufferedImage grassImg = createImage("beachImages/grass.png");
@@ -129,14 +132,14 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		oysterSpawnTick = 100; // 5 seconds
 
 		gameBoats = board.getGameBoats();
-		newBoatTimer = 100;
+		newBoatTimer = 200;
 		newBoatTimerTime = 0;
 
 		gameWaves = board.getGameWaves();
 		waveSpeed = board.getWaveSpeed();
 
 		//start timer
-		t.start();
+	//	t.start();
 	}
 
 
@@ -164,7 +167,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 					g.fillRect(tempBC.getXLoc(), tempYLoc, tempBC.getWidth(), tempHeight);
 					g.setColor(Color.BLACK);
 					// remove after testing
-					g.drawString(Integer.toString(tempBC.getHealth()) + " " + Boolean.toString(tempBC.getCanHoldOyster()),tempBC.getXLoc(), tempBC.getYLoc() + cellHeight/2);
+					g.drawString(Integer.toString(tempBC.getHealth()) + ": " + Boolean.toString(tempBC.getCanHoldOyster()),tempBC.getXLoc(), tempBC.getYLoc() + cellHeight/2);
 				}
 				else
 					g.drawString(Integer.toString(tempBC.getHealth()) + Boolean.toString(tempBC.getHasBarrier()),tempBC.getXLoc(), tempBC.getYLoc() + cellHeight/2);
@@ -189,6 +192,8 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		for(Boat b: board.getGameBoats()){
 			g.fillRect(b.getXLoc(),b.getYLoc(),b.getWidth(),b.getHeight());
 		}
+		
+		g.drawString("Current Shore Health: " + board.getCurrentShoreHealth(), screenWidth/2, screenHeight/2);
 		
 		//paints buckets
 		g.setColor(Color.GREEN);
@@ -266,6 +271,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			board.makeWaves(bt);
 			board.resetWaves(bt);
 		}
+		
 		board.removeBoatsOffScreen();
 		
 
@@ -287,6 +293,9 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			oysterSpawnTimer++;
 		}
 		board.removeOyster(crab);
+		
+		board.updateCurrentCellsHealth();
+		board.updateCurrentShoreHealth();
 		
 	}
 

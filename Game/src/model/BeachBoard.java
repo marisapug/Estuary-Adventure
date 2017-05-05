@@ -1,7 +1,5 @@
 package model;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
@@ -95,6 +93,13 @@ public class BeachBoard {
 	private int gabionBucketYLoc;
 	private int gabionBucketWidth;
 	private int gabionBucketHeight;
+	
+	//Shore Health
+	private int currentShoreHealth = 1000; //
+	private int totalShoreHealth = 1000;
+	
+	private int totalCellsHealth;
+	private int currentCellsHealth;
 
 
 
@@ -151,6 +156,10 @@ public class BeachBoard {
 		gabionBucketYLoc = grassBucketYLoc;
 		gabionBucketWidth = screenWidth/5;
 		gabionBucketHeight = grassBucketHeight;
+		
+		//Shore Health
+		updateCurrentCellsHealth();
+		totalCellsHealth = currentCellsHealth;
 	}
 
 	//creates beach board grid
@@ -249,7 +258,7 @@ public class BeachBoard {
 						grid[i][j+2].setCanHoldGrass(true);
 					}
 					if((numCols - 1) - j > 3){
-						grid[i][j+3].setCanHoldOyster(true);
+						grid[i][j+1].setCanHoldOyster(false);
 					}
 					if((numCols - 1) - j > 1){
 						BeachCell remGrassCell = grid[i][j+1];
@@ -375,9 +384,11 @@ public class BeachBoard {
 	public void spawnOyster(){
 		Random rand = new Random();
 		boolean spawned = false;
-		while(!spawned){
+		int x = 0;
+		while(!spawned && x != 10){
 			int randNumRows = rand.nextInt(numRows-1);
 			int randNumCols = rand.nextInt(seawallStartCell.getY());
+			x++;
 			BeachCell tempCell = grid[randNumRows][randNumCols];
 			if(tempCell.getCanHoldOyster()){
 				Oyster tempO = new Oyster(tempCell.getXLoc(), tempCell.getYLoc());
@@ -558,7 +569,12 @@ public class BeachBoard {
 			int yLoc = bye.getYLoc();
 			int width = bye.getWidth();
 			int height = bye.getHeight();
-			if((
+			BeachCell tempCell = inWhichCell(xLoc+1, yLoc+1);
+			if(tempCell != null && !tempCell.getCanHoldOyster()){
+				it.remove();
+			}
+			else 
+				if((
 					(xL > xLoc && xL < xLoc + width)   || (xL + w > xLoc && xL + w < xLoc + width)) &&
 					((yL > yLoc && yL < yLoc + height) || (yL + h > yLoc && yL + h < yLoc + height))
 					||
@@ -570,20 +586,25 @@ public class BeachBoard {
 			}
 		}
 	}
+	
+	//updating shore health
+	public void updateCurrentCellsHealth(){
+		int total = 0;
+		for(int i = 0; i < numRows; i++){
+			for(int j = 0; j < numCols; j++){
+				total += grid[i][j].getHealth();
+			}
+		}
+		currentCellsHealth = total;
+	}
+	
+	public void updateCurrentShoreHealth(){
+		int dif = (totalCellsHealth - currentCellsHealth);
+		currentShoreHealth = totalShoreHealth - dif;
+	}
 
 
 	//modifying arraylists
-	void remGrass(Grass g) { 
-		gameGrass.remove(g);
-	}
-
-	void remWall(Seawall g) {
-		gameGrass.remove(g);
-	}
-
-	void remOyster(OysterGabion g) { 
-		gameGrass.remove(g);
-	}
 
 	public void addGrass(int x, int y){
 		Grass g1 = new Grass(x,y);
@@ -728,5 +749,14 @@ public class BeachBoard {
 	public int getGabionBucketHeight(){
 		return gabionBucketHeight;
 	}
+	
+	public int getCurrentShoreHealth(){
+		return currentShoreHealth;
+	}
+	
+	public int getTotalShoreHealth(){
+		return totalShoreHealth;
+	}
+	
 
 }
