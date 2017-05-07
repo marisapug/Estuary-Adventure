@@ -24,6 +24,11 @@ public class BeachBoard {
 	private ArrayList<Seawall> gameWalls = new ArrayList<Seawall>();
 	private ArrayList<OysterGabion> gameGabions = new ArrayList<OysterGabion>();
 	private ArrayList<Oyster> gameOysters = new ArrayList<Oyster>();
+	
+	//features bar
+	private int featuresBarWidth;
+	private int featuresBarHeight;
+
 
 	//boat stuff
 	private ArrayList<Boat> gameBoats = new ArrayList<Boat>();
@@ -34,9 +39,9 @@ public class BeachBoard {
 	private int smallWidth = 30;
 	private int smallHeight = 20;
 
-	private int largeBoatY = 0;
-	private int mediumBoatY = largeBoatY + largeHeight;
-	private int smallBoatY = mediumBoatY + mediumHeight;
+	private int largeBoatY;
+	private int mediumBoatY;
+	private int smallBoatY;
 
 	private int largeSpeed = 1;
 	private int mediumSpeed = 2;
@@ -143,7 +148,7 @@ public class BeachBoard {
 		//grass
 		seawallStartCell = grid[numRows-1][numCols-3];
 		seawallBucketXLoc = 0;
-		seawallBucketYLoc = seawallStartCell.getYLoc();// - 2*screenHeight/10;
+		seawallBucketYLoc = seawallStartCell.getYLoc();
 		seawallBucketWidth = screenWidth/5;
 		seawallBucketHeight = screenHeight/10;
 		//seawall
@@ -156,6 +161,15 @@ public class BeachBoard {
 		gabionBucketYLoc = grassBucketYLoc;
 		gabionBucketWidth = screenWidth/5;
 		gabionBucketHeight = grassBucketHeight;
+		
+		//features bar initialization
+		featuresBarWidth = screenWidth;
+		featuresBarHeight = screenHeight/16;
+		
+		//boat height initialization
+		largeBoatY = featuresBarHeight;
+		mediumBoatY = largeBoatY + largeHeight;
+		smallBoatY = mediumBoatY + mediumHeight;
 		
 		//Shore Health
 		updateCurrentCellsHealth();
@@ -758,5 +772,12 @@ public class BeachBoard {
 		return totalShoreHealth;
 	}
 	
+	public int getFeaturesBarWidth(){
+		return this.featuresBarWidth;
+	}
+	
+	public int getFeaturesBarHeight(){
+		return this.featuresBarHeight;
+	}
 
 }
