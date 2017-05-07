@@ -339,8 +339,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				testCrab.setType(1);
 				testCrab.setDir(0);
 				crabNumPics = 3;
-				remove(hCrabButton);
-				remove(bCrabButton);
+				bCrabButton.setVisible(false);
+				hCrabButton.setVisible(false);
 				easyButton.setVisible(true);
 				mediumButton.setVisible(true);
 				hardButton.setVisible(true);
@@ -355,11 +355,12 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				testCrab.setType(0);
 				testCrab.setDir(2);
 				crabNumPics = 2;
-				remove(hCrabButton);
-				remove(bCrabButton);
+				bCrabButton.setVisible(false);
+				hCrabButton.setVisible(false);
 				easyButton.setVisible(true);
 				mediumButton.setVisible(true);
 				hardButton.setVisible(true);
+		
 			}
 
 		});
