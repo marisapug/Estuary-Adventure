@@ -9,6 +9,7 @@ import model.OysterGabion;
 import model.Seawall;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -51,9 +53,6 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private int cellHeight;
 
 	private int totalSandHealth;
-	
-	//Shore Health Stuff
-//	private int 
 
 	//Grass and Barrier Images
 	private BufferedImage grassImg = createImage("beachImages/grass.png");
@@ -81,7 +80,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private int oysterSpawnTimer;
 	private int oysterSpawnTick;
 	private BufferedImage oysterImg = createImage("beachImages/oyster.png");
-	
+
 	//Grass
 	private int grassTimerTick;
 	private int grassTimer;
@@ -96,6 +95,16 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private int waveSpeed;
 
 
+	//Game State
+	private boolean startScreenVisible;
+	private BufferedImage startBackground = createImage("background/Estuary_Background_1.jpg");
+	private JButton startButton;
+	private String startTitle = "Defend the Estuary!";
+	private int startTitleFontSize = screenWidth/50;
+	private String startTitleFontStyle = "TimesRoman";
+	private int startTitleX = screenWidth/2 - ((startTitleFontSize * startTitle.length())/4);
+	private int startTitleY = screenHeight/4;
+
 	//=======================================================================//
 
 	//CONSTRUCTOR
@@ -104,130 +113,155 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
 
+		//intialize game state
+		startScreenVisible = true;
+		startButton = new JButton("Start Game!");
+		this.add(startButton);
+		startButton.setVisible(true);
 
-		//game stuff
-		board = new BeachBoard(numRows,numCols,screenWidth,screenHeight);
-		grid = board.getGrid();
+		startButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				//game stuff
+				board = new BeachBoard(numRows,numCols,screenWidth,screenHeight);
+				grid = board.getGrid();
 
-		cellWidth = board.getCellWidth();
-		cellHeight = board.getCellHeight();
+				cellWidth = board.getCellWidth();
+				cellHeight = board.getCellHeight();
 
-		crab = board.getGameCrab();
-		crabXVel = crab.getXVel();
-		crabYVel = crab.getYVel();
+				crab = board.getGameCrab();
+				crabXVel = crab.getXVel();
+				crabYVel = crab.getYVel();
 
-		barrierImgWidth = cellWidth;
-		barrierImgHeight = cellHeight;
+				barrierImgWidth = cellWidth;
+				barrierImgHeight = cellHeight;
 
-		totalSeawallHealth = board.getTotalSeawallHealth();
-		totalGabionHealth = board.getTotalGabionHealth();
-		totalSandHealth = board.getTotalSandHealth();
+				totalSeawallHealth = board.getTotalSeawallHealth();
+				totalGabionHealth = board.getTotalGabionHealth();
+				totalSandHealth = board.getTotalSandHealth();
 
-		grassImgWidth = cellWidth/3;
-		grassImgHeight = cellWidth/3;
-		grassTimerTick = 50; //half a second
-		grassTimer = 0;
-		
-		oysterSpawnTimer = 0; 
-		oysterSpawnTick = 100; // 5 seconds
+				grassImgWidth = cellWidth/3;
+				grassImgHeight = cellWidth/3;
+				grassTimerTick = 50; //half a second
+				grassTimer = 0;
 
-		gameBoats = board.getGameBoats();
-		newBoatTimer = 200;
-		newBoatTimerTime = 0;
+				oysterSpawnTimer = 0; 
+				oysterSpawnTick = 100; // 5 seconds
 
-		gameWaves = board.getGameWaves();
-		waveSpeed = board.getWaveSpeed();
+				gameBoats = board.getGameBoats();
+				newBoatTimer = 200;
+				newBoatTimerTime = 0;
 
-		//start timer
-	//	t.start();
-	}
+				gameWaves = board.getGameWaves();
+				waveSpeed = board.getWaveSpeed();
+
+				//button visibility
+				startButton.setVisible(false);
+				startScreenVisible = false;
+
+				//start timer
+				t.start();
+			}
+		});
+	}//end constructor
 
 
 	//PAINT COMPONENT
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 
-		//ocean drawing
-		g.setColor(Color.CYAN);
-		g.drawRect(0, 0, screenWidth, screenHeight);
-		g.fillRect(0, 0, screenWidth, screenHeight);
+		//draws start screen
+		if(startScreenVisible){
+			g.drawImage(startBackground, 0, 0, screenWidth, screenHeight, this);
+			g.setColor(Color.WHITE);
+			g.setFont(new Font(startTitleFontStyle,Font.BOLD,startTitleFontSize));
+			g.drawString(startTitle,startTitleX,startTitleY);
+		}
 
-		g.setColor(Color.YELLOW);
-		g.drawRect(0, screenHeight-cellHeight, screenWidth, screenHeight);
-		g.fillRect(0, screenHeight-cellHeight, screenWidth, screenHeight);
+		//draws everthing else
+		else{
 
-		//paints board
-		for(int i = 0; i < numRows; i++){
-			for(int j = 0; j < numCols; j++){
-				BeachCell tempBC = board.getGrid()[i][j];
-				g.setColor(Color.YELLOW);
-				if(tempBC.getType() == 0){
-					int tempHeight = (int)(tempBC.getHeight() * ((double)tempBC.getHealth()/(double)totalSandHealth));
-					int tempYLoc = tempBC.getYLoc() + (cellHeight - tempHeight);
-					g.fillRect(tempBC.getXLoc(), tempYLoc, tempBC.getWidth(), tempHeight);
-					g.setColor(Color.BLACK);
-					// remove after testing
-					g.drawString(Integer.toString(tempBC.getHealth()) + ": " + Boolean.toString(tempBC.getCanHoldOyster()),tempBC.getXLoc(), tempBC.getYLoc() + cellHeight/2);
+			//ocean drawing
+			g.setColor(Color.CYAN);
+			g.drawRect(0, 0, screenWidth, screenHeight);
+			g.fillRect(0, 0, screenWidth, screenHeight);
+
+			g.setColor(Color.YELLOW);
+			g.drawRect(0, screenHeight-cellHeight, screenWidth, screenHeight);
+			g.fillRect(0, screenHeight-cellHeight, screenWidth, screenHeight);
+
+			//paints board
+			for(int i = 0; i < numRows; i++){
+				for(int j = 0; j < numCols; j++){
+					BeachCell tempBC = board.getGrid()[i][j];
+					g.setColor(Color.YELLOW);
+					if(tempBC.getType() == 0){
+						int tempHeight = (int)(tempBC.getHeight() * ((double)tempBC.getHealth()/(double)totalSandHealth));
+						int tempYLoc = tempBC.getYLoc() + (cellHeight - tempHeight);
+						g.fillRect(tempBC.getXLoc(), tempYLoc, tempBC.getWidth(), tempHeight);
+						g.setColor(Color.BLACK);
+						// remove after testing
+						g.drawString(Integer.toString(tempBC.getHealth()) + ": " + Boolean.toString(tempBC.getCanHoldOyster()),tempBC.getXLoc(), tempBC.getYLoc() + cellHeight/2);
+					}
+					else
+						g.drawString(Integer.toString(tempBC.getHealth()) + Boolean.toString(tempBC.getHasBarrier()),tempBC.getXLoc(), tempBC.getYLoc() + cellHeight/2);
 				}
-				else
-					g.drawString(Integer.toString(tempBC.getHealth()) + Boolean.toString(tempBC.getHasBarrier()),tempBC.getXLoc(), tempBC.getYLoc() + cellHeight/2);
 			}
-		}
-		for(int i = 0; i < numRows; i++){
-			for(int j = 0; j < numCols; j++){
-				BeachCell tempBC = board.getGrid()[i][j];
-				g.setColor(Color.BLACK);
-				g.drawRect(tempBC.getXLoc(), tempBC.getYLoc(), tempBC.getWidth(), tempBC.getHeight());
+			for(int i = 0; i < numRows; i++){
+				for(int j = 0; j < numCols; j++){
+					BeachCell tempBC = board.getGrid()[i][j];
+					g.setColor(Color.BLACK);
+					g.drawRect(tempBC.getXLoc(), tempBC.getYLoc(), tempBC.getWidth(), tempBC.getHeight());
+				}
 			}
-		}
-		
-		//paint waves
-		g.setColor(Color.BLUE);
-		for(Wave w: gameWaves){
-			g.drawLine(w.getXLoc(),w.getYLoc(),w.getXLoc() + w.getWidth(), w.getYLoc());
-		}
 
-		//paints boats
-		g.setColor(Color.RED);
-		for(Boat b: board.getGameBoats()){
-			g.fillRect(b.getXLoc(),b.getYLoc(),b.getWidth(),b.getHeight());
-		}
-		
-		g.drawString("Current Shore Health: " + board.getCurrentShoreHealth(), screenWidth/2, screenHeight/2);
-		
-		//paints buckets
-		g.setColor(Color.GREEN);
-		g.fillRect(board.getGrassBucketXLoc(),board.getGrassBucketYLoc(),board.getGrassBucketWidth(),board.getGrassBucketHeight());
-		g.setColor(Color.GRAY);
-		g.fillRect(board.getSeawallBucketXLoc(),board.getSeawallBucketYLoc(),board.getSeawallBucketWidth(),board.getSeawallBucketHeight());
-		g.setColor(Color.MAGENTA);
-		g.fillRect(board.getGabionBucketXLoc(),board.getGabionBucketYLoc(),board.getGabionBucketWidth(),board.getGabionBucketHeight());
-		
-		
-		//paints walls
-		for(Seawall s: board.getGameSeawalls()){
-			g.drawImage(wallImg, s.getXLoc(), s.getYLoc(), barrierImgWidth, barrierImgHeight, this);
-		}
-		
-		//draw oysters
-		for(Oyster o : board.getGameOysters()){
-			g.drawImage(oysterImg,o.getXLoc(),o.getYLoc(),o.getWidth(),o.getHeight(),this);
-		}
+			//paint waves
+			g.setColor(Color.BLUE);
+			for(Wave w: gameWaves){
+				g.drawLine(w.getXLoc(),w.getYLoc(),w.getXLoc() + w.getWidth(), w.getYLoc());
+			}
 
-		//paints gabions
-		g.setColor(Color.MAGENTA);
-		for(OysterGabion og: board.getGameGabs()){
-			g.fillRect(og.getXLoc(), og.getYLoc(), barrierImgWidth, barrierImgHeight);
-		}
+			//paints boats
+			g.setColor(Color.RED);
+			for(Boat b: board.getGameBoats()){
+				g.fillRect(b.getXLoc(),b.getYLoc(),b.getWidth(),b.getHeight());
+			}
 
-		//paints grass
-		for(Grass grass: board.getGameGrass()){
-			g.drawImage(grassImg,grass.getXLoc() + cellWidth/2 - (grassImgWidth/2), 
-					grass.getYLoc() + cellHeight/2 - (grassImgHeight/2), grassImgWidth, grassImgHeight, this);
-		}
+			g.drawString("Current Shore Health: " + board.getCurrentShoreHealth(), screenWidth/2, screenHeight/2);
 
-		//draws crab
-		g.drawImage(crabImg,crab.getXLoc(),crab.getYLoc(),crab.getWidth(),crab.getHeight(),this);
+			//paints buckets
+			g.setColor(Color.GREEN);
+			g.fillRect(board.getGrassBucketXLoc(),board.getGrassBucketYLoc(),board.getGrassBucketWidth(),board.getGrassBucketHeight());
+			g.setColor(Color.GRAY);
+			g.fillRect(board.getSeawallBucketXLoc(),board.getSeawallBucketYLoc(),board.getSeawallBucketWidth(),board.getSeawallBucketHeight());
+			g.setColor(Color.MAGENTA);
+			g.fillRect(board.getGabionBucketXLoc(),board.getGabionBucketYLoc(),board.getGabionBucketWidth(),board.getGabionBucketHeight());
+
+
+			//paints walls
+			for(Seawall s: board.getGameSeawalls()){
+				g.drawImage(wallImg, s.getXLoc(), s.getYLoc(), barrierImgWidth, barrierImgHeight, this);
+			}
+
+			//draw oysters
+			for(Oyster o : board.getGameOysters()){
+				g.drawImage(oysterImg,o.getXLoc(),o.getYLoc(),o.getWidth(),o.getHeight(),this);
+			}
+
+			//paints gabions
+			g.setColor(Color.MAGENTA);
+			for(OysterGabion og: board.getGameGabs()){
+				g.fillRect(og.getXLoc(), og.getYLoc(), barrierImgWidth, barrierImgHeight);
+			}
+
+			//paints grass
+			for(Grass grass: board.getGameGrass()){
+				g.drawImage(grassImg,grass.getXLoc() + cellWidth/2 - (grassImgWidth/2), 
+						grass.getYLoc() + cellHeight/2 - (grassImgHeight/2), grassImgWidth, grassImgHeight, this);
+			}
+
+			//draws crab
+			g.drawImage(crabImg,crab.getXLoc(),crab.getYLoc(),crab.getWidth(),crab.getHeight(),this);
+		}
 
 	}
 
@@ -253,7 +287,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		else{
 			grassTimer++;
 		}
-		
+
 		board.sandToOcean();
 
 		//BOAT STUFF
@@ -271,9 +305,9 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			board.makeWaves(bt);
 			board.resetWaves(bt);
 		}
-		
+
 		board.removeBoatsOffScreen();
-		
+
 
 		//Wave 
 		for(Wave wv: gameWaves){
@@ -284,7 +318,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 		//bucket stuff
 		board.setObjectFromBucket();
-		
+
 		//oysterStuff
 		if(oysterSpawnTimer >= oysterSpawnTick){
 			board.spawnOyster();
@@ -293,10 +327,10 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			oysterSpawnTimer++;
 		}
 		board.removeOyster(crab);
-		
+
 		board.updateCurrentCellsHealth();
 		board.updateCurrentShoreHealth();
-		
+
 	}
 
 
