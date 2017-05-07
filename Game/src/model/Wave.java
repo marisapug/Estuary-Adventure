@@ -7,6 +7,7 @@ public class Wave {
 	private int xLoc;
 	private int yLoc;
 	private int width;
+	private int height = 10;
 	private boolean hasHit = false;
 
 	Wave(int xc, int yc, int s, int w) {
@@ -28,6 +29,10 @@ public class Wave {
 	
 	public int getWidth(){
 		return width;
+	}
+	
+	public int getHeight(){
+		return height;
 	}
 
 	public int getXLoc(){

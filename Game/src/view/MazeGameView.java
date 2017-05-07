@@ -301,7 +301,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	public MazeGameView(){
 
 		//Buttons
-		hCrabButton = new JButton("Horshoe Crab");
+		hCrabButton = new JButton("Horseshoe Crab");
 		bCrabButton = new JButton("Blue Crab");
 		hCrabButton.setFocusable(false);
 		bCrabButton.setFocusable(false);

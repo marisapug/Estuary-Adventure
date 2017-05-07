@@ -53,6 +53,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private int cellHeight;
 	
 	private BufferedImage sandImage = createImage("beachImages/sand_tile.jpg");
+	private BufferedImage waterImage = createImage("beachImages/waterImg.jpg");
 
 	private int totalSandHealth;
 
@@ -103,10 +104,18 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	//wave stuff
 	private ArrayList<Wave> gameWaves;
 	private int waveSpeed;
+	private BufferedImage waveImage = createImage("beachImages/waveImage.png");
 
 	//features bar
 	private int featuresBarWidth;
 	private int featuresBarHeight;
+	
+	//Shore health bar
+	private int meterX;
+	private int meterY;
+
+	private int meterWidth;
+	private int meterHeight;
 
 
 	//Game State
@@ -165,6 +174,12 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				//features bar intialization
 				featuresBarWidth = board.getFeaturesBarWidth();
 				featuresBarHeight = board.getFeaturesBarHeight();
+				
+				//health bar intialization
+				meterX = screenWidth - screenWidth/4;
+				meterY = featuresBarHeight/8;
+				meterWidth = (screenWidth - 10) - meterX;
+				meterHeight = (featuresBarHeight*4)/5;
 
 				gameBoats = board.getGameBoats();
 				newBoatTimer = 200;
@@ -201,18 +216,21 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		else{
 
 			//ocean drawing
+			//g.drawImage(waterImage, 0, 0, screenWidth, screenHeight, this);
+			//g.drawImage(waterImage,0, screenHeight-cellHeight, screenWidth, screenHeight,this);
 			g.setColor(Color.CYAN);
-			g.drawRect(0, 0, screenWidth, screenHeight);
 			g.fillRect(0, 0, screenWidth, screenHeight);
-
-			g.setColor(Color.YELLOW);
-			g.drawRect(0, screenHeight-cellHeight, screenWidth, screenHeight);
 			g.fillRect(0, screenHeight-cellHeight, screenWidth, screenHeight);
 
 			//features bar
 			g.setColor(Color.WHITE);
 			g.drawRect(0, 0, featuresBarWidth, featuresBarHeight);
 			g.fillRect(0, 0, featuresBarWidth, featuresBarHeight);
+			
+			//health bar
+			g.setColor(Color.RED);
+			g.drawRect(meterX, meterY, meterWidth, meterHeight);
+			g.fillRect(meterX, meterY, meterWidth, meterHeight);
 
 			//paints board
 			for(int i = 0; i < numRows; i++){
@@ -239,9 +257,10 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			}
 
 			//paint waves
-			g.setColor(Color.BLUE);
+			//g.setColor(Color.BLUE);
 			for(Wave w: gameWaves){
-				g.drawLine(w.getXLoc(),w.getYLoc(),w.getXLoc() + w.getWidth(), w.getYLoc());
+				//g.drawLine(w.getXLoc(),w.getYLoc(),w.getXLoc() + w.getWidth(), w.getYLoc());
+				g.drawImage(waveImage, w.getXLoc(), w.getYLoc(), w.getWidth(), w.getHeight(), this);
 			}
 
 			//paints boats
