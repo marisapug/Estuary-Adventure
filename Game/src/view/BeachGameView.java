@@ -34,15 +34,15 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 	//=======================================================================//
 
-	int screenWidth = MainFrame.getFrameWidth();
-	int screenHeight = MainFrame.getFrameHeight();
+	private int screenWidth = MainFrame.getFrameWidth();
+	private int screenHeight = MainFrame.getFrameHeight();
 
-	int numRows = 15;
-	int numCols = 10;
+	private int numRows = 15;
+	private int numCols = 10;
 
 	//Timer
 	private int timerSpeed = 10;
-	Timer t = new Timer(timerSpeed,this);
+	private Timer t = new Timer(timerSpeed,this);
 
 	//BeachBoard
 	private BeachBoard board;
@@ -51,7 +51,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private BeachCell[][] grid;
 	private int cellWidth;
 	private int cellHeight;
-	
+
 	private BufferedImage sandImage = createImage("beachImages/sand_tile.jpg");
 	private BufferedImage waterImage = createImage("beachImages/waterImg.jpg");
 
@@ -60,6 +60,8 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	//Grass and Barrier Images
 	private BufferedImage grassImg = createImage("beachImages/grass.png");
 	private BufferedImage wallImg = createImage("beachImages/seawall.png");
+	private BufferedImage gabionImg = createImage("beachImages/oyster.png");
+	private BufferedImage[] objectImgArray = {grassImg,wallImg,gabionImg};
 	private int barrierImgWidth;
 	private int barrierImgHeight;
 	private int grassImgWidth;
@@ -94,7 +96,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private int newBoatTimerTime;
 	private BufferedImage mediumBoatImageLeft = createImage("beachImages/cleanvessel.png");
 	private BufferedImage mediumBoatImageRight = createImage("beachImages/cleanvessel right.png");
-	
+
 	private BufferedImage[][] boatImgArray = {
 			{mediumBoatImageRight},
 			{mediumBoatImageLeft},
@@ -109,7 +111,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	//features bar
 	private int featuresBarWidth;
 	private int featuresBarHeight;
-	
+
 	//Shore health bar
 	private int meterX;
 	private int meterY;
@@ -118,6 +120,10 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 	private int meterWidth;
 	private int meterHeight;
+
+	//Held Object
+	private int heldObjectWidth;
+	private int heldObjectHeight;
 
 
 	//Game State
@@ -176,7 +182,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				//features bar intialization
 				featuresBarWidth = board.getFeaturesBarWidth();
 				featuresBarHeight = board.getFeaturesBarHeight();
-				
+
 				//health bar intialization
 				meterX = screenWidth - screenWidth/4;
 				meterY = featuresBarHeight/8;
@@ -191,6 +197,9 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 				gameWaves = board.getGameWaves();
 				waveSpeed = board.getWaveSpeed();
+
+				heldObjectWidth = crab.getWidth()/5;
+				heldObjectHeight = crab.getHeight()/5;
 
 
 				//button visibility
@@ -230,7 +239,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			g.setColor(Color.WHITE);
 			g.drawRect(0, 0, featuresBarWidth, featuresBarHeight);
 			g.fillRect(0, 0, featuresBarWidth, featuresBarHeight);
-			
+
 			//HEALTH bar
 			g.setColor(Color.BLACK);
 			g.drawRect(meterX, meterY, meterWidth, meterHeight);
@@ -261,7 +270,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 					g.drawRect(tempBC.getXLoc(), tempBC.getYLoc(), tempBC.getWidth(), tempBC.getHeight());
 				}
 			}
-			
+
 
 			//paint waves
 			//g.setColor(Color.BLUE);
@@ -272,7 +281,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 			//paints boats
 			for(Boat b: board.getGameBoats()){
-					g.drawImage(boatImgArray[b.getSize()][0],b.getXLoc(),b.getYLoc(),b.getWidth(),b.getHeight(),this);
+				g.drawImage(boatImgArray[b.getSize()][0],b.getXLoc(),b.getYLoc(),b.getWidth(),b.getHeight(),this);
 			}
 
 			g.drawString("Current Shore Health: " + board.getCurrentShoreHealth(), screenWidth/2, screenHeight/2);
@@ -310,6 +319,10 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 			//draws crab
 			g.drawImage(crabImg,crab.getXLoc(),crab.getYLoc(),crab.getWidth(),crab.getHeight(),this);
+			//draws object held by crab
+			if(crab.getCurrObject() != 0){
+				g.drawImage(objectImgArray[crab.getCurrObject() - 1],crab.getXLoc() + crab.getWidth()/2 - heldObjectWidth/2, crab.getYLoc() + crab.getHeight() - heldObjectHeight, heldObjectWidth, heldObjectHeight, this);
+			}
 		}
 
 	}
