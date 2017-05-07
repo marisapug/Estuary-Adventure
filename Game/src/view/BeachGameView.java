@@ -113,6 +113,8 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	//Shore health bar
 	private int meterX;
 	private int meterY;
+	private int currShoreHealth;
+	private int totalShoreHealth;
 
 	private int meterWidth;
 	private int meterHeight;
@@ -180,6 +182,8 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				meterY = featuresBarHeight/8;
 				meterWidth = (screenWidth - 10) - meterX;
 				meterHeight = (featuresBarHeight*4)/5;
+				currShoreHealth = board.getCurrentShoreHealth();
+				totalShoreHealth = board.getTotalShoreHealth();
 
 				gameBoats = board.getGameBoats();
 				newBoatTimer = 200;
@@ -227,10 +231,11 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			g.drawRect(0, 0, featuresBarWidth, featuresBarHeight);
 			g.fillRect(0, 0, featuresBarWidth, featuresBarHeight);
 			
-			//health bar
-			g.setColor(Color.RED);
+			//HEALTH bar
+			g.setColor(Color.BLACK);
 			g.drawRect(meterX, meterY, meterWidth, meterHeight);
-			g.fillRect(meterX, meterY, meterWidth, meterHeight);
+			g.setColor(Color.RED);
+			g.fillRect(meterX, meterY, (int)(meterWidth * ((double)board.getCurrentShoreHealth()/(double)totalShoreHealth)), meterHeight);
 
 			//paints board
 			for(int i = 0; i < numRows; i++){
@@ -248,6 +253,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 						g.drawString(Integer.toString(tempBC.getHealth()) + Boolean.toString(tempBC.getHasBarrier()),tempBC.getXLoc(), tempBC.getYLoc() + cellHeight/2);
 				}
 			}
+			//grid drawing for testing
 			for(int i = 0; i < numRows; i++){
 				for(int j = 0; j < numCols; j++){
 					BeachCell tempBC = board.getGrid()[i][j];
@@ -255,6 +261,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 					g.drawRect(tempBC.getXLoc(), tempBC.getYLoc(), tempBC.getWidth(), tempBC.getHeight());
 				}
 			}
+			
 
 			//paint waves
 			//g.setColor(Color.BLUE);

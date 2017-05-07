@@ -100,8 +100,8 @@ public class BeachBoard {
 	private int gabionBucketHeight;
 	
 	//Shore Health
-	private int currentShoreHealth = 1000; //
-	private int totalShoreHealth = 1000;
+	private int currentShoreHealth = 4000; //
+	private int totalShoreHealth = 4000;
 	
 	private int totalCellsHealth;
 	private int currentCellsHealth;
