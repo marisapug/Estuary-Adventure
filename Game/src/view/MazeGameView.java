@@ -781,6 +781,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		if(swimTimer > 0){
 			swimTimer--;
 		}
+		
+		if(xVel == 0 && yVel ==0){
+			crabIsMoving = false;
+		}
 
 		if(crabIsMoving && swimTimer == 0){
 			crabPicNum = (crabPicNum + 1) % crabNumPics;
@@ -944,7 +948,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
-		crabIsMoving = false;
 		int code = e.getKeyCode();
 		if(code == KeyEvent.VK_UP){
 			yVel = 0;
