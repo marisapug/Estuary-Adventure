@@ -43,6 +43,9 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	//Timer
 	private int timerSpeed = 10;
 	private Timer t = new Timer(timerSpeed,this);
+	private int totalTime = 120;
+	private int timeRemaining = totalTime;
+	private int timeCheck = 0;
 
 	//BeachBoard
 	private BeachBoard board;
@@ -120,10 +123,25 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 	private int meterWidth;
 	private int meterHeight;
+	
+	private String healthTitleText;
+	private int healthTitleX;
+	private int healthTitleFontSize;
+	private int healthTitleY;
+	private String healthTitleFontStyle;
 
 	//Held Object
 	private int heldObjectWidth;
 	private int heldObjectHeight;
+	
+	//Timer stuff
+	private String timeRemainingLabel;
+	private String timeRemainingFontStyle;
+	private int timeRemainingFontSize;
+	private int timeRemainingLabelXLoc;
+	private int timeRemainingLabelYLoc;
+	private int timeXLoc;
+	private int timeYLoc;
 
 
 	//Game State
@@ -186,13 +204,13 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				//health bar intialization
 				meterX = screenWidth - screenWidth/4;
 				meterY = featuresBarHeight/8;
-				meterWidth = (screenWidth - 10) - meterX;
+				meterWidth = screenWidth/5;
 				meterHeight = (featuresBarHeight*4)/5;
 				currShoreHealth = board.getCurrentShoreHealth();
 				totalShoreHealth = board.getTotalShoreHealth();
-
+				
 				gameBoats = board.getGameBoats();
-				newBoatTimer = 200;
+				newBoatTimer = 600;
 				newBoatTimerTime = 0;
 
 				gameWaves = board.getGameWaves();
@@ -200,6 +218,21 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 				heldObjectWidth = crab.getWidth()/5;
 				heldObjectHeight = crab.getHeight()/5;
+				
+				//timer initialization
+				timeRemainingLabel = "Time Remaining: ";
+				timeRemainingFontStyle = "TimesRoman";
+				timeRemainingFontSize = screenWidth/50;
+				timeRemainingLabelXLoc = (screenWidth/2) - (timeRemainingLabel.length()*timeRemainingFontSize)/4;
+				timeRemainingLabelYLoc = featuresBarHeight - (featuresBarHeight - timeRemainingFontSize)/2;
+				timeXLoc = timeRemainingLabelXLoc + timeRemainingLabel.length()*timeRemainingFontSize/2;
+				timeYLoc = timeRemainingLabelYLoc;
+
+				healthTitleText = "Estuary Health";
+				healthTitleX = meterX + (meterWidth/4);
+				healthTitleFontSize = screenWidth/60;
+				healthTitleY = featuresBarHeight - (featuresBarHeight - healthTitleFontSize)/2;
+				healthTitleFontStyle = "TimesRoman";
 
 
 				//button visibility
@@ -229,23 +262,25 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		else{
 
 			//ocean drawing
-			//g.drawImage(waterImage, 0, 0, screenWidth, screenHeight, this);
-			//g.drawImage(waterImage,0, screenHeight-cellHeight, screenWidth, screenHeight,this);
 			g.setColor(Color.CYAN);
 			g.fillRect(0, 0, screenWidth, screenHeight);
 			g.fillRect(0, screenHeight-cellHeight, screenWidth, screenHeight);
 
 			//features bar
-			g.setColor(Color.WHITE);
+			g.setColor(Color.BLUE);
 			g.drawRect(0, 0, featuresBarWidth, featuresBarHeight);
 			g.fillRect(0, 0, featuresBarWidth, featuresBarHeight);
 
 			//HEALTH bar
-			g.setColor(Color.BLACK);
-			g.drawRect(meterX, meterY, meterWidth, meterHeight);
 			g.setColor(Color.RED);
 			g.fillRect(meterX, meterY, (int)(meterWidth * ((double)board.getCurrentShoreHealth()/(double)totalShoreHealth)), meterHeight);
-
+			g.setColor(Color.BLACK);
+			g.drawRect(meterX, meterY, meterWidth, meterHeight);
+			
+			g.setFont(new Font(healthTitleFontStyle,Font.BOLD,healthTitleFontSize));
+			g.setColor(Color.WHITE);
+			g.drawString(healthTitleText, healthTitleX, healthTitleY);
+			
 			//paints board
 			for(int i = 0; i < numRows; i++){
 				for(int j = 0; j < numCols; j++){
@@ -256,12 +291,14 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 						g.drawImage(sandImage, tempBC.getXLoc(), tempYLoc, tempBC.getWidth(), tempBC.getHeight(), this);
 						g.setColor(Color.BLACK);
 						// remove after testing
-						g.drawString(Integer.toString(tempBC.getHealth()) + ": " + Boolean.toString(tempBC.getCanHoldOyster()),tempBC.getXLoc(), tempBC.getYLoc() + cellHeight/2);
+						//g.drawString(Integer.toString(tempBC.getHealth()) + ": " + Boolean.toString(tempBC.getCanHoldOyster()),tempBC.getXLoc(), tempBC.getYLoc() + cellHeight/2);
 					}
-					else
-						g.drawString(Integer.toString(tempBC.getHealth()) + Boolean.toString(tempBC.getHasBarrier()),tempBC.getXLoc(), tempBC.getYLoc() + cellHeight/2);
+					//else
+						//g.drawString(Integer.toString(tempBC.getHealth()) + Boolean.toString(tempBC.getHasBarrier()),tempBC.getXLoc(), tempBC.getYLoc() + cellHeight/2);
 				}
 			}
+			
+			/*
 			//grid drawing for testing
 			for(int i = 0; i < numRows; i++){
 				for(int j = 0; j < numCols; j++){
@@ -270,6 +307,13 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 					g.drawRect(tempBC.getXLoc(), tempBC.getYLoc(), tempBC.getWidth(), tempBC.getHeight());
 				}
 			}
+			*/
+			
+			//Time Remaining Drawing
+			g.setFont(new Font(timeRemainingFontStyle,Font.BOLD,timeRemainingFontSize));
+			g.setColor(Color.WHITE);
+			g.drawString(timeRemainingLabel, timeRemainingLabelXLoc, timeRemainingLabelYLoc);
+			g.drawString(String.valueOf(timeRemaining), timeXLoc, timeYLoc);
 
 
 			//paint waves
@@ -332,6 +376,20 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		repaint();
+	
+		//Clock Time
+		timeCheck++;
+		if(timeCheck == 100){
+			timeRemaining--;
+			timeCheck = 0;
+		}
+		
+		//Checks if you lose
+		if(board.getCurrentShoreHealth() <= 0){
+			t.stop();
+		}
+		
+		//tracks crab movements
 		if (
 				((crabXVel < 0) && (crab.getXLoc() - crab.getXIncr() >= 0)) || 
 				((crabXVel > 0) && (crab.getXLoc() + crab.getWidth() + crab.getXIncr() <= screenWidth)) ||

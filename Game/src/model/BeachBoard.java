@@ -100,8 +100,8 @@ public class BeachBoard {
 	private int gabionBucketHeight;
 	
 	//Shore Health
-	private int currentShoreHealth = 4000; //
-	private int totalShoreHealth = 4000;
+	private int currentShoreHealth; //
+	private int totalShoreHealth;
 	
 	private int totalCellsHealth;
 	private int currentCellsHealth;
@@ -174,6 +174,8 @@ public class BeachBoard {
 		//Shore Health
 		updateCurrentCellsHealth();
 		totalCellsHealth = currentCellsHealth;
+		totalShoreHealth = totalCellsHealth/3;
+		currentShoreHealth = totalShoreHealth;
 	}
 
 	//creates beach board grid
@@ -606,7 +608,9 @@ public class BeachBoard {
 		int total = 0;
 		for(int i = 0; i < numRows; i++){
 			for(int j = 0; j < numCols; j++){
-				total += grid[i][j].getHealth();
+				if(grid[i][j].getType() == 0){
+					total += grid[i][j].getHealth();
+				}
 			}
 		}
 		currentCellsHealth = total;
