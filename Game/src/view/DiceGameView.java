@@ -219,7 +219,7 @@ public class DiceGameView extends JPanel implements ActionListener {
 				Color navy = new Color(3, 0, 130);
 				g.setColor(navy);
 				g.setFont(storyTextStyle);
-				if(dgame.getDiceStory().length() <= 22){
+				if(dgame.getDiceStory().length() <= 30){
 					g.drawString(dgame.getDiceStory(), storyTextX, storyTextY);
 				}
 				else{
@@ -260,7 +260,6 @@ public class DiceGameView extends JPanel implements ActionListener {
   		int currWord = 0;
   		ArrayList<String> lines = new ArrayList<String>();
   		stringYCoords[0] = storyTextY;
-  		System.out.println(storyTextY);
   		for(int k = 1; k < maxLines; k++){
   			stringYCoords[k] = 0;
   		}
@@ -273,7 +272,7 @@ public class DiceGameView extends JPanel implements ActionListener {
   			while(j < storyWords.length && !lineOver){
   				numChars += storyWords[j].length();
   				fragment = fragment + storyWords[j] + " ";
-  				if(j < (storyWords.length - 1) && numChars + storyWords[j+1].length() > 22){
+  				if(j < (storyWords.length - 1) && numChars + storyWords[j+1].length() > 30){
   					if(stringYCoords[yCoordIndex] == 0)
   						stringYCoords[yCoordIndex] = stringYCoords[yCoordIndex - 1] + 50;
   					lineOver = true;
