@@ -1,6 +1,7 @@
 package view;
 
 import java.util.Random;
+import java.util.ArrayList;
 
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -42,17 +43,22 @@ public class DiceGameView extends JPanel implements ActionListener {
     private int storyStartX;
     private int diceStartY;
     private int storyStartY;
-    private int storyTextX = 50;
+    private int storyTextX;
     private int storyTextY;
     private Font storyTextStyle;
 	private int storyFontSize = screenWidth/25;
+	private int maxLines = 7; //maximum number of lines the text box will fit
+	private int numLines = 0;
 	private String[] storyWords = {};
+	private ArrayList<String> storyLines = new ArrayList<String>();
+	private int[] stringYCoords = new int[maxLines];
     private boolean isRolled = false; // true if the user pressed the button to
                                         // roll
     private boolean isStorySaved = false; // true if the user pressed the button
                                             // to enter a story
     private boolean isAnimDone = false; // true if the dice have finished
                                         // "rolling"
+    private boolean isSplitStoryLinesCalled = false; //to make sure the function is only called once
     private String imgStrings[] = { "diceimages/apple.png", "diceimages/banana.png", "diceimages/beaker.png",
             "diceimages/box.png", "diceimages/bucket.png", "diceimages/can.png", "diceimages/canwithwings.png",
             "diceimages/chipBag.png", "diceimages/cleanvessel.png", "diceimages/clipboard.png", "diceimages/clock.png",
@@ -106,7 +112,8 @@ public class DiceGameView extends JPanel implements ActionListener {
         storyStartX = (screenWidth - (dgame.getNumDice() * diceWidth + (dgame.getNumDice() - 1) * betweenStory)) / 2;
         diceStartY = (screenHeight - (3 * diceWidth + 2 * betweenStory)) / 2;
         storyStartY = (screenHeight - diceWidth) / 2;
-        storyTextY = screenHeight - 2 * diceStartY / 3;
+        storyTextX = diceWidth + 30;
+        storyTextY = diceWidth + 60;
         storyTextStyle = new Font("Tempus Sans ITC", Font.BOLD, storyFontSize);
         clickedImg = diceImages[0];
 
@@ -212,21 +219,21 @@ public class DiceGameView extends JPanel implements ActionListener {
 				Color navy = new Color(3, 0, 130);
 				g.setColor(navy);
 				g.setFont(storyTextStyle);
-				if(dgame.getDiceStory().length() <= 22)
+				if(dgame.getDiceStory().length() <= 22){
 					g.drawString(dgame.getDiceStory(), storyTextX, storyTextY);
+				}
 				else{
 					storyWords = dgame.getDiceStory().split(" ");
-					int firstInd = 0;
-					for (int j = 0; j < storyWords.length; j++){	
-						int numChars = storyWords[j].length();
-						if(j < (storyWords.length - 1) && numChars + storyWords[j+1].length() > 5){
-							g.drawString(storyLines(firstInd), storyTextX, storyTextY);
-							firstInd = j + 1;
+					if(!isSplitStoryLinesCalled){
+						storyLines = splitStoryLines();
+						numLines = storyLines.size();
+						if(numLines > maxLines){
+							numLines = maxLines;
 						}
-						else{
-							g.drawString(storyLines(firstInd), storyTextX, storyTextY);
-						}
-							
+						isSplitStoryLinesCalled = true;
+					}
+					for (int j = 0; j < numLines; j++){
+						g.drawString(storyLines.get(j), storyTextX, stringYCoords[j] );		
 					}
 				}
             }
@@ -248,26 +255,42 @@ public class DiceGameView extends JPanel implements ActionListener {
     }
     
   //Splits strings of story into lines
-  	String storyLines(int firstInd){
-  		if(dgame.getDiceStory().length() <= 22)
-  			return dgame.getDiceStory();
-  		else{
-  			storyWords = dgame.getDiceStory().split(" ");
-  			String fragment = "";
-  			for (int j = 0; j < storyWords.length; j++){	
-  				int numChars = storyWords[j].length();
-  				fragment = fragment + storyWords[j] + " ";
-  				if(j < (storyWords.length - 1) && numChars + storyWords[j+1].length() > 5){
-  					storyTextY += 50;
-  					firstInd = j + 1;
-  					return fragment;
-  				}
-  				else{
-  					return fragment; //to print the last word--avoids nullPointerException
-  				}
-  			}
-  			return "";
+  	ArrayList<String> splitStoryLines(){ //iterate through story words, adding a new fragment to arraylist 
+  		// every time the words are almost 22 characters
+  		int currWord = 0;
+  		ArrayList<String> lines = new ArrayList<String>();
+  		stringYCoords[0] = storyTextY;
+  		System.out.println(storyTextY);
+  		for(int k = 1; k < maxLines; k++){
+  			stringYCoords[k] = 0;
   		}
+  		int yCoordIndex = 0;
+  		while(currWord < storyWords.length){
+  			String fragment = "";
+  			int j = currWord;
+  			boolean lineOver = false;
+  			int numChars = storyWords[currWord].length();
+  			while(j < storyWords.length && !lineOver){
+  				numChars += storyWords[j].length();
+  				fragment = fragment + storyWords[j] + " ";
+  				if(j < (storyWords.length - 1) && numChars + storyWords[j+1].length() > 22){
+  					if(stringYCoords[yCoordIndex] == 0)
+  						stringYCoords[yCoordIndex] = stringYCoords[yCoordIndex - 1] + 50;
+  					lineOver = true;
+  					yCoordIndex++;
+  					lines.add(fragment);
+  				}
+  				else if(j == (storyWords.length - 1) && yCoordIndex > 0){
+  					stringYCoords[yCoordIndex] = stringYCoords[yCoordIndex - 1] + 50;
+  					lineOver = true;
+  					yCoordIndex++;
+  					lines.add(fragment);
+  				}
+  				j++;
+  				currWord = j;
+  			}
+  		}
+  		return lines;
   	}
 
     // Set Button Listeners
@@ -396,7 +419,6 @@ public class DiceGameView extends JPanel implements ActionListener {
         @Override
         public void mouseDragged(MouseEvent e) {
           //  System.out.println("mouseDragged called");
-            System.out.println(point);
             tmpPoint = e.getPoint();
             if (toPlace) {
                 xCoordinates[clickedIndex] = tmpPoint.x - diceWidth / 2;
