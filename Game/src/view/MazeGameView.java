@@ -244,7 +244,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int currPowerStringY;
 	private int currPowerStringFontSize;
 	private String currPowerStringFontStyle;
-	private int currPowerTimerLimit = 300;
+	private int currPowerTimerLimit = 150;
 	private int currPowerTimerTime = currPowerTimerLimit;
 	private int currPowerUp;
 
