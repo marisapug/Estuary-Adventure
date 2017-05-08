@@ -53,7 +53,7 @@ public class BeachBoard {
 
 	//sand
 	private int totalSandHealth = 100;
-	private int grassHealIncr = 1;
+	private int grassHealIncr = 2;
 
 	//specific cells
 	private int crabGridStartX;
@@ -100,7 +100,7 @@ public class BeachBoard {
 	private int gabionBucketHeight;
 	
 	//Shore Health
-	private int currentShoreHealth; //
+	private int currentShoreHealth; 
 	private int totalShoreHealth;
 	
 	private int totalCellsHealth;
