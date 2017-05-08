@@ -237,6 +237,16 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int powerUpSpeedTimer = powerUpSpeedLimit;
 	private int powerUpInvLimit = 500;
 	private int powerUpInvTimer = powerUpInvLimit;
+	
+	private String[] currPowerUpStrings = {"Extra Life Added!", "Super Speed Activated! (10 Seconds)",
+			"Invincibility! (5 Seconds)"};
+	private int currPowerStringX;
+	private int currPowerStringY;
+	private int currPowerStringFontSize;
+	private String currPowerStringFontStyle;
+	private int currPowerTimerLimit = 300;
+	private int currPowerTimerTime = currPowerTimerLimit;
+	private int currPowerUp;
 
 	//StartScreen
 	private boolean startScreenVisible;
@@ -458,6 +468,12 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				currentSalinityText = salinityTextArray[testCrab.getType()][0];
 				currentSalinityTextX = meterX + meterWidth/2 - (currentSalinityText.length() * salinityTextSize)/4;
 				currentSalinityTextY = meterY + (meterHeight*2)/3;
+				
+				currPowerStringFontSize = screenWidth/60;
+				currPowerStringFontStyle = "TimesRoman";
+				currPowerStringX = testCrab.getXLoc();
+				currPowerStringY = testCrab.getYLoc() - characterHeight;
+				currPowerUp = 100;
 
 				miniMap = new MiniMap();
 				miniWidth = (screenWidth/4)/numRows;
@@ -686,7 +702,13 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			}
 			else
 				crabImg = bCrabPics[crabDir][crabPicNum];
-
+			
+			//Current Power Up String Drawing
+			g.setFont(new Font(currPowerStringFontStyle, Font.BOLD, currPowerStringFontSize));
+			g.setColor(Color.RED);
+			if(currPowerTimerTime != currPowerTimerLimit){
+				g.drawString(currPowerUpStrings[currPowerUp], currPowerStringX,currPowerStringY);
+			}
 
 			//HIT BLINKING OF CRAB
 			if(powerUpInvTimer != powerUpInvLimit){
@@ -697,6 +719,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			if(hitTimer%(cantBeHitLim/20) == 0){
 				g.drawImage(crabImg, testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight, this);
 			}
+			
 
 			//END SCREEN DRAWING
 			if(endScreenVisible){
@@ -731,6 +754,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		if(timeCheck == 100){
 			timeRemaining--;
 			timeCheck = 0;
+		}
+		
+		//curr power up timer
+		if(currPowerTimerTime < currPowerTimerLimit){
+			currPowerTimerTime++;
 		}
 
 		//updates Age State
@@ -797,17 +825,21 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		while(p.hasNext()){
 			PowerUp pu = p.next();
 			if(pu.hitPowerUp(characterXLoc, characterYLoc, characterWidth, characterHeight)){
+				currPowerTimerTime = 0;
 				if(pu.getType() == 0){
+					currPowerUp = 0;
 					health += 1;
 					p.remove();
 				}
 				else if(pu.getType() == 1){
 					powerUpSpeedTimer = 0;
+					currPowerUp = 1;
 					xIncr = powerUpSpeed;
 					yIncr = powerUpSpeed;
 					p.remove();
 				}
 				else{
+					currPowerUp = 2;
 					powerUpInvTimer = 0;
 					p.remove();
 				}

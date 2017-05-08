@@ -1,6 +1,7 @@
 package view;
 
 
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -12,18 +13,21 @@ public class StartScreenView extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
-	//Labels
-	//private JLabel welcomeMessage  = new JLabel("Welcome to Estuary Adventure!");
-	//private JLabel selectMessage = new JLabel("Please select a game mode.");
+	//Screen dimensions
+	private int screenWidth = MainFrame.getFrameWidth();
+	private int screenHeight = MainFrame.getFrameHeight();
 	
-
+	//Background Image
+	private BufferedImage backgroundImg = createImage("background/start.png");
+	
 	public StartScreenView(){
-		//this.add(welcomeMessage);
-		//this.add(selectMessage);
-		//Background Image
-		BufferedImage backgroundImg = createImage("background/start.png");
-		JLabel picLabel = new JLabel(new ImageIcon(backgroundImg));
-		this.add(picLabel);
+	}
+	
+	public void paintComponent(Graphics g){
+		super.paintComponent(g);
+		
+		//draws background
+		g.drawImage(backgroundImg,0,0,screenWidth,screenHeight,this);		
 	}
 	
 	public BufferedImage createImage(String fileName){
