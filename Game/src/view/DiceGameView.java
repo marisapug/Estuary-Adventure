@@ -76,6 +76,7 @@ public class DiceGameView extends JPanel implements ActionListener {
     int animsToDo = 50;
 
     // Buttons
+    private JButton startGameButton;
     private JButton rollDiceButton;
     private JButton storyButton;
 
@@ -84,6 +85,17 @@ public class DiceGameView extends JPanel implements ActionListener {
 
     // Images
     BufferedImage oceanBackground = createImage("background/dicebackground.jpg");
+    BufferedImage startScreen = createImage("background/dicestartscreen.jpg");
+    
+    //Start Screen
+    private boolean isStartScreenVisible = true;
+    private String gameTitle = "Estuary Story Cubes!";
+    private String titleFont = "TimesRoman";
+    private Color titleFontColor = new Color(10, 159, 214);
+    private int titleFontSize = 28;
+    private int titleX = 100;
+    private int titleY = 100;
+    
 
     // Mouse Listener
     DiceListener listener = new DiceListener();
@@ -117,23 +129,25 @@ public class DiceGameView extends JPanel implements ActionListener {
         storyTextStyle = new Font("Tempus Sans ITC", Font.BOLD, storyFontSize);
         clickedImg = diceImages[0];
 
+        //Buttons
+        startGameButton = new JButton("Start Game");
         rollDiceButton = new JButton("Roll Dice");
         storyButton = new JButton("Submit Story");
+        startGameButton.setFocusable(false);
         rollDiceButton.setFocusable(false);
+        rollDiceButton.setVisible(false);
         storyButton.setFocusable(false);
         storyButton.setVisible(false);
 
         storyText = new JTextField("Enter Story Here");
         storyText.setVisible(false);
 
+        this.add(startGameButton);
         this.add(rollDiceButton);
         this.add(storyText);
         this.add(storyButton);
         this.setupListeners();
         this.setupMouseListener(listener);
-
-        initializeCoordinates();
-        diceTimer.start();
     }
 
     // Getters
@@ -194,52 +208,59 @@ public class DiceGameView extends JPanel implements ActionListener {
     // paintComponent
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        if(isStartScreenVisible){
+        	g.drawImage(startScreen, 0, 0, screenWidth, screenHeight, this);
+        	g.setFont(new Font(titleFont,Font.BOLD,titleFontSize));
+        	g.setColor(titleFontColor);
+        	g.drawString(gameTitle,titleX,titleY);
+        }
+        else{
+        	if (listener.isPressing)
+        		currPoint = listener.point;
 
-        if (listener.isPressing)
-            currPoint = listener.point;
+        	g.drawImage(oceanBackground, 0, 0, screenWidth, screenHeight, this);
 
-        g.drawImage(oceanBackground, 0, 0, screenWidth, screenHeight, this);
+        	// Dice
+        	for (int i = 0; i < dgame.getNumDice(); i++) {
+        		g.drawRect(xCoordinates[i], yCoordinates[i], diceWidth, diceWidth);
+        		if (isRolled) {
+        			// Storyboard Slots
+        			g.drawRect(storyboardX[i], storyStartY, diceWidth, diceWidth);
+        			// Images
+        			g.drawImage(diceImages[i], xCoordinates[i], yCoordinates[i], diceWidth, diceWidth, this);
+        		}
 
-        // Dice
-        for (int i = 0; i < dgame.getNumDice(); i++) {
-            g.drawRect(xCoordinates[i], yCoordinates[i], diceWidth, diceWidth);
-            if (isRolled) {
-                // Storyboard Slots
-                g.drawRect(storyboardX[i], storyStartY, diceWidth, diceWidth);
-                // Images
-                g.drawImage(diceImages[i], xCoordinates[i], yCoordinates[i], diceWidth, diceWidth, this);
-            }
+        		if (isStorySaved) {
+        			// maybe do a text box?
+        			g.setColor(Color.white);
+        			g.fillRect(diceWidth, diceWidth, screenWidth - 2 * diceWidth, screenHeight - 2 * diceWidth);
 
-            if (isStorySaved) {
-				// maybe do a text box?
-				g.setColor(Color.white);
-				g.fillRect(diceWidth, diceWidth, screenWidth - 2 * diceWidth, screenHeight - 2 * diceWidth);
+        			// Story Text
+        			Color navy = new Color(3, 0, 130);
+        			g.setColor(navy);
+        			g.setFont(storyTextStyle);
+        			if(dgame.getDiceStory().length() <= 35){
+        				g.drawString(dgame.getDiceStory(), storyTextX, storyTextY);
+        			}
+        			else{
+        				storyWords = dgame.getDiceStory().split(" ");
+        				if(!isSplitStoryLinesCalled){
+        					storyLines = splitStoryLines();
+        					numLines = storyLines.size();
+        					if(numLines > maxLines){
+        						numLines = maxLines;
+        					}
+        					isSplitStoryLinesCalled = true;
+        				}
+        				for (int j = 0; j < numLines; j++){
+        					g.drawString(storyLines.get(j), storyTextX, stringYCoords[j] );		
+        				}
+        			}
+        			for (int k = 0; k < dgame.getNumDice(); k++) 
+        				g.drawImage(diceImages[k], xCoordinates[k], 450, diceWidth, diceWidth, this);
 
-				// Story Text
-				Color navy = new Color(3, 0, 130);
-				g.setColor(navy);
-				g.setFont(storyTextStyle);
-				if(dgame.getDiceStory().length() <= 35){
-					g.drawString(dgame.getDiceStory(), storyTextX, storyTextY);
-				}
-				else{
-					storyWords = dgame.getDiceStory().split(" ");
-					if(!isSplitStoryLinesCalled){
-						storyLines = splitStoryLines();
-						numLines = storyLines.size();
-						if(numLines > maxLines){
-							numLines = maxLines;
-						}
-						isSplitStoryLinesCalled = true;
-					}
-					for (int j = 0; j < numLines; j++){
-						g.drawString(storyLines.get(j), storyTextX, stringYCoords[j] );		
-					}
-				}
-				for (int k = 0; k < dgame.getNumDice(); k++) 
-					g.drawImage(diceImages[k], xCoordinates[k], 450, diceWidth, diceWidth, this);
-				
-            }
+        		}
+        	}
         }
     }
 
@@ -297,6 +318,17 @@ public class DiceGameView extends JPanel implements ActionListener {
 
     // Set Button Listeners
     void setupListeners() {
+    	startGameButton.addActionListener(new ActionListener(){
+    		@Override
+    		public void actionPerformed(ActionEvent e){
+    			rollDiceButton.setVisible(true);
+    			startGameButton.setVisible(false);
+    			isStartScreenVisible = false;
+    			repaint();
+    			initializeCoordinates();
+    	        diceTimer.start();
+    		}
+    	});
         rollDiceButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
