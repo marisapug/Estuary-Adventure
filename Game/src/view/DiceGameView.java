@@ -61,12 +61,12 @@ public class DiceGameView extends JPanel implements ActionListener {
 	private boolean isSplitStoryLinesCalled = false; // to make sure the
 														// function is only
 														// called once
-	private String imgStrings[] = { "diceimages/apple.png", "diceimages/banana.png", "diceimages/beaker.png",
-			"diceimages/box.png", "diceimages/bucket.png", "diceimages/can.png", "diceimages/canwithwings.png",
-			"diceimages/chipBag.png", "diceimages/cleanvessel.png", "diceimages/clipboard.png", "diceimages/clock.png",
-			"diceimages/crabfoodpile.png", "diceimages/crabtrap.png", "diceimages/crumbledpaper.png",
-			"diceimages/crushedcan.png", "diceimages/deadfish.png", "diceimages/dirtyvessel.png",
-			"diceimages/dogpoopbag.png", "diceimages/fishtag.png", "diceimages/flagFull.png" };
+	private String imgStrings[] = { "diceimages/appledie.png", "diceimages/bananadie.png", "diceimages/beakerdie.png",
+			"diceimages/boxdie.png", "diceimages/bucketdie.png", "diceimages/candie.png", "diceimages/canwithwingsdie.png",
+			"diceimages/chipbagdie.png", "diceimages/cleanvesseldie.png", "diceimages/clipboarddie.png", "diceimages/clockdie.png",
+			"diceimages/crabfooddie.png", "diceimages/crabtrapdie.png", "diceimages/crumpledpaperdie.png",
+			"diceimages/crushedcandie.png", "diceimages/deadfishdie.png", "diceimages/dirtyvesseldie.png",
+			"diceimages/dogpoopbagdie.png", "diceimages/fishtagdie.png", "diceimages/flagdie.png" };
 	private BufferedImage[] possibleDiceImgs;
 	private BufferedImage[] diceImages;
 	private int[] xCoordinates;
@@ -217,7 +217,7 @@ public class DiceGameView extends JPanel implements ActionListener {
 
 			// Dice
 			for (int i = 0; i < dgame.getNumDice(); i++) {
-				g.drawRect(xCoordinates[i], yCoordinates[i], diceWidth, diceWidth);
+				//g.drawRect(xCoordinates[i], yCoordinates[i], diceWidth, diceWidth);
 				if (isRolled) {
 					g.drawRect(storyboardX[i], storyStartY, diceWidth, diceWidth); //draws storyboard slots
 					g.drawImage(diceImages[i], xCoordinates[i], yCoordinates[i], diceWidth, diceWidth, this); //draws images
