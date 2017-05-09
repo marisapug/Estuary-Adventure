@@ -3,6 +3,7 @@ package view;
 import model.Crab;
 import model.MazeBoard;
 import model.MazeCell;
+import model.MazeTutorialBoard;
 import model.MazeWall;
 import model.MiniMap;
 import model.PowerUp;
@@ -58,6 +59,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private MazeBoard hardBoard = new MazeBoard(2, screenWidth,screenHeight);
 	private MazeBoard[] boardArr = {easyBoard, mediumBoard, hardBoard};
 	private int boardInd = 1;
+	
+	//Tutorial Board
+	private MazeBoard tutBoard = new MazeBoard(-1,screenWidth,screenHeight);
 
 	//create the maze board
 	private MazeBoard board;
@@ -296,6 +300,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private JButton mediumButton;
 	private JButton hardButton;
 	private JButton startButton;
+	private JButton tutorialButton;
 
 	//Age State
 	private ArrayList<MazeCell> ageStateCells = new ArrayList<MazeCell>();
@@ -325,6 +330,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 		startButton = new JButton("Start Game!");
 		startButton.setFocusable(false);
+		
+		tutorialButton = new JButton("Tutorial");
+		tutorialButton.setFocusable(false);
 
 		//StartScreen Visibility
 		startScreenVisible = true;
@@ -334,12 +342,14 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		this.add(mediumButton);
 		this.add(hardButton);
 		this.add(startButton);
+		this.add(tutorialButton);
 
 		//Button Visibility
 		easyButton.setVisible(false);
 		mediumButton.setVisible(false);
 		hardButton.setVisible(false);
 		startButton.setVisible(false);
+		tutorialButton.setVisible(false);
 
 		//Button Listeners
 		bCrabButton.addActionListener(new ActionListener(){
@@ -354,6 +364,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				easyButton.setVisible(true);
 				mediumButton.setVisible(true);
 				hardButton.setVisible(true);
+				tutorialButton.setVisible(true);
 			}
 
 		});
@@ -370,7 +381,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				easyButton.setVisible(true);
 				mediumButton.setVisible(true);
 				hardButton.setVisible(true);
-		
+				tutorialButton.setVisible(true);
 			}
 
 		});
@@ -398,6 +409,16 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		hardButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				boardInd = 2;
+				easyButton.setVisible(false);
+				mediumButton.setVisible(false);
+				hardButton.setVisible(false);
+				startButton.setVisible(true);
+			}
+		});
+		
+		tutorialButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				board = tutBoard;
 				easyButton.setVisible(false);
 				mediumButton.setVisible(false);
 				hardButton.setVisible(false);
@@ -476,8 +497,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				currPowerUp = 100;
 
 				miniMap = new MiniMap();
-				miniWidth = (screenWidth/4)/numRows;
-				miniHeight = miniWidth;
+				miniWidth = (screenWidth/4)/numCols;
+				miniHeight = (screenWidth/4)/numRows;
 
 				healthImgWidth = (featuresBarHeight*3)/5;
 				healthImgHeight = healthImgWidth;
@@ -590,8 +611,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			//MINIMAP DRAWING
 			//background of minimap
 			g.setColor(Color.BLACK);
-			g.drawRect(0,0,numRows*miniWidth, numCols*miniHeight);
-			g.fillRect(0,0,numRows*miniWidth, numCols*miniHeight);
+			g.drawRect(0,0,numCols*miniWidth, numRows*miniHeight);
+			g.fillRect(0,0,numCols*miniWidth, numRows*miniHeight);
 			//actual lines of minimap
 			for(int i = 0; i < numRows; i++){
 				for(int j =0; j < numCols; j++){

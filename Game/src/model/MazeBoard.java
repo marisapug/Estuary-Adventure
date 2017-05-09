@@ -24,6 +24,19 @@ public class MazeBoard {
 	private int hardNumRows = 25;
 	private int hardNumCols = 25;
 	
+	//tutorial stuff
+	private int tutNumRows = 1;
+	private int tutNumCols = 20;
+	private Litter tutLitter;
+	private int tutLitterType = 0;
+	private int tutLitterStartIndex = 5;
+	private Predator tutPredator;
+	private int tutPredatorStartIndex = 10;
+	private PowerUp tutPowerUp;
+	private int tutPowerUpStartIndex = 15;
+	private ArrayList<MazeWall> tutWalls;
+	
+	
 	private int characterW;
 	private int characterH;
 	

@@ -419,6 +419,10 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			timeCheck = 0;
 		}
 		
+		if(timeRemaining < 60){
+			newBoatTimer = 200;
+		}
+		
 		//Checks if you lose
 		if(board.getCurrentShoreHealth() <= 0){
 			t.stop();

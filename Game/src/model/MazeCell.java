@@ -123,4 +123,20 @@ public class MazeCell {
 	public boolean getHasRightWall(){
 		return hasRightWall;
 	}
+	
+	public void setHasLeftWall(boolean b){
+		hasLeftWall = b;
+	}
+	
+	public void setHasRigthWall(boolean b){
+		hasRightWall = b;
+	}
+	
+	public void setHasTopWall(boolean b){
+		hasTopWall = b;
+	}
+	
+	public void setHasBottomWall(boolean b){
+		hasBottomWall = b;
+	}
 }
