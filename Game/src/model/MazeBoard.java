@@ -35,6 +35,7 @@ public class MazeBoard {
 	private PowerUp tutPowerUp;
 	private int tutPowerUpStartIndex = 15;
 	private ArrayList<MazeWall> tutWalls;
+	private boolean isTutorial = false;
 	
 	
 	private int characterW;
@@ -65,7 +66,7 @@ public class MazeBoard {
 //	private PowerUp[] gamePowerUps;
 	private ArrayList<PowerUp> gamePowerUps = new ArrayList<PowerUp>();
 
-	//CONSTRUCTOR initializes board
+	//CONSTRUCTOR for game board
 	public MazeBoard(int dif, int sWidth, int sHeight){
 		
 		if(dif == 0){
@@ -119,10 +120,64 @@ public class MazeBoard {
 		predWidth = 70;
 		predHeight = 70;
 		generatePredators(numPred);
+	}
+	
+	//CONSTRUCTOR for TUTORIAL BOARD
+	public MazeBoard(int sWidth, int sHeight){
+		screenWidth = sWidth;
+		screenHeight = sHeight;
+		numRows = 1;
+		numCols = 20;
+		isTutorial = true;
 		
+		characterW = cellWidth/4;
+		characterH = cellHeight/4;
+		
+		xStartIndex = 0;
+		yStartIndex = 0;
+		xEndIndex = numRows-1;
+		yEndIndex = numCols-1;
+		
+		//predSetUp
+		predSpeed = 3;
+		predWidth = 70;
+		predHeight = 70;
+		
+		//initializes grid
+		grid = new MazeCell[numRows][numCols];
+		makeGrid(xStartIndex, yStartIndex);
+		//generates maze from grid
+		generateMaze(grid[0][0]);
+		//resets all visited attributes of every cell to false
+		resetVisited();
+		//generates the correct path from a given start and end
+		generateShortestPath(grid[xStartIndex][yStartIndex], grid[xEndIndex][yEndIndex]);
+		getPath();
+		
+		setUpTutObjects();
+		setWalls();
+	}
+	
+	//-----------------------------------------------------------------------------------------
+	//TUTORIAL STUFF---------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------------------
+
+
+	public void setUpTutObjects(){
+		tutLitter = new Litter(tutLitterType, tutLitterStartIndex * cellWidth, grid[0][tutLitterStartIndex].getYLoc() + cellHeight/2);
+		tutPredator = new Predator(tutPredatorStartIndex * cellWidth, grid[0][tutPredatorStartIndex].getYLoc() + cellHeight/2 - predHeight/2, 3, predWidth, predHeight);
+		tutPowerUp = new PowerUp(0, tutPowerUpStartIndex * cellWidth, grid[0][tutPowerUpStartIndex].getYLoc() + cellHeight/2);
+		gameLitter = new Litter[1];
+		gameLitter[0] = tutLitter;
+		predators.add(tutPredator);
+		gamePowerUps.add(tutPowerUp);
 		
 	}
-
+	
+	//-----------------------------------------------------------------------------------------
+	//END OF TUTORIAL STUFF---------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------------------
+	
 	//Makes grid based on user num rows and cols input
 	void makeGrid(int xStart, int yStart){
 		for(int i = 0; i < numRows; i++){
@@ -305,7 +360,7 @@ public class MazeBoard {
 			pow.movePowerUp(xIncr,yIncr);
 		}
 	}
-	
+
 	//checks if a given x and y location falls on a correct path cell
 	public boolean isOnCorrectPath(int x, int y){
 		for(MazeCell m : correctPath){
@@ -587,6 +642,10 @@ public class MazeBoard {
 	public ArrayList<Predator> getPredators(){
 		return predators;
 	}
+	
+	public boolean getIsTutorial(){
+		return isTutorial;
+	}
 
 	//SETTERS
 	public void setNumRows(int rows){
@@ -613,6 +672,8 @@ public class MazeBoard {
 	public void setXStart(int x){
 		 this.xStartIndex = x;
 	}
+	
+	
 	
 
 

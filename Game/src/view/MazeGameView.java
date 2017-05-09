@@ -61,7 +61,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int boardInd = 1;
 	
 	//Tutorial Board
-	private MazeBoard tutBoard = new MazeBoard(-1,screenWidth,screenHeight);
+	private MazeBoard tutBoard = new MazeBoard(screenWidth,screenHeight);
+	private boolean isTutorial;
 
 	//create the maze board
 	private MazeBoard board;
@@ -144,12 +145,15 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private BufferedImage pickPredLeft = createImage("characters/fish_pickerel_left.png");
 	private BufferedImage pickPredUp = createImage("characters/fish_pickerel_up.png");
 	private BufferedImage pickPredDown = createImage("characters/fish_pickerel_down.png");
+	
 
 	//Predator Pic Array,  0 = bass, 1 = group
 	private BufferedImage[][] preds = {
 			{bassPredUp,bassPredDown,bassPredRight,bassPredLeft},
 			{pickPredUp,pickPredDown,pickPredRight,pickPredLeft}
 	};
+	private int predSwitchCount;
+	private int numPredImages = preds.length;
 
 	//Features bar
 	private final int featuresBarWidth = screenWidth;
@@ -269,7 +273,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int endTitleFontSize = screenWidth/50;
 	private String endTitleFontStyle = "TimesRoman";
 	private String endLoseText = "Oh no! You lost!";
-	private String endWinText = "Congratulations, you won!";
+	private String endWinText;
 	private int endTitleStringX = screenWidth/2 - ((titleFontSize * titleText.length())/4);
 	private int endTitleStringY = screenHeight/4;
 
@@ -392,6 +396,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				easyButton.setVisible(false);
 				mediumButton.setVisible(false);
 				hardButton.setVisible(false);
+				tutorialButton.setVisible(false);
 				startButton.setVisible(true);
 			}
 		});
@@ -402,6 +407,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				easyButton.setVisible(false);
 				mediumButton.setVisible(false);
 				hardButton.setVisible(false);
+				tutorialButton.setVisible(false);
 				startButton.setVisible(true);
 			}
 		});
@@ -412,6 +418,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				easyButton.setVisible(false);
 				mediumButton.setVisible(false);
 				hardButton.setVisible(false);
+				tutorialButton.setVisible(false);
 				startButton.setVisible(true);
 			}
 		});
@@ -422,13 +429,22 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				easyButton.setVisible(false);
 				mediumButton.setVisible(false);
 				hardButton.setVisible(false);
+				tutorialButton.setVisible(false);
 				startButton.setVisible(true);
 			}
 		});
 
 		startButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				board = boardArr[boardInd];
+				if(board == null){
+					board = boardArr[boardInd];
+				}
+				isTutorial = board.getIsTutorial();
+				if(!isTutorial){
+					endWinText = "Congratulations, you won!";
+				}else{
+					endWinText = "You've Fininshed the Tutorial, try your skills at the real game!!";
+				}
 				grids = board.getGrid(); 
 				mazeWalls = board.getMazeWalls();
 				numRows = board.getNumRows();
@@ -498,16 +514,17 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 				miniMap = new MiniMap();
 				miniWidth = (screenWidth/4)/numCols;
-				miniHeight = (screenWidth/4)/numRows;
+				miniHeight = (screenWidth/4)/numCols;
 
 				healthImgWidth = (featuresBarHeight*3)/5;
 				healthImgHeight = healthImgWidth;
-				healthImgXLoc = miniWidth * (numRows+1);
+				healthImgXLoc = miniWidth * (numCols+1);
 				healthImgYLoc = (featuresBarHeight - healthImgHeight)/2;
 
 				litterWidth = gameLitter[0].getWidth();
 				litterHeight = gameLitter[0].getHeight();
 				predators = board.getPredators();
+				predSwitchCount = 0;
 				gamePowerUps = board.getGamePowerUps();
 				powerUpWidth = gamePowerUps.get(0).getWidth();
 				powerUpHeight = gamePowerUps.get(0).getHeight();
@@ -594,6 +611,13 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				g.drawImage(powerUpImg,pu.getXLoc(),pu.getYLoc(), powerUpWidth, powerUpHeight, this);
 			}
 			//DRAWS PREDATORS
+			
+			for(Predator p: predators){
+				g.drawImage(preds[predSwitchCount%(numPredImages-1)][p.getDirection()], p.getXLoc(), p.getYLoc(), p.getWidth(), p.getHeight(), this);
+				predSwitchCount++;
+			}
+			/*
+			 * SHOW LOGAN LOLZZ
 			for(int i = 0; i < predators.size()/2; i++){
 				g.drawImage(preds[0][predators.get(i).getDirection()], predators.get(i).getXLoc(), predators.get(i).getYLoc(), predators.get(i).getWidth(), predators.get(i).getHeight(), this);
 			}
@@ -601,6 +625,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			for(int i = (predators.size()/2) + 1; i < predators.size(); i++){
 				g.drawImage(preds[1][predators.get(i).getDirection()], predators.get(i).getXLoc(), predators.get(i).getYLoc(), predators.get(i).getWidth(), predators.get(i).getHeight(), this);
 			}
+			*/
 
 
 			//Features Bar Drawing
@@ -611,14 +636,14 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			//MINIMAP DRAWING
 			//background of minimap
 			g.setColor(Color.BLACK);
-			g.drawRect(0,0,numCols*miniWidth, numRows*miniHeight);
-			g.fillRect(0,0,numCols*miniWidth, numRows*miniHeight);
+			g.drawRect(0,0,numCols*miniWidth, numCols*miniHeight);
+			g.fillRect(0,0,numCols*miniWidth, numCols*miniHeight);
 			//actual lines of minimap
 			for(int i = 0; i < numRows; i++){
 				for(int j =0; j < numCols; j++){
 					MazeCell currG = grids[i][j];
 					int topLX = j*miniWidth; //top left corner x value
-					int topLY = i*miniHeight; //top left corner y value
+					int topLY = i*miniHeight + miniHeight*((numCols-numRows)/2); //top left corner y value
 					int topRX = topLX + miniWidth; //top right corner x value
 					int topRY = topLY; //top right corner y value
 					int bottomLX = topLX; //bottom left corner x value
@@ -649,14 +674,16 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			//MINI MAP CHARACTER DRAWING
 			miniCharacter = board.inWhichCell(characterXLoc,characterYLoc);
 			g.setColor(Color.GREEN);
-			g.drawRect(miniCharacter.getX() * miniWidth + miniWidth/4, miniCharacter.getY()*miniHeight + miniHeight/4,miniWidth/2,miniHeight/2);
-			g.fillRect(miniCharacter.getX() * miniWidth + miniWidth/4, miniCharacter.getY()*miniHeight + miniHeight/4,miniWidth/2,miniHeight/2);
+			g.drawRect(miniCharacter.getX() * miniWidth + miniWidth/4, miniCharacter.getY()*miniHeight + miniHeight/4 + miniHeight*((numCols-numRows)/2),miniWidth/2,miniHeight/2);
+			g.fillRect(miniCharacter.getX() * miniWidth + miniWidth/4, miniCharacter.getY()*miniHeight + miniHeight/4 + miniHeight*((numCols-numRows)/2),miniWidth/2,miniHeight/2);
 
 			//Time Remaining Drawing
-			g.setFont(new Font(titleFontStyle,Font.BOLD,timeRemainingFontSize));
-			g.setColor(Color.BLACK);
-			g.drawString(timeRemainingLabel, timeRemainingLabelXLoc, timeRemainingLabelYLoc);
-			g.drawString(String.valueOf(timeRemaining), timeXLoc, timeYLoc);
+			if(!isTutorial){
+				g.setFont(new Font(titleFontStyle,Font.BOLD,timeRemainingFontSize));
+				g.setColor(Color.BLACK);
+				g.drawString(timeRemainingLabel, timeRemainingLabelXLoc, timeRemainingLabelYLoc);
+				g.drawString(String.valueOf(timeRemaining), timeXLoc, timeYLoc);
+			}
 
 			//Crab Health Drawing
 			g.setColor(Color.BLACK);
@@ -771,10 +798,12 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 	public void actionPerformed(ActionEvent arg0) {
 
-		timeCheck++;
-		if(timeCheck == 100){
-			timeRemaining--;
-			timeCheck = 0;
+		if(!isTutorial){
+			timeCheck++;
+			if(timeCheck == 100){
+				timeRemaining--;
+				timeCheck = 0;
+			}
 		}
 		
 		//curr power up timer
@@ -920,7 +949,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 		//PREDATOR TICKS
 		board.setRandomDirections();
-		board.moveAllPredators();
+		if(!isTutorial){
+			board.moveAllPredators();
+		}
 
 		repaint();
 

@@ -171,7 +171,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 	//=======================================================================//
 
-	//CONSTRUCTOR
+	//CONSTRUCTOR 
 	public BeachGameView(){
 		addKeyListener(this);
 		setFocusable(true);
