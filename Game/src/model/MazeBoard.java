@@ -25,16 +25,21 @@ public class MazeBoard {
 	private int hardNumCols = 25;
 	
 	//tutorial stuff
-	private int tutNumRows = 1;
-	private int tutNumCols = 20;
 	private Litter tutLitter;
 	private int tutLitterType = 0;
 	private int tutLitterStartIndex = 5;
+	private int tutLitterTextIndex = tutLitterStartIndex - 1;
+	private String tutLitterText = "Avoid floating litter that damages the crab. Hit the litter to move on with the tutorial.";
 	private Predator tutPredator;
 	private int tutPredatorStartIndex = 10;
+	private int tutPredatorTextIndex = tutPredatorStartIndex - 1;
+	private String tutPredatorText = "Also watch out for predators! Hit the predator to move on with the tutorial.";
 	private PowerUp tutPowerUp;
 	private int tutPowerUpStartIndex = 15;
-	private ArrayList<MazeWall> tutWalls;
+	private int tutPowerUpTextIndex = tutPowerUpStartIndex - 1;
+	private String tutPowerUpText = 
+			"Along the way you may find power ups to help you, such as an extra life, super speed, or invincibility! Pick up the power up to move on in the tutorial.";
+	private ArrayList<MazeWall> tutWalls = new ArrayList<MazeWall>();
 	private boolean isTutorial = false;
 	
 	
@@ -52,7 +57,7 @@ public class MazeBoard {
 	
 	//LITTER
 	private int numLitter;
-	Litter[] gameLitter;
+	private ArrayList<Litter> gameLitter = new ArrayList<Litter>();
 	
 	//PRETEDTORS
 	private int numPred;
@@ -108,7 +113,7 @@ public class MazeBoard {
 		
 		//generates litter 
 		numLitter = numRows;
-		gameLitter = generateLitter(numLitter);
+		generateLitter(numLitter);
 		
 		//power ups initialization
 		numPowerUps = 4;
@@ -156,6 +161,7 @@ public class MazeBoard {
 		
 		setUpTutObjects();
 		setWalls();
+		setUpTutWalls();
 	}
 	
 	//-----------------------------------------------------------------------------------------
@@ -164,14 +170,25 @@ public class MazeBoard {
 
 
 	public void setUpTutObjects(){
-		tutLitter = new Litter(tutLitterType, tutLitterStartIndex * cellWidth, grid[0][tutLitterStartIndex].getYLoc() + cellHeight/2);
-		tutPredator = new Predator(tutPredatorStartIndex * cellWidth, grid[0][tutPredatorStartIndex].getYLoc() + cellHeight/2 - predHeight/2, 3, predWidth, predHeight);
-		tutPowerUp = new PowerUp(0, tutPowerUpStartIndex * cellWidth, grid[0][tutPowerUpStartIndex].getYLoc() + cellHeight/2);
-		gameLitter = new Litter[1];
-		gameLitter[0] = tutLitter;
+		tutLitter = new Litter(tutLitterType, grid[0][tutLitterStartIndex].getXLoc(), grid[0][tutLitterStartIndex].getYLoc() + cellHeight/2);
+		tutPredator = new Predator(grid[0][tutPredatorStartIndex].getXLoc(), grid[0][tutPredatorStartIndex].getYLoc() + cellHeight/2 - predHeight/2, 3, predWidth, predHeight);
+		tutPowerUp = new PowerUp(0, grid[0][tutPowerUpStartIndex].getXLoc(), grid[0][tutPowerUpStartIndex].getYLoc() + cellHeight/2);
+		gameLitter.add(tutLitter);
 		predators.add(tutPredator);
 		gamePowerUps.add(tutPowerUp);
 		
+	}
+	
+	public void setUpTutWalls(){
+		MazeCell tempCell = grid[0][tutLitterStartIndex];
+		MazeWall tempWall = new MazeWall(tempCell.getXLoc() + cellWidth,tempCell.getYLoc(),tempCell.getXLoc() + cellWidth,tempCell.getYLoc() + cellHeight,1);
+		tutWalls.add(tempWall);
+		tempCell = grid[0][tutPredatorStartIndex];
+		tempWall = new MazeWall(tempCell.getXLoc() + cellWidth,tempCell.getYLoc(),tempCell.getXLoc() + cellWidth,tempCell.getYLoc() + cellHeight,1);
+		tutWalls.add(tempWall);
+		tempCell = grid[0][tutPowerUpStartIndex];
+		tempWall = new MazeWall(tempCell.getXLoc() + cellWidth,tempCell.getYLoc(),tempCell.getXLoc() + cellWidth,tempCell.getYLoc() + cellHeight,1);
+		tutWalls.add(tempWall);
 	}
 	
 	//-----------------------------------------------------------------------------------------
@@ -353,6 +370,9 @@ public class MazeBoard {
 		for(MazeWall wall: mazeWalls){
 			wall.moveWall(xIncr,yIncr);
 		}
+		for(MazeWall wall: tutWalls){
+			wall.moveWall(xIncr,yIncr);
+		}
 		for(Predator pred: predators){
 			pred.movePred(xIncr,yIncr);
 		}
@@ -422,12 +442,20 @@ public class MazeBoard {
 	}
 	
 	public boolean isHittingAnyWalls(int xLoc, int yLoc, int w, int h){
+		boolean tempBool = false;
 		for(MazeWall wall: mazeWalls){
 			if(wall.isHittingWall(xLoc, yLoc, w, h)){
-				return true;
+				tempBool = true;
 			}
 		}
-		return false;
+		if(isTutorial){
+			for(MazeWall wall: tutWalls){
+				if(wall.isHittingWall(xLoc, yLoc, w, h)){
+					tempBool = true;
+				}
+			}
+		}
+		return tempBool;
 	}
 	
 	
@@ -442,16 +470,14 @@ public class MazeBoard {
 	}
 	
 	//generates given amount of litter randomly throughout maze
-	public Litter[] generateLitter(int amount){ 
-		Litter[] pile = new Litter[amount];
+	public void generateLitter(int amount){
 		Random rand = new Random();
 		for(int i = 0; i < amount; i++){
 			int litInd = rand.nextInt(4); 
 			MazeCell cell = getRandomCell();
 			Litter lit = new Litter(litInd, cell.getXLoc(),cell.getYLoc() + cellHeight/3);
-			pile[i] = lit;
+			gameLitter.add(lit);
 		}
-		return pile;
 	}
 	
 	//floats all pieces of litter
@@ -631,7 +657,11 @@ public class MazeBoard {
 		return mazeWalls;
 	}
 	
-	public Litter[] getGameLitter(){
+	public ArrayList<MazeWall> getTutWalls(){
+		return tutWalls;
+	}
+	
+	public ArrayList<Litter> getGameLitter(){
 		return gameLitter;
 	}
 	
@@ -645,6 +675,30 @@ public class MazeBoard {
 	
 	public boolean getIsTutorial(){
 		return isTutorial;
+	}
+	
+	public int getTutLitterStartIndex(){
+		return tutLitterStartIndex;
+	}
+	
+	public int getTutPredatorStartIndex(){
+		return tutPredatorStartIndex;
+	}
+	
+	public int getTutPowerUpStartIndex(){
+		return tutPowerUpStartIndex;
+	}
+	
+	public String getTutLitterText(){
+		return tutLitterText;
+	}
+	
+	public String getTutPredatorText(){
+		return tutPredatorText;
+	}
+	
+	public String getTutPowerUpText(){
+		return tutPowerUpText;
 	}
 
 	//SETTERS

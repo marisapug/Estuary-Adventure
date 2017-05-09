@@ -3,7 +3,6 @@ package view;
 import model.Crab;
 import model.MazeBoard;
 import model.MazeCell;
-import model.MazeTutorialBoard;
 import model.MazeWall;
 import model.MiniMap;
 import model.PowerUp;
@@ -63,6 +62,19 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	//Tutorial Board
 	private MazeBoard tutBoard = new MazeBoard(screenWidth,screenHeight);
 	private boolean isTutorial;
+	private ArrayList<MazeWall> tutWalls;
+	
+	private int tutLitterStartIndex;
+	private int tutPredatorStartIndex;
+	private int tutPowerUpStartIndex;
+	
+	private String tutLitterText;
+	private String tutPredatorText;
+	private String tutPowerUpText;
+	
+	private boolean tutIsLitterHit;
+	private boolean tutIsPredatorHit;
+	
 
 	//create the maze board
 	private MazeBoard board;
@@ -208,7 +220,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	//Litter
 	private ArrayList<BufferedImage> litterTypes = makeLitterList();
 	Random rand = new Random();
-	Litter[] gameLitter;
+	private ArrayList<Litter> gameLitter;
 	private int litterWidth;
 	private int litterHeight;
 	private int xLitterMax = 0;
@@ -436,6 +448,16 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				hardButton.setVisible(false);
 				tutorialButton.setVisible(false);
 				startButton.setVisible(true);
+				tutLitterStartIndex = board.getTutLitterStartIndex();
+				tutPredatorStartIndex = board.getTutPredatorStartIndex();
+				tutPowerUpStartIndex = board.getTutPowerUpStartIndex();
+				
+				tutLitterText = board.getTutLitterText();
+				tutPredatorText = board.getTutPredatorText();
+				tutPowerUpText = board.getTutPowerUpText();
+				
+				tutIsLitterHit = false;
+				tutIsPredatorHit = false;
 			}
 		});
 
@@ -452,6 +474,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				}
 				grids = board.getGrid(); 
 				mazeWalls = board.getMazeWalls();
+				tutWalls = board.getTutWalls();
 				numRows = board.getNumRows();
 				numCols = board.getNumCols();
 				cellWidth = board.getCellWidth();
@@ -526,8 +549,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				healthImgXLoc = miniWidth * (numCols+1);
 				healthImgYLoc = (featuresBarHeight - healthImgHeight)/2;
 
-				litterWidth = gameLitter[0].getWidth();
-				litterHeight = gameLitter[0].getHeight();
+				litterWidth = gameLitter.get(0).getWidth();
+				litterHeight = gameLitter.get(0).getHeight();
 				predators = board.getPredators();
 				predSwitchCount = 0;
 				gamePowerUps = board.getGamePowerUps();
@@ -604,7 +627,17 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 						)
 					g.drawLine(startX, startY, endX, endY);
 			}
-
+			//Draws tutorial Walls
+			if(isTutorial){
+				for (MazeWall wall: tutWalls){
+					int startX = wall.getStartX();
+					int startY = wall.getStartY();
+					int endX = wall.getEndX();
+					int endY = wall.getEndY();
+					//checks if on Screen
+						g.drawLine(startX, startY, endX, endY);
+				}
+			}
 			//Draws litter
 			for(Litter lit : gameLitter){
 				if(lit.getXLoc()+litterWidth > 0 && lit.getXLoc() <= screenWidth && lit.getYLoc()+litterHeight > 0 && lit.getYLoc() < screenHeight)
@@ -615,23 +648,12 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			for(PowerUp pu : gamePowerUps){
 				g.drawImage(powerUpImg,pu.getXLoc(),pu.getYLoc(), powerUpWidth, powerUpHeight, this);
 			}
-			//DRAWS PREDATORS
 			
+			//DRAWS PREDATORS
 			for(Predator p: predators){
 				g.drawImage(preds[predSwitchCount%(numPredImages-1)][p.getDirection()], p.getXLoc(), p.getYLoc(), p.getWidth(), p.getHeight(), this);
 				predSwitchCount++;
 			}
-			/*
-			 * SHOW LOGAN LOLZZ
-			for(int i = 0; i < predators.size()/2; i++){
-				g.drawImage(preds[0][predators.get(i).getDirection()], predators.get(i).getXLoc(), predators.get(i).getYLoc(), predators.get(i).getWidth(), predators.get(i).getHeight(), this);
-			}
-
-			for(int i = (predators.size()/2) + 1; i < predators.size(); i++){
-				g.drawImage(preds[1][predators.get(i).getDirection()], predators.get(i).getXLoc(), predators.get(i).getYLoc(), predators.get(i).getWidth(), predators.get(i).getHeight(), this);
-			}
-			*/
-
 
 			//Features Bar Drawing
 			g.setColor(Color.yellow);
@@ -762,6 +784,20 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			if(currPowerTimerTime != currPowerTimerLimit){
 				g.drawString(currPowerUpStrings[currPowerUp], currPowerStringX,currPowerStringY);
 			}
+			
+			//tutorial text drawing
+			if(isTutorial){
+				MazeCell tempCell = board.inWhichCell(characterXLoc, characterYLoc);
+				if(tempCell.getX() == tutLitterStartIndex){
+					g.drawString(tutLitterText, 100, 100);
+				}
+				else if(tempCell.getX() == tutPredatorStartIndex){
+					g.drawString(tutPredatorText, 100, 100);
+				}
+				else if(tempCell.getX() == tutPowerUpStartIndex){
+					g.drawString(tutPowerUpText, 100, 100);
+				}
+			}
 
 			//HIT BLINKING OF CRAB
 			if(powerUpInvTimer != powerUpInvLimit){
@@ -809,6 +845,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				timeRemaining--;
 				timeCheck = 0;
 			}
+		}
+		
+		if(isTutorial){
+			
 		}
 		
 		//curr power up timer
@@ -885,6 +925,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 					currPowerUp = 0;
 					health += 1;
 					p.remove();
+					if(isTutorial){
+						tutWalls.remove(0);
+					}
 				}
 				else if(pu.getType() == 1){
 					powerUpSpeedTimer = 0;
@@ -892,11 +935,17 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 					xIncr = powerUpSpeed;
 					yIncr = powerUpSpeed;
 					p.remove();
+					if(isTutorial){
+						tutWalls.remove(0);
+					}
 				}
 				else{
 					currPowerUp = 2;
 					powerUpInvTimer = 0;
 					p.remove();
+					if(isTutorial){
+						tutWalls.remove(0);
+					}
 				}
 			}
 		}
@@ -920,14 +969,32 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		//checks for litter hits
 		if(hitTimer == cantBeHitLim && powerUpInvTimer == powerUpInvLimit){
 			if(board.hitAnyLitter(characterXLoc, characterYLoc, characterWidth, characterHeight)){
-				health -= 1;
-				hitTimer = 0;
+				if(!isTutorial){
+					health -= 1;
+					hitTimer = 0;
+				}
+				else{
+					if(!tutIsLitterHit){
+						tutWalls.remove(0);
+						hitTimer = 0;
+						tutIsLitterHit = true;
+					}
+				}
 			}
 
 			//checks for predator hits
 			if(board.hitAnyPreds(characterXLoc, characterYLoc, characterWidth, characterHeight)){
-				health -= 1;
-				hitTimer = 0;
+				if(!isTutorial){
+					health -= 1;
+					hitTimer = 0;
+				}
+				else{
+					if(!tutIsPredatorHit){
+						tutWalls.remove(0);
+						hitTimer = 0;
+						tutIsPredatorHit = true;
+					}
+				}
 			}
 		}
 
@@ -937,13 +1004,13 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		}
 
 		//floats the litter back and forth in a cell
-		if(xLitterMax + board.getGameLitter()[0].getFloatXIncr() + litterWidth <= cellWidth){
+		if(xLitterMax + board.getGameLitter().get(0).getFloatXIncr() + litterWidth <= cellWidth){
 			board.floatAllLitterRight();
-			xLitterMax += board.getGameLitter()[0].getFloatXIncr();
+			xLitterMax += board.getGameLitter().get(0).getFloatXIncr();
 		}
-		else if(xLitterMin + board.getGameLitter()[0].getFloatXIncr() + litterWidth <= cellWidth){
+		else if(xLitterMin + board.getGameLitter().get(0).getFloatXIncr() + litterWidth <= cellWidth){
 			board.floatAllLitterLeft();
-			xLitterMin += board.getGameLitter()[0].getFloatXIncr();
+			xLitterMin += board.getGameLitter().get(0).getFloatXIncr();
 		}
 		else{
 			xLitterMax = 0;
