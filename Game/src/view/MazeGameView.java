@@ -58,37 +58,53 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private MazeBoard hardBoard = new MazeBoard(2, screenWidth,screenHeight);
 	private MazeBoard[] boardArr = {easyBoard, mediumBoard, hardBoard};
 	private int boardInd = 1;
-	
+
 	//Tutorial Board
 	private MazeBoard tutBoard = new MazeBoard(screenWidth,screenHeight);
 	private boolean isTutorial;
 	private ArrayList<MazeWall> tutWalls;
-	
+
 	private int tutLitterTextIndex;
 	private int tutPredatorTextIndex;
 	private int tutPowerUpTextIndex;
-	
+	private int tutSalinityTextIndex;
+	private int tutMiniMapTextIndex;
+
 	private String tutLitterText;
 	private String tutPredatorText;
 	private String tutPowerUpText;
-	
+	private String tutSalinityText;
+	private String tutMiniMapText;
+
 	private boolean litterTextSeen;
 	private boolean predatorTextSeen;
 	private boolean powerUpTextSeen;
-	
+	private boolean salinityTextSeen;
+	private boolean miniMapTextSeen;
+
 	private boolean tutIsLitterHit;
 	private boolean tutIsPredatorHit;
-	
+
 	private int tutPauseTimer;
 	private int tutPauseTotal;
-	
+
 	private String tutFontStyle;
 	private int tutFontSize;
 	private int tutLitterTextXLoc;
 	private int tutPredatorTextXLoc;
 	private int tutPowerUpTextXLoc;
+	private int tutSalinityTextXLoc;
+	private int tutMiniMapTextXLoc;
 	private int tutTextYLoc;
 	
+	private BufferedImage upArrowImage = createImage("MazeExtraImgs/upArrow.png");
+	private BufferedImage leftArrowImage = createImage("MazeExtraImgs/leftArrow.png");
+	private int upArrowX;
+	private int upArrowY;
+	private int leftArrowX;
+	private int leftArrowY;
+	private int arrowWidth;
+	private int arrowHeight;
 
 	//create the maze board
 	private MazeBoard board;
@@ -171,7 +187,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private BufferedImage pickPredLeft = createImage("characters/fish_pickerel_left.png");
 	private BufferedImage pickPredUp = createImage("characters/fish_pickerel_up.png");
 	private BufferedImage pickPredDown = createImage("characters/fish_pickerel_down.png");
-	
+
 
 	//Predator Pic Array,  0 = bass, 1 = group
 	private BufferedImage[][] preds = {
@@ -271,9 +287,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int powerUpSpeedTimer = powerUpSpeedLimit;
 	private int powerUpInvLimit = 500;
 	private int powerUpInvTimer = powerUpInvLimit;
-	
+
 	private String[] currPowerUpStrings = {"Extra Life Added!", "Super Speed Activated! (10 Seconds)",
-			"Invincibility! (5 Seconds)"};
+	"Invincibility! (5 Seconds)"};
 	private int currPowerStringX;
 	private int currPowerStringY;
 	private int currPowerStringFontSize;
@@ -331,8 +347,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private JButton hardButton;
 	private JButton startButton;
 	private JButton tutorialButton;
-	private JButton yesTutorialButton;
-	private JButton noTutorialButton;
+
 
 	//Age State
 	private ArrayList<MazeCell> ageStateCells = new ArrayList<MazeCell>();
@@ -362,13 +377,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 		startButton = new JButton("Start Game!");
 		startButton.setFocusable(false);
-		
+
 		tutorialButton = new JButton("Tutorial");
 		tutorialButton.setFocusable(false);
-		
-		yesTutorialButton = new JButton("Yes");
-		noTutorialButton = new JButton("No");
-		
+
 
 		//StartScreen Visibility
 		startScreenVisible = true;
@@ -454,7 +466,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				startButton.setVisible(true);
 			}
 		});
-		
+
 		tutorialButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				board = tutBoard;
@@ -466,25 +478,35 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				tutLitterTextIndex = board.getTutLitterTextIndex();
 				tutPredatorTextIndex = board.getTutPredatorTextIndex();
 				tutPowerUpTextIndex = board.getTutPowerUpTextIndex();
-				
+				tutSalinityTextIndex = board.getTutSalinityTextIndex();
+				tutMiniMapTextIndex = board.getTutMiniMapTextIndex();
+
 				tutLitterText = board.getTutLitterText();
 				tutPredatorText = board.getTutPredatorText();
 				tutPowerUpText = board.getTutPowerUpText();
-				
+				tutSalinityText = board.getTutSalinityText();
+				tutMiniMapText = board.getTutMiniMapText();
+
 				tutIsLitterHit = false;
 				tutIsPredatorHit = false;
 				predatorTextSeen = false;
 				litterTextSeen = false;
 				powerUpTextSeen = false;
-				tutPauseTotal = 300;
-				tutPauseTimer = tutPauseTotal;
+				salinityTextSeen = false;
+				miniMapTextSeen = false;
 				
+				tutPauseTotal = 200;
+				tutPauseTimer = tutPauseTotal;
+
 				tutFontStyle = "TimesRoman";
 				tutFontSize = screenHeight/30;
 				tutPowerUpTextXLoc = screenWidth/2 - ((tutFontSize * tutPowerUpText.length())/4);
 				tutPredatorTextXLoc = screenWidth/2 - ((tutFontSize * tutPredatorText.length())/4);
 				tutLitterTextXLoc = screenWidth/2 - ((tutFontSize * tutLitterText.length())/4);
+				tutSalinityTextXLoc = screenWidth/2 -((tutFontSize * tutSalinityText.length())/4);
+				tutMiniMapTextXLoc = screenWidth/2 -((tutFontSize * tutMiniMapText.length())/4);
 				tutTextYLoc = screenHeight/2;
+				
 			}
 		});
 
@@ -560,7 +582,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				currentSalinityText = salinityTextArray[testCrab.getType()][0];
 				currentSalinityTextX = meterX + meterWidth/2 - (currentSalinityText.length() * salinityTextSize)/4;
 				currentSalinityTextY = meterY + (meterHeight*2)/3;
-				
+
 				currPowerStringFontSize = screenWidth/60;
 				currPowerStringFontStyle = "TimesRoman";
 				currPowerStringX = testCrab.getXLoc();
@@ -570,6 +592,15 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				miniMap = new MiniMap();
 				miniWidth = (screenWidth/4)/numCols;
 				miniHeight = (screenWidth/4)/numCols;
+				
+				arrowWidth = 125;
+				arrowHeight = 150;
+				upArrowX = meterX + meterWidth/2 - arrowWidth/2;
+				upArrowY = meterY + meterHeight;
+				
+				leftArrowX = miniWidth * numCols;
+				leftArrowY = (miniHeight * numCols)/2 - arrowHeight/2;
+				
 
 				healthImgWidth = (featuresBarHeight*3)/5;
 				healthImgHeight = healthImgWidth;
@@ -662,7 +693,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 					int endX = wall.getEndX();
 					int endY = wall.getEndY();
 					//checks if on Screen
-						g.drawLine(startX, startY, endX, endY);
+					g.drawLine(startX, startY, endX, endY);
 				}
 			}
 			//Draws litter
@@ -675,7 +706,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			for(PowerUp pu : gamePowerUps){
 				g.drawImage(powerUpImg,pu.getXLoc(),pu.getYLoc(), powerUpWidth, powerUpHeight, this);
 			}
-			
+
 			//DRAWS PREDATORS
 			for(Predator p: predators){
 				g.drawImage(preds[predSwitchCount%(numPredImages-1)][p.getDirection()], p.getXLoc(), p.getYLoc(), p.getWidth(), p.getHeight(), this);
@@ -804,16 +835,17 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			}
 			else
 				crabImg = bCrabPics[crabDir][crabPicNum];
-			
+
 			//Current Power Up String Drawing
 			g.setFont(new Font(currPowerStringFontStyle, Font.BOLD, currPowerStringFontSize));
 			g.setColor(Color.RED);
 			if(currPowerTimerTime != currPowerTimerLimit){
 				g.drawString(currPowerUpStrings[currPowerUp], currPowerStringX,currPowerStringY);
 			}
-			
+
 			//tutorial text drawing
 			g.setFont(new Font(tutFontStyle, Font.BOLD,tutFontSize));
+			g.setColor(Color.WHITE);
 			if(isTutorial){
 				MazeCell tempCell = board.inWhichCell(characterXLoc, characterYLoc);
 				if(tempCell.getX() == tutLitterTextIndex && !litterTextSeen){
@@ -821,10 +853,22 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 					tutPauseTimer = 0;
 					litterTextSeen = true;
 				}
+				else if(tempCell.getX() == tutSalinityTextIndex && !salinityTextSeen){
+					g.drawImage(upArrowImage, upArrowX, upArrowY, arrowWidth, arrowHeight, this);
+					g.drawString(tutSalinityText, tutSalinityTextXLoc, tutTextYLoc);
+					tutPauseTimer = 0;
+					salinityTextSeen = true;
+				}
 				else if(tempCell.getX() == tutPredatorTextIndex && !predatorTextSeen){
 					g.drawString(tutPredatorText, tutPredatorTextXLoc, tutTextYLoc);
 					tutPauseTimer = 0;
 					predatorTextSeen = true;
+				}
+				else if(tempCell.getX() == tutMiniMapTextIndex && !miniMapTextSeen){
+					g.drawImage(leftArrowImage, leftArrowX, leftArrowY, arrowHeight, arrowWidth, this);					
+					g.drawString(tutMiniMapText, tutMiniMapTextXLoc, tutTextYLoc);
+					tutPauseTimer = 0;
+					miniMapTextSeen = true;
 				}
 				else if(tempCell.getX() == tutPowerUpTextIndex && !powerUpTextSeen){
 					g.drawString(tutPowerUpText, tutPowerUpTextXLoc, tutTextYLoc);
@@ -842,7 +886,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			if(hitTimer%(cantBeHitLim/20) == 0){
 				g.drawImage(crabImg, testCrab.getXLoc(), testCrab.getYLoc(), characterWidth, characterHeight, this);
 			}
-			
+
 
 			//END SCREEN DRAWING
 			if(endScreenVisible){
@@ -852,7 +896,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				if(hasWon){
 					g.setColor(Color.BLUE);
 					g.drawString(endWinText, endTitleStringX, endTitleStringY);
-					g.drawString(endWinTimeText + (totalTime - timeRemaining) + " seconds", endWinTimeTextX, endWinTimeTextY);
+					if(!isTutorial){
+						g.drawString(endWinTimeText + (totalTime - timeRemaining) + " seconds", endWinTimeTextX, endWinTimeTextY);
+					}
 				}
 				else{
 					g.setColor(Color.RED);
@@ -884,7 +930,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				timeCheck = 0;
 			}
 		}
-		
+
 		//curr power up timer
 		if(currPowerTimerTime < currPowerTimerLimit){
 			currPowerTimerTime++;
@@ -939,7 +985,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		if(swimTimer > 0){
 			swimTimer--;
 		}
-		
+
 		if(xVel == 0 && yVel ==0){
 			crabIsMoving = false;
 		}

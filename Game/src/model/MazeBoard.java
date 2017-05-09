@@ -39,6 +39,13 @@ public class MazeBoard {
 	private int tutPowerUpTextIndex = tutPowerUpStartIndex - 1;
 	private String tutPowerUpText = 
 			"GRAB POWER UPS TO HELP YOU ALONG THE WAY! Pick up the power up to move on in the tutorial.";
+	
+	private int tutSalinityTextIndex = tutPredatorTextIndex - 1;
+	private String tutSalinityText = "Use the SALINITY INDICATOR to make sure the crab is on the right path and can grow!";
+	
+	private int tutMiniMapTextIndex = tutPowerUpTextIndex - 1;
+	private String tutMiniMapText = "Use the mini map to guide you!";
+	
 	private ArrayList<MazeWall> tutWalls = new ArrayList<MazeWall>();
 	private boolean isTutorial = false;
 	
@@ -711,6 +718,22 @@ public class MazeBoard {
 	
 	public String getTutPowerUpText(){
 		return tutPowerUpText;
+	}
+	
+	public int getTutSalinityTextIndex(){
+		return tutSalinityTextIndex;
+	}
+	
+	public String getTutSalinityText(){
+		return tutSalinityText;
+	}
+	
+	public int getTutMiniMapTextIndex(){
+		return tutMiniMapTextIndex;
+	}
+	
+	public String getTutMiniMapText(){
+		return tutMiniMapText;
 	}
 
 	//SETTERS
