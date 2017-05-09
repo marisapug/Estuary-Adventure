@@ -19,7 +19,7 @@ public class MainFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	//Frame
-	private final static int frameWidth = 1000;
+	private final static int frameWidth = 1200;
 	private final static int frameHeight = 700;
 
 	//Main Layout

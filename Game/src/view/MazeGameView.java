@@ -82,6 +82,13 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int tutPauseTimer;
 	private int tutPauseTotal;
 	
+	private String tutFontStyle;
+	private int tutFontSize;
+	private int tutLitterTextXLoc;
+	private int tutPredatorTextXLoc;
+	private int tutPowerUpTextXLoc;
+	private int tutTextYLoc;
+	
 
 	//create the maze board
 	private MazeBoard board;
@@ -471,6 +478,13 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				powerUpTextSeen = false;
 				tutPauseTotal = 300;
 				tutPauseTimer = tutPauseTotal;
+				
+				tutFontStyle = "TimesRoman";
+				tutFontSize = screenHeight/30;
+				tutPowerUpTextXLoc = screenWidth/2 - ((tutFontSize * tutPowerUpText.length())/4);
+				tutPredatorTextXLoc = screenWidth/2 - ((tutFontSize * tutPredatorText.length())/4);
+				tutLitterTextXLoc = screenWidth/2 - ((tutFontSize * tutLitterText.length())/4);
+				tutTextYLoc = screenHeight/2;
 			}
 		});
 
@@ -799,20 +813,21 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			}
 			
 			//tutorial text drawing
+			g.setFont(new Font(tutFontStyle, Font.BOLD,tutFontSize));
 			if(isTutorial){
 				MazeCell tempCell = board.inWhichCell(characterXLoc, characterYLoc);
 				if(tempCell.getX() == tutLitterTextIndex && !litterTextSeen){
-					g.drawString(tutLitterText, 100, 100);
+					g.drawString(tutLitterText, tutLitterTextXLoc, tutTextYLoc);
 					tutPauseTimer = 0;
 					litterTextSeen = true;
 				}
 				else if(tempCell.getX() == tutPredatorTextIndex && !predatorTextSeen){
-					g.drawString(tutPredatorText, 100, 100);
+					g.drawString(tutPredatorText, tutPredatorTextXLoc, tutTextYLoc);
 					tutPauseTimer = 0;
 					predatorTextSeen = true;
 				}
 				else if(tempCell.getX() == tutPowerUpTextIndex && !powerUpTextSeen){
-					g.drawString(tutPowerUpText, 100, 100);
+					g.drawString(tutPowerUpText, tutPowerUpTextXLoc, tutTextYLoc);
 					tutPauseTimer = 0;
 					powerUpTextSeen = true;
 				}
