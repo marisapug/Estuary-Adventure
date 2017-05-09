@@ -305,6 +305,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private JButton hardButton;
 	private JButton startButton;
 	private JButton tutorialButton;
+	private JButton yesTutorialButton;
+	private JButton noTutorialButton;
 
 	//Age State
 	private ArrayList<MazeCell> ageStateCells = new ArrayList<MazeCell>();
@@ -337,6 +339,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		
 		tutorialButton = new JButton("Tutorial");
 		tutorialButton.setFocusable(false);
+		
+		yesTutorialButton = new JButton("Yes");
+		noTutorialButton = new JButton("No");
 
 		//StartScreen Visibility
 		startScreenVisible = true;

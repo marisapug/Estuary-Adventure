@@ -2,14 +2,27 @@ package model;
 
 import java.util.Random;
 
+/**
+ * Predator contains all the information including direction, x-location, y-location
+ * width, and height of a predator in the maze game. Predator is a subclass of Obstacle.
+ * @author Logan
+ *
+ */
 public class Predator extends Obstacle {
 	private int direction;
 	private int xLoc;
 	private int yLoc;
 	private int width;
 	private int height;
-	private int type;
 
+	/**
+	 * Constructor that creates a new predator object
+	 * @param x x-location of the predator
+	 * @param y y-location of the predator
+	 * @param d direction of the predator
+	 * @param w width of the predator
+	 * @param h height of the predator
+	 */
 	public Predator(int x, int y, int d, int w, int h){
 		xLoc = x;
 		yLoc = y;
@@ -18,6 +31,11 @@ public class Predator extends Obstacle {
 		height = h;
 	}
 
+	/**
+	 * Moves the predator object by incrementing the x-location and y-location
+	 * @param xIncr the x-increment
+	 * @param yIncr the y-increment
+	 */
 	public void movePred(int xIncr, int yIncr){
 		yLoc = yLoc + yIncr;
 		xLoc = xLoc + xIncr;
