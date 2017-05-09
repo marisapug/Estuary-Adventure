@@ -29,16 +29,16 @@ public class MazeBoard {
 	private int tutLitterType = 0;
 	private int tutLitterStartIndex = 5;
 	private int tutLitterTextIndex = tutLitterStartIndex - 1;
-	private String tutLitterText = "Avoid floating litter that damages the crab. Hit the litter to move on with the tutorial.";
+	private String tutLitterText = "AVOID LITTER. Hit the litter to move on with the tutorial.";
 	private Predator tutPredator;
 	private int tutPredatorStartIndex = 10;
 	private int tutPredatorTextIndex = tutPredatorStartIndex - 1;
-	private String tutPredatorText = "Also watch out for predators! Hit the predator to move on with the tutorial.";
+	private String tutPredatorText = "AVOID PREDATORS! Hit the predator to move on with the tutorial.";
 	private PowerUp tutPowerUp;
 	private int tutPowerUpStartIndex = 15;
 	private int tutPowerUpTextIndex = tutPowerUpStartIndex - 1;
 	private String tutPowerUpText = 
-			"Along the way you may find power ups to help you, such as an extra life, super speed, or invincibility! Pick up the power up to move on in the tutorial.";
+			"GRAB POWER UPS TO HELP YOU ALONG THE WAY! Pick up the power up to move on in the tutorial.";
 	private ArrayList<MazeWall> tutWalls = new ArrayList<MazeWall>();
 	private boolean isTutorial = false;
 	
@@ -687,6 +687,18 @@ public class MazeBoard {
 	
 	public int getTutPowerUpStartIndex(){
 		return tutPowerUpStartIndex;
+	}
+	
+	public int getTutLitterTextIndex(){
+		return tutLitterTextIndex;
+	}
+	
+	public int getTutPredatorTextIndex(){
+		return tutPredatorTextIndex;
+	}
+	
+	public int getTutPowerUpTextIndex(){
+		return tutPowerUpTextIndex;
 	}
 	
 	public String getTutLitterText(){

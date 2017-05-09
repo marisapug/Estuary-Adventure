@@ -64,16 +64,23 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private boolean isTutorial;
 	private ArrayList<MazeWall> tutWalls;
 	
-	private int tutLitterStartIndex;
-	private int tutPredatorStartIndex;
-	private int tutPowerUpStartIndex;
+	private int tutLitterTextIndex;
+	private int tutPredatorTextIndex;
+	private int tutPowerUpTextIndex;
 	
 	private String tutLitterText;
 	private String tutPredatorText;
 	private String tutPowerUpText;
 	
+	private boolean litterTextSeen;
+	private boolean predatorTextSeen;
+	private boolean powerUpTextSeen;
+	
 	private boolean tutIsLitterHit;
 	private boolean tutIsPredatorHit;
+	
+	private int tutPauseTimer;
+	private int tutPauseTotal;
 	
 
 	//create the maze board
@@ -354,6 +361,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		
 		yesTutorialButton = new JButton("Yes");
 		noTutorialButton = new JButton("No");
+		
 
 		//StartScreen Visibility
 		startScreenVisible = true;
@@ -448,9 +456,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				hardButton.setVisible(false);
 				tutorialButton.setVisible(false);
 				startButton.setVisible(true);
-				tutLitterStartIndex = board.getTutLitterStartIndex();
-				tutPredatorStartIndex = board.getTutPredatorStartIndex();
-				tutPowerUpStartIndex = board.getTutPowerUpStartIndex();
+				tutLitterTextIndex = board.getTutLitterTextIndex();
+				tutPredatorTextIndex = board.getTutPredatorTextIndex();
+				tutPowerUpTextIndex = board.getTutPowerUpTextIndex();
 				
 				tutLitterText = board.getTutLitterText();
 				tutPredatorText = board.getTutPredatorText();
@@ -458,6 +466,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				
 				tutIsLitterHit = false;
 				tutIsPredatorHit = false;
+				predatorTextSeen = false;
+				litterTextSeen = false;
+				powerUpTextSeen = false;
+				tutPauseTotal = 300;
+				tutPauseTimer = tutPauseTotal;
 			}
 		});
 
@@ -788,14 +801,20 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			//tutorial text drawing
 			if(isTutorial){
 				MazeCell tempCell = board.inWhichCell(characterXLoc, characterYLoc);
-				if(tempCell.getX() == tutLitterStartIndex){
+				if(tempCell.getX() == tutLitterTextIndex && !litterTextSeen){
 					g.drawString(tutLitterText, 100, 100);
+					tutPauseTimer = 0;
+					litterTextSeen = true;
 				}
-				else if(tempCell.getX() == tutPredatorStartIndex){
+				else if(tempCell.getX() == tutPredatorTextIndex && !predatorTextSeen){
 					g.drawString(tutPredatorText, 100, 100);
+					tutPauseTimer = 0;
+					predatorTextSeen = true;
 				}
-				else if(tempCell.getX() == tutPowerUpStartIndex){
+				else if(tempCell.getX() == tutPowerUpTextIndex && !powerUpTextSeen){
 					g.drawString(tutPowerUpText, 100, 100);
+					tutPauseTimer = 0;
+					powerUpTextSeen = true;
 				}
 			}
 
@@ -838,6 +857,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 
 	public void actionPerformed(ActionEvent arg0) {
+		if(tutPauseTimer < tutPauseTotal){
+			tutPauseTimer++;
+			return;
+		}
 
 		if(!isTutorial){
 			timeCheck++;
@@ -845,10 +868,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				timeRemaining--;
 				timeCheck = 0;
 			}
-		}
-		
-		if(isTutorial){
-			
 		}
 		
 		//curr power up timer
