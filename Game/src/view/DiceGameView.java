@@ -45,6 +45,7 @@ public class DiceGameView extends JPanel implements ActionListener {
 	private int storyStartY;
 	private int storyTextX;
 	private int storyTextY;
+	private int numDicePlaced = 0;
 	private Font storyTextStyle;
 	private int storyFontSize = screenWidth / 25;
 	private int maxLines = 7; // maximum number of lines the text box will fit
@@ -69,6 +70,7 @@ public class DiceGameView extends JPanel implements ActionListener {
 			"diceimages/dogpoopbagdie.png", "diceimages/fishtagdie.png", "diceimages/flagdie.png" };
 	private BufferedImage[] possibleDiceImgs;
 	private BufferedImage[] diceImages;
+	private BufferedImage[] finalImages;
 	private int[] xCoordinates;
 	private int[] yCoordinates;
 	private int[] storyboardX;
@@ -113,6 +115,7 @@ public class DiceGameView extends JPanel implements ActionListener {
 		//Initialize Images
 		possibleDiceImgs = new BufferedImage[dgame.getNumImgs()];
 		diceImages = new BufferedImage[dgame.getNumDice()];
+		finalImages = new BufferedImage[dgame.getNumDice()];
 		xCoordinates = new int[dgame.getNumDice()];
 		yCoordinates = new int[dgame.getNumDice()];
 		storyboardX = new int[dgame.getNumDice()];
@@ -222,7 +225,10 @@ public class DiceGameView extends JPanel implements ActionListener {
 					g.drawRect(storyboardX[i], storyStartY, diceWidth, diceWidth); //draws storyboard slots
 					g.drawImage(diceImages[i], xCoordinates[i], yCoordinates[i], diceWidth, diceWidth, this); //draws images
 				}
-
+				if(numDicePlaced == dgame.getNumDice()){
+					storyButton.setVisible(true);
+					storyText.setVisible(true);
+				}
 				if (isStorySaved) {
 					Color storyBackground = new Color(136, 191, 246);
 					g.setColor(storyBackground);
@@ -248,14 +254,15 @@ public class DiceGameView extends JPanel implements ActionListener {
 							g.drawString(storyLines.get(j), storyTextX, stringYCoords[j]);
 						}
 					}
+					//setFinalImages();
 					for (int k = 0; k < dgame.getNumDice(); k++)
-						g.drawImage(diceImages[k], storyboardX[k], screenHeight - 2 * (diceWidth + betweenStory), diceWidth, diceWidth, this);
+						g.drawImage(finalImages[k], storyboardX[k], screenHeight - 2 * (diceWidth + betweenStory), diceWidth, diceWidth, this);
 
 				}
 			}
 		}
 	}
-
+	
 	// Rolls Dice and Sets Images
 	void rollDice() {
 		makeImages();
@@ -354,8 +361,8 @@ public class DiceGameView extends JPanel implements ActionListener {
 			isAnimDone = true;
 			setDiceImgs();
 			repaint();
-			storyButton.setVisible(true);
-			storyText.setVisible(true);
+//			storyButton.setVisible(true);
+//			storyText.setVisible(true);
 			numAnimations++;
 		}
 	}
@@ -384,18 +391,19 @@ public class DiceGameView extends JPanel implements ActionListener {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			if (isRolled) {
+			if (isRolled && !isStorySaved) {
 				tmpPoint = e.getPoint();
-				toPlace = true;
 				for (int i = 0; i < dgame.getNumDice(); i++) {
 					if (tmpPoint.x > xCoordinates[i] && tmpPoint.x < (xCoordinates[i] + diceWidth)) {
 						if (tmpPoint.y > yCoordinates[i] && tmpPoint.y < (yCoordinates[i] + diceWidth)) {
 							clickedIndex = i;
+							toPlace = true;
 						}
 					}
+					/*if(tmpPoint.x == storyboardX[i] && tmpPoint.y == storyStartY){
+						numDicePlaced--;
+					}*/
 				}
-				xCoordinates[clickedIndex] = tmpPoint.x - diceWidth / 2;
-				yCoordinates[clickedIndex] = tmpPoint.y - diceWidth / 2;
 				if (!isPressing)
 					isPressing = true;
 			}
@@ -412,8 +420,6 @@ public class DiceGameView extends JPanel implements ActionListener {
 						releasedIndex = i;
 					}
 				}
-			}
-			for (int i = 0; i < dgame.getNumDice(); i++) {
 				if (storyboardX[releasedIndex] == xCoordinates[i] && storyStartY == yCoordinates[i]) {
 					canPlace = false;
 				}
@@ -421,6 +427,8 @@ public class DiceGameView extends JPanel implements ActionListener {
 			if (canPlace && isRolled) {
 				xCoordinates[clickedIndex] = storyboardX[releasedIndex];
 				yCoordinates[clickedIndex] = storyStartY;
+				finalImages[releasedIndex] = diceImages[clickedIndex];
+				//numDicePlaced++;
 			}
 			canPlace = true;
 			repaint();
