@@ -41,6 +41,11 @@ public class Predator extends Obstacle {
 		xLoc = xLoc + xIncr;
 	}
 
+	/**
+	 * Moves the predator object relating to its current direction
+	 * @param s speed
+	 * @param d direction
+	 */
 	public void move(int s, int d){
 		if(d==0){
 			yLoc -= s;
@@ -53,7 +58,10 @@ public class Predator extends Obstacle {
 		}
 	}
 
-	//Sets new random direction for the predator
+	/**
+	 * Sets a new random direction for a predator object
+	 * @param d direction
+	 */
 	public void setRandomDirection(int d){
 		Random rand = new Random();
 		int newDir = rand.nextInt(4);
@@ -63,9 +71,15 @@ public class Predator extends Obstacle {
 		direction = newDir;
 	}
 
-	//checks if something hit the litter
+	/**
+	 * Checks if another object has collides with a predator object
+	 * @param xL x-location of object
+	 * @param yL y-location of object
+	 * @param w width of object
+	 * @param h height of object
+	 * @return a boolean indicating if an object has hit a predator object
+	 */
 	public boolean hitPred(int xL, int yL, int w, int h){
-		//NEEDS FIXING TO WORK
 		if((
 				(xL > xLoc && xL < xLoc + width)   || (xL + w > xLoc && xL + w < xLoc + width)) &&
 				((yL > yLoc && yL < yLoc + height) || (yL + h > yLoc && yL + h < yLoc + height))
