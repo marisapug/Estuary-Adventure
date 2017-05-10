@@ -175,12 +175,14 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private int grassState;
 	private int seawallState;
 	private int gabionState;
-	private int smallBoatState;
+	private int firstBoatState;
+	private int secondBoatState;
 	private int healthBarState;
 	
 	private int finishTutorialState;
 	
 	private boolean hasSpawnedOysters;
+	private boolean hasSpawnedFirstBoat;
 
 	//=======================================================================//
 
@@ -202,16 +204,18 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			public void actionPerformed(ActionEvent e){
 				//tutorial Stuff
 				isTutorial = true;
-				tutorialState = 0;
 				hasSpawnedOysters = false;
+				hasSpawnedFirstBoat = false;
 				
-				grassState = 0;
-				seawallState = 1;
-				gabionState = 2;
-				smallBoatState = 3;
-				healthBarState = 4;
+				firstBoatState = 0;
+				grassState = 1;
+				seawallState = 2;
+				gabionState = 3;
+				secondBoatState = 4;
+				healthBarState = 5;
 				
 				finishTutorialState = 10;
+				tutorialState = firstBoatState;
 				
 				//all game stuff
 				board = new BeachBoard(numRows,numCols,screenWidth,screenHeight);
@@ -422,6 +426,24 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			if(crab.getCurrObject() != 0){
 				g.drawImage(objectImgArray[crab.getCurrObject() - 1],crab.getXLoc() + crab.getWidth()/2 - heldObjectWidth/2, crab.getYLoc() + crab.getHeight() - heldObjectHeight, heldObjectWidth, heldObjectHeight, this);
 			}
+			
+			//TUTORIAL TEXT AND IMAGES
+			if(isTutorial){
+				g.setColor(Color.BLACK);
+				if(tutorialState == firstBoatState){
+					g.drawString("OH NO! The ships are destroying the shore", 400, 100);
+				}
+				else if(tutorialState == grassState){
+					g.drawString("Plant Grass to heal the Shore", 400, 100);
+				}
+				else if(tutorialState == seawallState){
+					g.drawString("Use seawalls to protect the shore", 400, 100);
+				}
+				else if(tutorialState == gabionState){
+					g.drawString("Grab 3 shells to plant a gabion!", 400, 100);
+					g.drawString("Gabions are STRONGER than seawalls", 400, 200);
+				}
+			}
 		}
 
 	}
@@ -478,10 +500,19 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		for(Wave wv: gameWaves){
 			wv.move(waveSpeed);
 		}
-		
+
 
 		if(isTutorial){
-			if(tutorialState == grassState){
+			if(tutorialState == firstBoatState){
+				if(!hasSpawnedFirstBoat){
+					board.generateRandomBoat();
+					hasSpawnedFirstBoat = true;
+				}
+				if(board.getGameBoats().size() < 1){
+					tutorialState = grassState;
+				}
+			}
+			else if(tutorialState == grassState){
 				if(board.getGameGrass().size() >= 1){
 					tutorialState = seawallState;
 				}
