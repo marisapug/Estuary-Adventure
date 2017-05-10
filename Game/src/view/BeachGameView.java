@@ -8,9 +8,11 @@ import model.Oyster;
 import model.OysterGabion;
 import model.Seawall;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -357,13 +359,15 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 						g.drawImage(sandImage, tempBC.getXLoc(), tempYLoc, tempBC.getWidth(), tempBC.getHeight(), this);
 						g.setColor(Color.BLACK);
 					}
-					g.setColor(Color.green);
+					Graphics2D g2 = (Graphics2D)g;
+					g2.setStroke(new BasicStroke(3));
+					g2.setColor(Color.green);
 					if(crab.getCurrObject() == 1 && tempBC.getCanHoldGrass() && !tempBC.getHasGrass()){
-						g.drawRect( tempBC.getXLoc()+(tempBC.getWidth()/10), tempBC.getYLoc() + (tempBC.getHeight()/10), tempBC.getWidth()- (tempBC.getWidth()/5), tempBC.getHeight() - (tempBC.getHeight()/5));
+						g2.drawRect( tempBC.getXLoc()+(tempBC.getWidth()/10), tempBC.getYLoc() + (tempBC.getHeight()/10), tempBC.getWidth()- (tempBC.getWidth()/5), tempBC.getHeight() - (tempBC.getHeight()/5));
 					}
-					g.setColor(Color.RED);
+					g2.setColor(Color.RED);
 					if((crab.getCurrObject() == 2 || (crab.getCurrObject() == 3 && crab.getNumOysters() >= 3)) && tempBC.getCanHoldBarrier()){
-						g.drawRect( tempBC.getXLoc()+(tempBC.getWidth()/10), tempBC.getYLoc() + (tempBC.getHeight()/10), tempBC.getWidth()- (tempBC.getWidth()/5), tempBC.getHeight() - (tempBC.getHeight()/5));
+						g2.drawRect( tempBC.getXLoc()+(tempBC.getWidth()/10), tempBC.getYLoc() + (tempBC.getHeight()/10), tempBC.getWidth()- (tempBC.getWidth()/5), tempBC.getHeight() - (tempBC.getHeight()/5));
 					}
 				}
 			}
