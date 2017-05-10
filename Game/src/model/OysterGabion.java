@@ -9,4 +9,5 @@ public class OysterGabion extends Barrier {
 		yLoc = y;
 	}
 	
+	
 }
