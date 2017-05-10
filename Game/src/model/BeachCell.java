@@ -1,5 +1,15 @@
 package model;
 
+/**
+ * Boat gives the specific information needed for a cell in the BeachBoard
+ * that is utilized during the estuary defense game
+ * Each cell has a x-location,y-location, x and y in terms of the grid, a width,
+ * a height, a cellType (sand or ocean), and booleans that tell if the cell is 
+ * available to hold grass, oysters, grass, or barriers.
+ * 
+ * @author Marisa
+ *
+ */
 public class BeachCell {
 	private int x; //location in grid
 	private int y; //location in grid
@@ -15,7 +25,16 @@ public class BeachCell {
 	private boolean hasGrass = false;
 	private boolean hasBarrier = false;
 
-
+/**
+	 * Constructor that initializes a cell's x,y,width, height, y-location, and cell-type
+	 * All parameters are ints
+	 * @param xInp, x in terms of grid
+	 * @param yInp, y in terms of grid 
+	 * @param cWidth, width of cell
+	 * @param cHeight,height of cell
+	 * @param startYLoc, the beginning location, will be added to the height
+	 * @param matter, 0 = sand, 1 = ocean
+*/
 	BeachCell(int xInp, int yInp, int cWidth, int cHeight,int startYLoc ,int matter){
 		x = xInp;
 		y = yInp;
@@ -110,3 +129,4 @@ public class BeachCell {
 	
 	
 }
+
