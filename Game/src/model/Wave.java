@@ -10,7 +10,7 @@ public class Wave {
 	private int height = 10;
 	private boolean hasHit = false;
 
-	Wave(int xc, int yc, int s, int w) {
+	public Wave(int xc, int yc, int s, int w) {
 		strength = s;
 		xLoc = xc;
 		yLoc = yc;
