@@ -68,6 +68,8 @@ public class MazeCell {
 		return false;
 	}
 	
+	
+	//GETTERS
 	public int getX(){
 		return x;
 	}
@@ -92,22 +94,6 @@ public class MazeCell {
 		return height;
 	}
 	
-	public void setY(int y){
-		this.y = y;
-	}
-	
-	public void setX(int x){
-		this.x = x;
-	}
-	
-	public void setYLoc(int y){
-		this.yLoc = y;
-	}
-	
-	public void setXLoc(int x){
-		this.xLoc = x;
-	}
-	
 	public boolean getHasTopWall(){
 		return hasTopWall;
 	}
@@ -122,6 +108,24 @@ public class MazeCell {
 	
 	public boolean getHasRightWall(){
 		return hasRightWall;
+	}
+	
+	
+	//SETTERS
+	public void setY(int y){
+		this.y = y;
+	}
+	
+	public void setX(int x){
+		this.x = x;
+	}
+	
+	public void setYLoc(int y){
+		this.yLoc = y;
+	}
+	
+	public void setXLoc(int x){
+		this.xLoc = x;
 	}
 	
 	public void setHasLeftWall(boolean b){
