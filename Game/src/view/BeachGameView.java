@@ -59,7 +59,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 	private BufferedImage sandImage = createImage("beachImages/sand_tile.jpg");
 	private BufferedImage waterImage = createImage("beachImages/waterImg.jpg");
-	
+
 	//Object Buckets
 	private BufferedImage boxImage = createImage("beachImages/boardwalk_tile.jpg");
 	private int bucketLogoWidth = 50;
@@ -87,9 +87,19 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private int crabGridBottomX;
 	private int crabGridBottomY;
 
-	private BufferedImage crabImg = createImage("characters/bluecrab_0.png");
+	private BufferedImage crabImg0 = createImage("characters/bluecrab_0.png");
+	private BufferedImage crabImg1 = createImage("characters/bluecrab_1.png");
+	private BufferedImage crabImg2 = createImage("characters/bluecrab_2.png");
 	private int crabXVel;
 	private int crabYVel;
+
+	private BufferedImage[] crabPics = {crabImg0, crabImg1, crabImg2};
+
+	private int crabPicNum = 0;
+	private int crabNumPics = 3;
+	private boolean crabIsMoving = false;
+	private int swimSpeed = 6;
+	private int swimTimer = swimSpeed;
 
 	//Oysters
 	private int oysterSpawnTimer;
@@ -131,7 +141,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 	private int meterWidth;
 	private int meterHeight;
-	
+
 	private String healthTitleText;
 	private int healthTitleX;
 	private int healthTitleFontSize;
@@ -141,7 +151,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	//Held Object
 	private int heldObjectWidth;
 	private int heldObjectHeight;
-	
+
 	//Timer stuff
 	private String timeRemainingLabel;
 	private String timeRemainingFontStyle;
@@ -150,7 +160,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private int timeRemainingLabelYLoc;
 	private int timeXLoc;
 	private int timeYLoc;
-	
+
 	//oyster count stuff
 	private String oysterCountLabel;
 	private String oysterCountFontStyle;
@@ -170,7 +180,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private String startTitleFontStyle = "TimesRoman";
 	private int startTitleX = screenWidth/2 - ((startTitleFontSize * startTitle.length())/4);
 	private int startTitleY = screenHeight/4;
-	
+
 	//tutorial stuff
 	private boolean isTutorial;
 	private int tutorialState;
@@ -180,13 +190,13 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private int firstBoatState;
 	private int secondBoatState;
 	private int healthBarState;
-	
+
 	private int finishTutorialTextState;
 	private int finishTutorialState;
-	
+
 	private int tutPauseTimer;
 	private int tutPauseTotal;
-	
+
 	private boolean hasSpawnedOysters;
 	private boolean hasSpawnedFirstBoat;
 	private boolean hasSpawnedSecondBoat;
@@ -205,7 +215,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		this.add(startButton);
 		startButton.setVisible(true);
 		startButton.setFocusable(false);
-		
+
 
 		startButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -214,21 +224,21 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				hasSpawnedOysters = false;
 				hasSpawnedFirstBoat = false;
 				hasSpawnedSecondBoat = false;
-				
+
 				firstBoatState = 0;
 				grassState = 1;
 				seawallState = 2;
 				gabionState = 3;
 				secondBoatState = 4;
 				healthBarState = 5;
-				
+
 				finishTutorialTextState = 9;
 				finishTutorialState = 10;
 				tutorialState = firstBoatState;
-				
+
 				tutPauseTotal = 300;
 				tutPauseTimer = tutPauseTotal;
-				
+
 				//all game stuff
 				board = new BeachBoard(numRows,numCols,screenWidth,screenHeight);
 				grid = board.getGrid();
@@ -266,7 +276,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				meterHeight = (featuresBarHeight*4)/5;
 				currShoreHealth = board.getCurrentShoreHealth();
 				totalShoreHealth = board.getTotalShoreHealth();
-				
+
 				gameBoats = board.getGameBoats();
 				newBoatTimer = 600;
 				newBoatTimerTime = 0;
@@ -276,7 +286,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 				heldObjectWidth = crab.getWidth()/2;
 				heldObjectHeight = crab.getHeight()/2;
-				
+
 				//timer initialization
 				timeRemainingLabel = "Time Remaining: ";
 				timeRemainingFontStyle = "TimesRoman";
@@ -292,7 +302,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				healthTitleFontSize = screenWidth/60;
 				healthTitleY = featuresBarHeight - (featuresBarHeight - healthTitleFontSize)/2;
 				healthTitleFontStyle = "TimesRoman";
-				
+
 				//oyster count intialization	
 				oysterCountLabel = "Oyster Count: ";
 				oysterCountFontStyle = "TimesRoman";
@@ -344,11 +354,11 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			g.fillRect(meterX, meterY, (int)(meterWidth * ((double)board.getCurrentShoreHealth()/(double)totalShoreHealth)), meterHeight);
 			g.setColor(Color.BLACK);
 			g.drawRect(meterX, meterY, meterWidth, meterHeight);
-			
+
 			g.setFont(new Font(healthTitleFontStyle,Font.BOLD,healthTitleFontSize));
 			g.setColor(Color.WHITE);
 			g.drawString(healthTitleText, healthTitleX, healthTitleY);
-			
+
 			//paints board
 			for(int i = 0; i < numRows; i++){
 				for(int j = 0; j < numCols; j++){
@@ -371,13 +381,13 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 					}
 				}
 			}
-			
+
 			//Time Remaining Drawing
 			g.setFont(new Font(timeRemainingFontStyle,Font.BOLD,timeRemainingFontSize));
 			g.setColor(Color.WHITE);
 			g.drawString(timeRemainingLabel, timeRemainingLabelXLoc, timeRemainingLabelYLoc);
 			g.drawString(String.valueOf(timeRemaining), timeXLoc, timeYLoc);
-			
+
 			//Oysters Count Drawing
 			g.setFont(new Font(oysterCountFontStyle,Font.BOLD,oysterCountFontSize));
 			g.setColor(Color.WHITE);
@@ -396,17 +406,17 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			}
 
 			//paints buckets
-			
+
 			//grass box
 			g.drawImage(boxImage,board.getGrassBucketXLoc(),board.getGrassBucketYLoc(),board.getGrassBucketWidth(),board.getGrassBucketHeight(), this);
 			g.drawImage(grassImg, board.getGrassBucketXLoc() + board.getGrassBucketWidth()/3, 
 					board.getGrassBucketYLoc() + board.getGrassBucketHeight()/4, bucketLogoWidth, bucketLogoHeight, this);
-			
+
 			//seawall box
 			g.drawImage(boxImage,board.getSeawallBucketXLoc(),board.getSeawallBucketYLoc(),board.getSeawallBucketWidth(),board.getSeawallBucketHeight(),this);
 			g.drawImage(wallImg, board.getSeawallBucketXLoc() + board.getSeawallBucketWidth()/3, 
 					board.getSeawallBucketYLoc() + board.getSeawallBucketHeight()/4, bucketLogoWidth, bucketLogoHeight, this);
-			
+
 			//gabion box
 			g.drawImage(boxImage,board.getGabionBucketXLoc(),board.getGabionBucketYLoc(),board.getGabionBucketWidth(),board.getGabionBucketHeight(),this);
 			g.drawImage(gabionImg, board.getGabionBucketXLoc() + board.getGabionBucketWidth()/3, 
@@ -432,7 +442,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				g.drawImage(grassImg,grass.getXLoc() + cellWidth/2 - (grassImgWidth/2), 
 						grass.getYLoc() + cellHeight/2 - (grassImgHeight/2), grassImgWidth, grassImgHeight, this);
 			}
-			
+
 			//TUTORIAL TEXT AND IMAGES
 			if(isTutorial){
 				Graphics2D g2 = (Graphics2D)g;
@@ -464,15 +474,15 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 					g.drawString("GET READY TO PLAY!!", 400, 150);
 				}
 			}//end draw tutorial stuff
-			
+
 			//draws crab
-			g.drawImage(crabImg,crab.getXLoc(),crab.getYLoc(),crab.getWidth(),crab.getHeight(),this);
-			
+			g.drawImage(crabPics[crabPicNum],crab.getXLoc(),crab.getYLoc(),crab.getWidth(),crab.getHeight(),this);
+
 			//draws object held by crab
 			if(crab.getCurrObject() != 0){
 				g.drawImage(objectImgArray[crab.getCurrObject() - 1],crab.getXLoc() + crab.getWidth()/2 - heldObjectWidth/2, crab.getYLoc() + crab.getHeight() - heldObjectHeight, heldObjectWidth, heldObjectHeight, this);
 			}
-			
+
 			//----END DRAW EVERYTHING ELSE
 		}
 
@@ -483,6 +493,22 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		repaint();
+		
+		//Swim speed (rendering crab movement)
+		if(swimTimer > 0){
+			swimTimer--;
+		}
+
+		if(crabXVel == 0 && crabYVel == 0){
+			crabIsMoving = false;
+		}
+
+		if(crabIsMoving && swimTimer == 0){
+			crabPicNum = (crabPicNum + 1) % crabNumPics;
+			swimTimer = swimSpeed;
+		}
+		
+		
 		if(tutPauseTimer < tutPauseTotal){
 			tutPauseTimer++;
 			return;
@@ -490,7 +516,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		//tutorial tick stuff
 		board.updateCurrentCellsHealth();
 		board.updateCurrentShoreHealth();
-		
+
 		//tracks crab movements
 		if (
 				((crabXVel < 0) && (crab.getXLoc() - crab.getXIncr() >= 0)) || 
@@ -500,7 +526,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				){
 			crab.move(crabXVel,crabYVel);
 		}
-		
+
 		//shore stuff
 		if(grassTimer >= grassTimerTick){
 			board.healCellsAboveGrass();
@@ -511,7 +537,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		}
 
 		board.sandToOcean();
-		
+
 		//Boat Ticks
 		for(Boat bt: gameBoats){
 			bt.move();
@@ -519,14 +545,14 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			board.resetWaves(bt);
 		}
 		board.removeBoatsOffScreen();
-		
-			//remove oyster when grabbed by crab
+
+		//remove oyster when grabbed by crab
 		board.removeOyster(crab);
-		
+
 		board.removeHitWaves();
 		board.removeDeadBarriers();
 
-		
+
 		//Wave 
 		for(Wave wv: gameWaves){
 			wv.move(waveSpeed);
@@ -585,31 +611,31 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			return;
 		}
 		//-----------------------------------------------------------
-	
+
 		//Clock Time
 		timeCheck++;
 		if(timeCheck == 100){
 			timeRemaining--;
 			timeCheck = 0;
 		}
-		
+
 		if(timeRemaining < 60){
 			newBoatTimer = 200;
 		}
-		
+
 		//Checks if you lose
 		if(board.getCurrentShoreHealth() <= 0){
 			t.stop();
 		}
-		
+
 		//Checks if you win
 		if(timeRemaining <= 0){
 			t.stop();
 		}
-		
+
 		//bucket stuff, gives crab object from the bucket
 		board.setObjectFromBucket();
-		
+
 
 		//BOAT STUFF
 		//Boat timer increment
@@ -629,23 +655,28 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		}
 
 
-	}
+
+	}//actionPerformed
 
 
 	//MOVE CRAB IMAGE
 	public void moveCrabImgUp(){
+		crabIsMoving = true;
 		crabXVel = 0;
 		crabYVel = -crab.getYIncr();
 	}
 	public void moveCrabImgDown(){
+		crabIsMoving = true;
 		crabXVel = 0;
 		crabYVel = crab.getYIncr();
 	}
 	public void moveCrabImgLeft(){
+		crabIsMoving = true;
 		crabXVel = -crab.getXIncr();
 		crabYVel = 0;
 	}
 	public void moveCrabImgRight(){
+		crabIsMoving = true;
 		crabXVel = crab.getXIncr();
 		crabYVel = 0;
 	}
