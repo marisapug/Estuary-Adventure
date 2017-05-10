@@ -179,10 +179,15 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private int secondBoatState;
 	private int healthBarState;
 	
+	private int finishTutorialTextState;
 	private int finishTutorialState;
+	
+	private int tutPauseTimer;
+	private int tutPauseTotal;
 	
 	private boolean hasSpawnedOysters;
 	private boolean hasSpawnedFirstBoat;
+	private boolean hasSpawnedSecondBoat;
 
 	//=======================================================================//
 
@@ -206,6 +211,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				isTutorial = true;
 				hasSpawnedOysters = false;
 				hasSpawnedFirstBoat = false;
+				hasSpawnedSecondBoat = false;
 				
 				firstBoatState = 0;
 				grassState = 1;
@@ -214,8 +220,12 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				secondBoatState = 4;
 				healthBarState = 5;
 				
+				finishTutorialTextState = 9;
 				finishTutorialState = 10;
 				tutorialState = firstBoatState;
+				
+				tutPauseTotal = 300;
+				tutPauseTimer = tutPauseTotal;
 				
 				//all game stuff
 				board = new BeachBoard(numRows,numCols,screenWidth,screenHeight);
@@ -400,7 +410,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 			//paints walls
 			for(Seawall s: board.getGameSeawalls()){
-				g.drawImage(wallImg, s.getXLoc(), s.getYLoc(), barrierImgWidth, barrierImgHeight, this);
+				g.drawImage(wallImg, s.getXLoc(), s.getYLoc() + barrierImgHeight/2, barrierImgWidth, barrierImgHeight - barrierImgHeight/2, this);
 			}
 
 			//draw oysters
@@ -443,6 +453,12 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 					g.drawString("Grab 3 shells to plant a gabion!", 400, 100);
 					g.drawString("Gabions are STRONGER than seawalls", 400, 200);
 				}
+				else if(tutorialState == secondBoatState){
+					g.drawString("barriers block WAKES", 400, 100);
+				}
+				else if(tutorialState == finishTutorialState){
+					g.drawString("GET READY TO PLAY!!", 400, 150);
+				}
 			}
 		}
 
@@ -453,7 +469,10 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		repaint();
-		
+		if(tutPauseTimer < tutPauseTotal){
+			tutPauseTimer++;
+			return;
+		}
 		//tutorial tick stuff
 		board.updateCurrentCellsHealth();
 		board.updateCurrentShoreHealth();
@@ -493,8 +512,6 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		board.removeHitWaves();
 		board.removeDeadBarriers();
 
-		//bucket stuff
-		board.setObjectFromBucket();
 		
 		//Wave 
 		for(Wave wv: gameWaves){
@@ -505,33 +522,50 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		if(isTutorial){
 			if(tutorialState == firstBoatState){
 				if(!hasSpawnedFirstBoat){
-					board.spawnSmallBoat();
+					board.spawnMediumBoat();
 					hasSpawnedFirstBoat = true;
 				}
-				if(board.getGameBoats().size() < 1){
+				else if(board.getGameBoats().size() < 1){
 					tutorialState = grassState;
 				}
 			}
 			else if(tutorialState == grassState){
+				board.setSpecificObjectFromBucket(1);
 				if(board.getGameGrass().size() >= 1){
 					tutorialState = seawallState;
 				}
 			}
 			else if(tutorialState == seawallState){
+				board.setSpecificObjectFromBucket(2);
 				if(board.getGameSeawalls().size() >= 1){
 					tutorialState = gabionState;
 				}
 			}
 			else if(tutorialState == gabionState){
+				board.setSpecificObjectFromBucket(3);
 				while(board.getGameOysters().size() < 3 && !hasSpawnedOysters){
 					board.spawnOyster();
 				}
 				hasSpawnedOysters = true;
 				if(board.getGameGabs().size() >= 1){
-					tutorialState = finishTutorialState;
+					tutorialState = secondBoatState;
 				}
 			}
+			else if(tutorialState == secondBoatState){
+				if(!hasSpawnedSecondBoat){
+					board.spawnMediumBoat();
+					hasSpawnedSecondBoat = true;
+				}
+				else if(board.getGameBoats().size() < 1){
+					tutorialState = finishTutorialTextState;
+				}
+			}
+			else if(tutorialState == finishTutorialTextState){
+				tutPauseTimer = 0;
+				tutorialState = finishTutorialState;
+			}
 			else if(tutorialState == finishTutorialState){
+				board.resetShore();
 				isTutorial = false;
 			}
 			return;
@@ -558,6 +592,9 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		if(timeRemaining <= 0){
 			t.stop();
 		}
+		
+		//bucket stuff, gives crab object from the bucket
+		board.setObjectFromBucket();
 		
 
 		//BOAT STUFF

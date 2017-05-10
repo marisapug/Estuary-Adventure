@@ -205,6 +205,14 @@ public class BeachBoard {
 
 		}
 	}
+	
+	public void resetShore(){
+		gameGrass = new ArrayList<Grass>();
+		gameWalls = new ArrayList<Seawall>();
+		gameGabions = new ArrayList<OysterGabion>();
+		gameOysters = new ArrayList<Oyster>();
+		initializeCells();
+	}
 
 
 	//returns cell that contains the given x and y location
@@ -224,23 +232,27 @@ public class BeachBoard {
 	public void generateRandomBoat(){
 		Random rand = new Random();
 		int boatType = rand.nextInt(30);
-		Boat tempBoat;
 		if(boatType < 15){
-			tempBoat = new Boat(-smallWidth, smallBoatY, 0, 0, smallSpeed,smallWidth,smallHeight);
-			gameBoats.add(tempBoat);
+			spawnSmallBoat();
 		}
 		else if(boatType < 25){
-			tempBoat = new Boat(screenWidth, mediumBoatY, 1, 1, mediumSpeed,mediumWidth,mediumHeight);
-			gameBoats.add(tempBoat);
+			spawnMediumBoat();
 		}
 		else if(boatType <= 30){
-			tempBoat = new Boat(-largeWidth, largeBoatY, 2, 0, largeSpeed,largeWidth,largeHeight);
-			gameBoats.add(tempBoat);
+			spawnLargeBoat();
 		}
 	}
 	
 	public void spawnSmallBoat(){
 		Boat tempBoat = new Boat(-smallWidth, smallBoatY, 0, 0, smallSpeed,smallWidth,smallHeight);
+		gameBoats.add(tempBoat);
+	}
+	public void spawnMediumBoat(){
+		Boat tempBoat = new Boat(screenWidth, mediumBoatY, 1, 1, mediumSpeed,mediumWidth,mediumHeight);
+		gameBoats.add(tempBoat);
+	}
+	public void spawnLargeBoat(){
+		Boat tempBoat = new Boat(-largeWidth, largeBoatY, 2, 0, largeSpeed,largeWidth,largeHeight);
 		gameBoats.add(tempBoat);
 	}
 
@@ -399,7 +411,34 @@ public class BeachBoard {
 			gameCrab.setCurrObject(3);
 		}
 	}
+	
+	public void setSpecificObjectFromBucket(int objectNum){
+		int width = gameCrab.getWidth();
+		int height = gameCrab.getHeight();
+		int xL = gameCrab.getXLoc() + width/2;
+		int yL = gameCrab.getYLoc() + height/2;
+		
+		//grassBucket = 1
+		if((xL >= grassBucketXLoc && xL <= grassBucketXLoc + grassBucketWidth && 
+				yL >= grassBucketYLoc && yL <= grassBucketYLoc + grassBucketHeight) && 
+				objectNum == 1){
+			gameCrab.setCurrObject(1);
+		}
+		//seawallBucket = 2
+		else if((xL >= seawallBucketXLoc && xL <= seawallBucketXLoc + seawallBucketWidth && 
+				yL >= seawallBucketYLoc && yL <= seawallBucketYLoc + seawallBucketHeight) && 
+				objectNum == 2){
+			gameCrab.setCurrObject(2);
+		}
+		//gabionBucket = 3
+		else if((xL >= gabionBucketXLoc && xL <= gabionBucketXLoc + gabionBucketWidth && 
+				yL >= gabionBucketYLoc && yL <= gabionBucketYLoc + gabionBucketHeight) && 
+				objectNum == 3){
+			gameCrab.setCurrObject(3);
+		}
+	}
 
+	
 
 	//Oyster stuff
 	public void spawnOyster(){
