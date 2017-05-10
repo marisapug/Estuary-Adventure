@@ -79,6 +79,47 @@ public class Die {
 			}
 		}
 	}
+	
+	public void finishThrowing(){
+		System.out.println("finishthrowing called");
+		if(xLoc < startXLoc){
+			if(yLoc < startYLoc){
+				xLoc += xIncr;
+				yLoc += yIncr;
+			}
+			else if(yLoc > startYLoc){
+				xLoc += xIncr;
+				yLoc -= yIncr;
+			}
+			else{
+				xLoc += xIncr;
+			}
+		}
+		else if(xLoc > startXLoc){
+			if(yLoc < startYLoc){
+				xLoc -= xIncr;
+				yLoc += yIncr;
+			}
+			else if(yLoc > startYLoc){
+				xLoc -= xIncr;
+				yLoc -= yIncr;
+			}
+			else{
+				xLoc -= xIncr;
+			}
+		}
+		else{
+			if(yLoc < startYLoc){
+				yLoc += yIncr;
+			}
+			else if(yLoc > startYLoc){
+				yLoc -= yIncr;
+			}
+			else{
+				System.out.println("dice placed");
+			}
+		}
+	}
 
 	
 	// Getters
@@ -89,5 +130,13 @@ public class Die {
 	
 	public int getYLoc(){
 		return yLoc;
+	}
+	
+	public int getStartXLoc(){
+		return startXLoc;
+	}
+	
+	public int getStartYLoc(){
+		return startYLoc;
 	}
 }

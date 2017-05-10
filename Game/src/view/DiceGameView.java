@@ -422,6 +422,20 @@ public class DiceGameView extends JPanel implements ActionListener {
 			diceImages[i] = possibleDiceImgs[rand.nextInt(dgame.getNumImgs())];
 		}
 	}
+	
+	void returnDice(){ //returns rolled dice to their original positions
+		System.out.println("returnDice called");
+		Die[] dice = dgame.getDice();
+		for (int i = 0; i < dgame.getNumDice(); i++) {
+			while(dice[i].getXLoc() != dice[i].getStartXLoc() | dice[i].getYLoc() != dice[i].getStartYLoc()){
+				dice[i].finishThrowing();
+				xCoordinates[i] = dice[i].getXLoc();
+				yCoordinates[i] = dice[i].getYLoc();
+				repaint();
+				//diceImages[i] = possibleDiceImgs[rand.nextInt(dgame.getNumImgs())];
+			}
+		}
+	}
 
 	public void actionPerformed(ActionEvent e) {
 		if (numAnimations < animsToDo) {
@@ -432,6 +446,7 @@ public class DiceGameView extends JPanel implements ActionListener {
 			}
 		} else if (numAnimations == animsToDo) {
 			isAnimDone = true;
+			returnDice();
 			setDiceImgs();
 			repaint();
 			// storyButton.setVisible(true);
