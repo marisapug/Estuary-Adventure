@@ -13,7 +13,7 @@ public class Boat extends GameFigure {
 	private int width;
 	private int height;
 
-	Boat(int x, int y, int size, int direction, int speed, int w, int h){
+	public Boat(int x, int y, int size, int direction, int speed, int w, int h){
 		this.size = size;
 		this.direction = direction;
 		this.speed = speed;
