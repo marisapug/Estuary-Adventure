@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
 
@@ -83,9 +84,22 @@ public class DiceGameView extends JPanel implements ActionListener {
 	private JButton startGameButton;
 	private JButton rollDiceButton;
 	private JButton storyButton;
+	private JButton rollAgainButton;
+	
+	// Button Appearance
+	private int buttonFontSize = screenWidth / 50;
+	private Font buttonFont;
+	private int startButtonSizeX = screenWidth / 5;
+	private int startButtonSizeY = screenWidth / 25;
+	private Dimension startButtonSize;
+	private int buttonSizeX = screenWidth / 10;
+	private int buttonSizeY = screenWidth / 25;
+	private Dimension buttonSize;
+	private boolean showStoryButton;
+	
 
-	// TextFields
-	JTextField storyText;
+	// TextArea
+	JTextArea storyText;
 
 	// Images
 	BufferedImage oceanBackground = createImage("background/dicebackground.jpg");
@@ -94,7 +108,7 @@ public class DiceGameView extends JPanel implements ActionListener {
 	// Start Screen
 	private boolean isStartScreenVisible = true;
 	private String gameTitle = "Estuary Story Cubes!";
-	private String titleFont = "TimesRoman";
+	private String titleFont = "Arial Narrow";
 	private Color titleFontColor = new Color(10, 159, 214);
 	private int titleFontSize = 28;
 	private int titleX = 100;
@@ -111,6 +125,14 @@ public class DiceGameView extends JPanel implements ActionListener {
 	public DiceGameView() {
 
 		dgame = new DiceGame();
+		
+		//Initialize Button Appearance
+		buttonFont = new Font(titleFont, Font.BOLD, buttonFontSize);
+		storyTextStyle = new Font("Tempus Sans ITC", Font.BOLD, storyFontSize);
+		startButtonSize = new Dimension(startButtonSizeX, startButtonSizeY);
+		buttonSize = new Dimension(buttonSizeX, buttonSizeY);
+		showStoryButton = false;
+
 
 		//Initialize Images
 		possibleDiceImgs = new BufferedImage[dgame.getNumImgs()];
@@ -129,27 +151,44 @@ public class DiceGameView extends JPanel implements ActionListener {
 		storyStartY = (screenHeight - diceWidth) / 2;
 		storyTextX = diceWidth + 30;
 		storyTextY = diceWidth + 60;
-		storyTextStyle = new Font("Tempus Sans ITC", Font.BOLD, storyFontSize);
 
 		// Buttons
 		startGameButton = new JButton("Start Game");
-		rollDiceButton = new JButton("Roll Dice");
-		storyButton = new JButton("Submit Story");
 		startGameButton.setFocusable(false);
+		startGameButton.setFont(buttonFont);
+		startGameButton.setPreferredSize(startButtonSize);
+		
+		rollDiceButton = new JButton("Roll Dice");
 		rollDiceButton.setFocusable(false);
 		rollDiceButton.setVisible(false);
+		rollDiceButton.setFont(buttonFont);
+		rollDiceButton.setPreferredSize(startButtonSize);
+		
+		storyButton = new JButton("Submit");
 		storyButton.setFocusable(false);
 		storyButton.setVisible(false);
-
+		storyButton.setFont(buttonFont);
+		storyButton.setPreferredSize(buttonSize);
+		
+		rollAgainButton = new JButton("Roll Again");
+		rollAgainButton.setFocusable(false);
+		rollAgainButton.setVisible(false);
+		rollAgainButton.setFont(buttonFont);
+		rollAgainButton.setPreferredSize(startButtonSize);
+		
+		
 		//Text Fields
-		storyText = new JTextField("Enter Story Here");
+		storyText = new JTextArea("Enter Story Here");
 		storyText.setVisible(false);
+		storyText.setPreferredSize(new Dimension(400, 96));
+		storyText.setFont(new Font(titleFont, Font.PLAIN, 16 ));
 
 		//Add Buttons
 		this.add(startGameButton);
 		this.add(rollDiceButton);
 		this.add(storyText);
 		this.add(storyButton);
+		this.add(rollAgainButton);
 		this.setupListeners();
 		this.setupMouseListener(listener);
 	}
@@ -222,12 +261,13 @@ public class DiceGameView extends JPanel implements ActionListener {
 			for (int i = 0; i < dgame.getNumDice(); i++) {
 				//g.drawRect(xCoordinates[i], yCoordinates[i], diceWidth, diceWidth);
 				if (isRolled) {
-					g.drawRect(storyboardX[i], storyStartY, diceWidth, diceWidth); //draws storyboard slots
 					g.drawImage(diceImages[i], xCoordinates[i], yCoordinates[i], diceWidth, diceWidth, this); //draws images
-				}
-				if(numDicePlaced == dgame.getNumDice()){
-					storyButton.setVisible(true);
-					storyText.setVisible(true);
+					
+					if(isAnimDone && showStoryButton){
+						storyButton.setVisible(true);
+						storyText.setVisible(true);
+						g.drawRect(storyboardX[i], storyStartY, diceWidth, diceWidth); //draws storyboard slots
+					}
 				}
 				if (isStorySaved) {
 					Color storyBackground = new Color(136, 191, 246);
@@ -332,13 +372,35 @@ public class DiceGameView extends JPanel implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				rollDice(); // roll dice function
 				rollDiceButton.setVisible(false);
+				showStoryButton = true;
+				repaint();
 			}
 		});
 		storyButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				repaint(); // print story function
 				saveStory(); // save story function
+				showStoryButton = false;
+				storyButton.setVisible(false);
+				storyText.setVisible(false);
+				rollAgainButton.setVisible(true);
+				repaint(); // print story function
+			}
+		});
+		rollAgainButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				rollAgainButton.setVisible(false);
+				isRolled = false;
+				isStorySaved = false;
+				numAnimations = 0;
+				isAnimDone = false;
+				rollDice();
+				showStoryButton = true;
+				repaint();
+				//storyButton.setVisible(true);
+				//storyText.setVisible(true);
+						
 			}
 		});
 	}
