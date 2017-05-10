@@ -52,13 +52,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int cellWidth;
 	private int cellHeight;
 
-	//Maze Boards
-	private MazeBoard easyBoard = new MazeBoard(0, screenWidth,screenHeight);
-	private MazeBoard mediumBoard = new MazeBoard(1, screenWidth,screenHeight);
-	private MazeBoard hardBoard = new MazeBoard(2, screenWidth,screenHeight);
-	private MazeBoard[] boardArr = {easyBoard, mediumBoard, hardBoard};
-	private int boardInd = 1;
-
 	//Tutorial Board
 	private MazeBoard tutBoard = new MazeBoard(screenWidth,screenHeight);
 	private boolean isTutorial;
@@ -159,7 +152,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 
 	//Crab
-	private Crab testCrab = new Crab(5,0,screenWidth/2 + 10 ,screenHeight/2 + 10);
+	private Crab testCrab;
 	private int crabDir;
 	private BufferedImage crabImg;
 	private int characterWidth;
@@ -170,12 +163,12 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int mediumHeight;
 	private int largeWidth;
 	private int largeHeight;
-	private int characterXLoc = testCrab.getXLoc();
-	private int characterYLoc = testCrab.getYLoc();
-	private int yIncr = testCrab.getXIncr();
-	private int xIncr = testCrab.getYIncr();
-	private int xVel = testCrab.getXVel();
-	private int yVel = testCrab.getYVel();
+	private int characterXLoc;
+	private int characterYLoc;
+	private int yIncr;
+	private int xIncr;
+	private int xVel;
+	private int yVel;
 
 	//Predator Images
 	private BufferedImage bassPredRight = createImage("characters/fish_bass_right.png");
@@ -253,15 +246,15 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private ArrayList<Litter> gameLitter;
 	private int litterWidth;
 	private int litterHeight;
-	private int xLitterMax = 0;
-	private int xLitterMin = 0;
+	private int xLitterMax;
+	private int xLitterMin;
 
 
 	//Predator Array List
 	private ArrayList<Predator> predators;
 
 	//Health
-	private int health = testCrab.getHealth();
+	private int health;
 	private int hitTimer = 0;
 	private int cantBeHitLim = 100;
 
@@ -382,7 +375,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		tutorialButton = new JButton("Tutorial");
 		tutorialButton.setFocusable(false);
 		
-		goToStartButton = new JButton("Go Back");
+		goToStartButton = new JButton("Go to Start Screen");
 		goToStartButton.setFocusable(false);
 
 
@@ -395,6 +388,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		this.add(hardButton);
 		this.add(startButton);
 		this.add(tutorialButton);
+		this.add(goToStartButton);
 
 		//Button Visibility
 		easyButton.setVisible(false);
@@ -402,6 +396,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		hardButton.setVisible(false);
 		startButton.setVisible(false);
 		tutorialButton.setVisible(false);
+		goToStartButton.setVisible(false);
+		
+		//initialize crab
+		testCrab = new Crab(5,0,screenWidth/2 + 10 ,screenHeight/2 + 10);
 
 		//Button Listeners
 		bCrabButton.addActionListener(new ActionListener(){
@@ -454,7 +452,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 		easyButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				boardInd = 0;
+				board = new MazeBoard(0, screenWidth,screenHeight);
 				easyButton.setVisible(false);
 				mediumButton.setVisible(false);
 				hardButton.setVisible(false);
@@ -465,7 +463,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 		mediumButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				boardInd = 1;
+				board = new MazeBoard(1, screenWidth,screenHeight);
 				easyButton.setVisible(false);
 				mediumButton.setVisible(false);
 				hardButton.setVisible(false);
@@ -476,7 +474,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 		hardButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				boardInd = 2;
+				board = new MazeBoard(2, screenWidth,screenHeight);
 				easyButton.setVisible(false);
 				mediumButton.setVisible(false);
 				hardButton.setVisible(false);
@@ -521,18 +519,41 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 			}
 		});
+		
+		goToStartButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				endScreenVisible = false;
+				startScreenVisible = true;
+				hasWon = false;
+				bCrabButton.setVisible(true);
+				hCrabButton.setVisible(true);
+				goToStartButton.setVisible(false);
+				xLitterMax = 0;
+				xLitterMin = 0;
+				t.stop();
+				repaint();
+				board = null;
+			}
+		});
 
 		startButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				if(board == null){
-					board = boardArr[boardInd];
-				}
 				isTutorial = board.getIsTutorial();
 				if(!isTutorial){
 					endWinText = "Congratulations, you won!";
 				}else{
 					endWinText = "You've Fininshed the Tutorial, try your skills at the real game!";
 				}
+				
+				//crab
+				health = testCrab.getHealth();
+				characterXLoc = testCrab.getXLoc();
+				characterYLoc = testCrab.getYLoc();
+				yIncr = testCrab.getXIncr();
+				xIncr = testCrab.getYIncr();
+				xVel = testCrab.getXVel();
+				yVel = testCrab.getYVel();
+				
 				grids = board.getGrid(); 
 				mazeWalls = board.getMazeWalls();
 				tutWalls = board.getTutWalls();
@@ -636,7 +657,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				ageStateCellMediumCount = ageStateCellOriginalCount/3 * 2;
 				ageStateCellLargeCount = ageStateCellOriginalCount/3;
 				startScreenVisible = false;
-				remove(startButton);
+				startButton.setVisible(false);
 				timeRemaining = totalTime;
 
 				//Start Timer
@@ -1005,6 +1026,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		if(testCrab.getXLoc() > endCell.getXLoc() && testCrab.getYLoc() > endCell.getYLoc()){
 			hasWon = true;
 			endScreenVisible = true;
+			goToStartButton.setVisible(true);
 			t.stop();
 		}
 
