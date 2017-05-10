@@ -1,7 +1,7 @@
 package model;
 
 /**
- * Boat gives the specific information needed for a cell in the BeachBoard
+ * BeachCell gives the specific information needed for a cell in the BeachBoard
  * that is utilized during the estuary defense game
  * Each cell has a x-location,y-location, x and y in terms of the grid, a width,
  * a height, a cellType (sand or ocean), and booleans that tell if the cell is 
