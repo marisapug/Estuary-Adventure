@@ -40,13 +40,13 @@ public class MainFrame extends JFrame {
 	private JMenuBar menuBar = new JMenuBar();
 
 	//JMenus
-	private JMenu miniGamesMenu = new JMenu("Mini Games");
+	private JMenu miniGamesMenu;
 
 	//JMenuItems
-	private JMenuItem startItem = new JMenuItem("Start Screen");
-	private JMenuItem mazeItem = new JMenuItem("Maze Game");
-	private JMenuItem beachItem = new JMenuItem("Estuary Defense Game");
-	private JMenuItem diceItem = new JMenuItem("Dice Game");
+	private JMenuItem startItem;
+	private JMenuItem mazeItem;
+	private JMenuItem beachItem;
+	private JMenuItem diceItem;
 
 	public MainFrame(){
 		
@@ -54,6 +54,16 @@ public class MainFrame extends JFrame {
 		currStartPanel = new StartScreenView();
 		currDicePanel = new DiceGameView();
 		currBeachPanel = new BeachGameView();
+		
+		miniGamesMenu = new JMenu("Mini Games");
+		startItem = new JMenuItem("Start Screen");
+		startItem.setFocusable(false);
+		mazeItem = new JMenuItem("Maze Game");
+		mazeItem.setFocusable(false);
+		beachItem = new JMenuItem("Estuary Defense Game");
+		beachItem.setFocusable(false);
+		diceItem = new JMenuItem("Dice Game");
+		diceItem.setFocusable(false);
 		
 //		addKeyListener(currMazePanel);
 		EventQueue.invokeLater(new Runnable(){
