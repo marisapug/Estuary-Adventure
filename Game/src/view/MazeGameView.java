@@ -241,6 +241,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private boolean firstTimeWrongSalinity;
 	private int salinityWarningTextX;
 	private int salinityWarningTextY;
+	
 
 
 	//Litter
@@ -593,7 +594,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				salinityTitleFontStyle = "TimesRoman";
 
 				salinityWarningText = "Watch out! Make sure to monitor your salinity meter!";
-				salinityWarningTimeLimit = 500;
+				salinityWarningTimeLimit = 300;
 				salinityWarningTimeTimer = salinityWarningTimeLimit;
 				firstTimeWrongSalinity = true;
 				salinityWarningTextX = screenWidth/2 - (salinityWarningText.length()*endTitleFontSize)/5;
@@ -871,9 +872,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 
 			if(salinityWarningTimeTimer != salinityWarningTimeLimit){
-				g.setColor(Color.WHITE);
+				g.setColor(Color.BLACK);
 				g.setFont(new Font(endTitleFontStyle,Font.BOLD,endTitleFontSize));
 				g.drawString(salinityWarningText,salinityWarningTextX,salinityWarningTextY);
+				g.drawImage(upArrowImage, upArrowX, upArrowY, arrowWidth, arrowHeight, this);
 			}
 
 
@@ -981,6 +983,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		if(tutPauseTimer < tutPauseTotal){
 			tutPauseTimer++;
 			return;
+		}else if(salinityWarningTimeTimer < salinityWarningTimeLimit){
+			salinityWarningTimeTimer++;
+			return;
 		}
 
 		if(!isTutorial){
@@ -1019,10 +1024,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		//updates minimap
 		miniCharacter = board.inWhichCell(characterXLoc,characterYLoc);
 
-		//salinityWarningTimeTimer Tick
-		if(salinityWarningTimeTimer != salinityWarningTimeLimit){
-			salinityWarningTimeTimer++;
-		}
 
 		//blinks salinity meter if on wrong path
 		if(salinityBlinkTimer < salinityBlinkSpeed)

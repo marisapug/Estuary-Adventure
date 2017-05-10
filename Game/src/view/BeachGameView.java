@@ -53,12 +53,10 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private BeachBoard board;
 
 	//BeachGrid
-	private BeachCell[][] grid;
 	private int cellWidth;
 	private int cellHeight;
 
 	private BufferedImage sandImage = createImage("beachImages/sand_tile.jpg");
-	private BufferedImage waterImage = createImage("beachImages/waterImg.jpg");
 
 	//Object Buckets
 	private BufferedImage boxImage = createImage("beachImages/boardwalk_tile.jpg");
@@ -77,15 +75,11 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private int grassImgWidth;
 	private int grassImgHeight;
 
-	private int totalSeawallHealth;
-	private int totalGabionHealth;
+
 
 	//ShoreCrab
 	private ShoreCrab crab;
-	private int crabGridTopX;
-	private int crabGridTopY;
-	private int crabGridBottomX;
-	private int crabGridBottomY;
+
 
 	private BufferedImage crabImg0 = createImage("characters/bluecrab_0.png");
 	private BufferedImage crabImg1 = createImage("characters/bluecrab_1.png");
@@ -136,7 +130,6 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	//Shore health bar
 	private int meterX;
 	private int meterY;
-	private int currShoreHealth;
 	private int totalShoreHealth;
 
 	private int meterWidth;
@@ -189,7 +182,6 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private int gabionState;
 	private int firstBoatState;
 	private int secondBoatState;
-	private int healthBarState;
 
 	private int finishTutorialTextState;
 	private int finishTutorialState;
@@ -231,7 +223,6 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				seawallState = 2;
 				gabionState = 3;
 				secondBoatState = 4;
-				healthBarState = 5;
 
 				finishTutorialTextState = 9;
 				finishTutorialState = 10;
@@ -242,7 +233,6 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 				//all game stuff
 				board = new BeachBoard(numRows,numCols,screenWidth,screenHeight);
-				grid = board.getGrid();
 
 				cellWidth = board.getCellWidth();
 				cellHeight = board.getCellHeight();
@@ -254,8 +244,6 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				barrierImgWidth = cellWidth;
 				barrierImgHeight = cellHeight;
 
-				totalSeawallHealth = board.getTotalSeawallHealth();
-				totalGabionHealth = board.getTotalGabionHealth();
 				totalSandHealth = board.getTotalSandHealth();
 
 				grassImgWidth = cellWidth/3;
@@ -275,7 +263,6 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				meterY = featuresBarHeight/8;
 				meterWidth = screenWidth/5;
 				meterHeight = (featuresBarHeight*4)/5;
-				currShoreHealth = board.getCurrentShoreHealth();
 				totalShoreHealth = board.getTotalShoreHealth();
 
 				gameBoats = board.getGameBoats();
@@ -351,7 +338,9 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			g.fillRect(0, 0, featuresBarWidth, featuresBarHeight);
 
 			//HEALTH bar
-			g.setColor(Color.RED);
+			Graphics2D g2 = (Graphics2D)g;
+			g2.setStroke(new BasicStroke(3));
+			g2.setColor(Color.RED);
 			g.fillRect(meterX, meterY, (int)(meterWidth * ((double)board.getCurrentShoreHealth()/(double)totalShoreHealth)), meterHeight);
 			g.setColor(Color.BLACK);
 			g.drawRect(meterX, meterY, meterWidth, meterHeight);
@@ -370,7 +359,6 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 						g.drawImage(sandImage, tempBC.getXLoc(), tempYLoc, tempBC.getWidth(), tempBC.getHeight(), this);
 						g.setColor(Color.BLACK);
 					}
-					Graphics2D g2 = (Graphics2D)g;
 					g2.setStroke(new BasicStroke(3));
 					g2.setColor(Color.green);
 					if(crab.getCurrObject() == 1 && tempBC.getCanHoldGrass() && !tempBC.getHasGrass()){
@@ -446,7 +434,6 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 			//TUTORIAL TEXT AND IMAGES
 			if(isTutorial){
-				Graphics2D g2 = (Graphics2D)g;
 				g2.setStroke(new BasicStroke(6));
 				g.setColor(Color.BLACK);
 				if(tutorialState == firstBoatState){
