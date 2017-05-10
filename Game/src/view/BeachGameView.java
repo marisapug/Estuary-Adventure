@@ -205,10 +205,11 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 	//CONSTRUCTOR 
 	public BeachGameView(){
-		addKeyListener(this);
-		setFocusable(true);
-		setFocusTraversalKeysEnabled(false);
 
+		addKeyListener(this);
+		this.setFocusable(true);
+		this.setFocusTraversalKeysEnabled(false);
+		
 		//intialize game state
 		startScreenVisible = true;
 		startButton = new JButton("PLAY Game!");
@@ -216,9 +217,9 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		startButton.setVisible(true);
 		startButton.setFocusable(false);
 
-
 		startButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
+				
 				//tutorial Stuff
 				isTutorial = true;
 				hasSpawnedOysters = false;

@@ -140,6 +140,7 @@ public class MainFrame extends JFrame {
 				// TODO Auto-generated method stub
 				
 				cardPanel.remove(currMazePanel);
+				removeKeyListener(currBeachPanel);
 				resetMaze();
 				addKeyListener(currMazePanel);
 				cardPanel.add(currMazePanel, "maze");
@@ -152,6 +153,7 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				cardPanel.remove(currBeachPanel);
+				removeKeyListener(currMazePanel);
 				resetBeach();
 				addKeyListener(currBeachPanel);
 				cardPanel.add(currBeachPanel, "beach");

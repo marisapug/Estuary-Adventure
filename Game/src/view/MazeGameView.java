@@ -328,6 +328,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private MazeCell endCell;
 
 	private BufferedImage endGrassImg = createImage("MazeExtraImgs/seagrass.png");
+	private BufferedImage finishFlagImg = createImage("MazeExtraImgs/finishFlags.png");
 
 	private BufferedImage endBlueCrabImg = createImage("characters/bluecrab_0.png");
 	private BufferedImage endHorshoeCrabImg = createImage("characters/horseshoe_crab_left_0.png");
@@ -377,7 +378,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 		tutorialButton = new JButton("Tutorial");
 		tutorialButton.setFocusable(false);
-		
+
 		goToStartButton = new JButton("Go to Start Screen");
 		goToStartButton.setFocusable(false);
 
@@ -400,7 +401,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		startButton.setVisible(false);
 		tutorialButton.setVisible(false);
 		goToStartButton.setVisible(false);
-		
+
 		//initialize crab
 		testCrab = new Crab(5,0,screenWidth/2 + 10 ,screenHeight/2 + 10);
 
@@ -522,7 +523,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 			}
 		});
-		
+
 		goToStartButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				endScreenVisible = false;
@@ -547,7 +548,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				}else{
 					endWinText = "You've Fininshed the Tutorial, try your skills at the real game!";
 				}
-				
+
 				//crab
 				health = testCrab.getHealth();
 				characterXLoc = testCrab.getXLoc();
@@ -556,10 +557,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				xIncr = testCrab.getYIncr();
 				xVel = testCrab.getXVel();
 				yVel = testCrab.getYVel();
-				
+
 
 				miniCharacter = board.inWhichCell(characterXLoc,characterYLoc);
-				
+
 				grids = board.getGrid(); 
 				mazeWalls = board.getMazeWalls();
 				tutWalls = board.getTutWalls();
@@ -757,7 +758,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 			//DRAWS PREDATORS
 			for(Predator p: predators){
-				g.drawImage(preds[predSwitchCount%(numPredImages-1)][p.getDirection()], p.getXLoc(), p.getYLoc(), p.getWidth(), p.getHeight(), this);
+				g.drawImage(preds[predSwitchCount%numPredImages][p.getDirection()], p.getXLoc(), p.getYLoc(), p.getWidth(), p.getHeight(), this);
 				predSwitchCount++;
 				if(!predatorTextSeen && board.inWhichCell(characterXLoc,characterYLoc).getX() == tutPredatorTextIndex){
 					g2.drawImage(wrongImage, p.getXLoc() - p.getWidth()/2, p.getYLoc() - p.getWidth()/2,
@@ -812,12 +813,12 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			g.setColor(Color.GREEN);
 			g.drawRect(miniCharacter.getX() * miniWidth + miniWidth/4, miniCharacter.getY()*miniHeight + miniHeight/4 + miniHeight*((numCols-numRows)/2),miniWidth/2,miniHeight/2);
 			g.fillRect(miniCharacter.getX() * miniWidth + miniWidth/4, miniCharacter.getY()*miniHeight + miniHeight/4 + miniHeight*((numCols-numRows)/2),miniWidth/2,miniHeight/2);
-			
+
 			//DRAWS END GOAL ON MINIMAP
 			g.setColor(Color.YELLOW);
 			g.drawRect(endCell.getX() * miniWidth + miniWidth/4, endCell.getY()*miniHeight + miniHeight/4 + miniHeight*((numCols-numRows)/2),miniWidth/2,miniHeight/2);
 			g.fillRect(endCell.getX() * miniWidth + miniWidth/4, endCell.getY()*miniHeight + miniHeight/4 + miniHeight*((numCols-numRows)/2),miniWidth/2,miniHeight/2);
-			
+
 			//Time Remaining Drawing
 			if(!isTutorial){
 				g.setFont(new Font(titleFontStyle,Font.BOLD,timeRemainingFontSize));
@@ -878,6 +879,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 
 			//END LOCATION DRAWING
+			g.drawImage(finishFlagImg, endCell.getXLoc(), endCell.getYLoc() + endCell.getHeight()/4, endCell.getWidth(), endCell.getHeight()/2, this);
 			g.drawImage(endGrassImg, endCell.getXLoc(), endCell.getYLoc(), characterWidth, characterHeight, this);
 			g.drawImage(endGrassImg, endCell.getXLoc(), endCell.getYLoc()+150, characterWidth, characterHeight, this);
 			g.drawImage(endGrassImg, endCell.getXLoc()+150, endCell.getYLoc(), characterWidth, characterHeight, this);
@@ -1013,7 +1015,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			characterWidth = mediumWidth;
 			characterHeight = mediumHeight;
 		}
-		
+
 		//updates minimap
 		miniCharacter = board.inWhichCell(characterXLoc,characterYLoc);
 
