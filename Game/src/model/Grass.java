@@ -6,7 +6,6 @@ public class Grass {
 	private int yLoc;
 	
 	public Grass(int x, int y){
-		isHit = false;
 		xLoc = x;
 		yLoc = y;
 	}
@@ -21,3 +20,4 @@ public class Grass {
 	}
 	
 }
+
