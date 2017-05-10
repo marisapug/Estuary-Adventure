@@ -191,7 +191,9 @@ public class BeachBoard {
 	private void initializeCells(){
 		for(int i = 0; i < numRows; i++){
 			grid[i][3].setCanHoldGrass(true);
+			grid[i][3].setHasGrass(false);
 			grid[i][0].setCanHoldBarrier(true);
+			grid[i][0].setHasBarrier(false);
 			for(int j = 2; j < numCols; j++){
 				grid[i][j].setType(0);
 				grid[i][j].setHealth(totalSandHealth);

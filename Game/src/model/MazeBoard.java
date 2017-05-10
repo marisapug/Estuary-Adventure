@@ -112,15 +112,15 @@ public class MazeBoard {
 		setWalls();
 		
 		//generates litter 
-		numLitter = numRows;
+		numLitter = (numRows * numCols)/10;
 		generateLitter(numLitter);
 		
 		//power ups initialization
-		numPowerUps = 4;
+		numPowerUps = (numRows * numCols) / 20;
 		generatePowerUps(numPowerUps);
 		
 		//predator initialization
-		numPred = numRows;
+		numPred = (numRows * numCols) / 15;
 		predSpeed = 3;
 		predWidth = 70;
 		predHeight = 70;

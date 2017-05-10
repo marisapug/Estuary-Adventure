@@ -111,6 +111,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int miniWidth;
 	private int miniHeight;
 	private MazeCell miniCharacter;
+	private MazeCell miniGoal;
+	private int endGoalX;
+	private int endGoalY;
 
 
 	//Horseshoe Crab images
@@ -554,6 +557,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				xVel = testCrab.getXVel();
 				yVel = testCrab.getYVel();
 				
+
+				miniCharacter = board.inWhichCell(characterXLoc,characterYLoc);
+				
 				grids = board.getGrid(); 
 				mazeWalls = board.getMazeWalls();
 				tutWalls = board.getTutWalls();
@@ -803,11 +809,15 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			}
 
 			//MINI MAP CHARACTER DRAWING
-			miniCharacter = board.inWhichCell(characterXLoc,characterYLoc);
 			g.setColor(Color.GREEN);
 			g.drawRect(miniCharacter.getX() * miniWidth + miniWidth/4, miniCharacter.getY()*miniHeight + miniHeight/4 + miniHeight*((numCols-numRows)/2),miniWidth/2,miniHeight/2);
 			g.fillRect(miniCharacter.getX() * miniWidth + miniWidth/4, miniCharacter.getY()*miniHeight + miniHeight/4 + miniHeight*((numCols-numRows)/2),miniWidth/2,miniHeight/2);
-
+			
+			//DRAWS END GOAL ON MINIMAP
+			g.setColor(Color.YELLOW);
+			g.drawRect(endCell.getX() * miniWidth + miniWidth/4, endCell.getY()*miniHeight + miniHeight/4 + miniHeight*((numCols-numRows)/2),miniWidth/2,miniHeight/2);
+			g.fillRect(endCell.getX() * miniWidth + miniWidth/4, endCell.getY()*miniHeight + miniHeight/4 + miniHeight*((numCols-numRows)/2),miniWidth/2,miniHeight/2);
+			
 			//Time Remaining Drawing
 			if(!isTutorial){
 				g.setFont(new Font(titleFontStyle,Font.BOLD,timeRemainingFontSize));
@@ -1003,6 +1013,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			characterWidth = mediumWidth;
 			characterHeight = mediumHeight;
 		}
+		
+		//updates minimap
+		miniCharacter = board.inWhichCell(characterXLoc,characterYLoc);
 
 		//salinityWarningTimeTimer Tick
 		if(salinityWarningTimeTimer != salinityWarningTimeLimit){

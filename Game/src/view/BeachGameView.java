@@ -274,8 +274,8 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				gameWaves = board.getGameWaves();
 				waveSpeed = board.getWaveSpeed();
 
-				heldObjectWidth = crab.getWidth()/5;
-				heldObjectHeight = crab.getHeight()/5;
+				heldObjectWidth = crab.getWidth()/2;
+				heldObjectHeight = crab.getHeight()/2;
 				
 				//timer initialization
 				timeRemainingLabel = "Time Remaining: ";
@@ -432,7 +432,39 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				g.drawImage(grassImg,grass.getXLoc() + cellWidth/2 - (grassImgWidth/2), 
 						grass.getYLoc() + cellHeight/2 - (grassImgHeight/2), grassImgWidth, grassImgHeight, this);
 			}
-
+			
+			//TUTORIAL TEXT AND IMAGES
+			if(isTutorial){
+				Graphics2D g2 = (Graphics2D)g;
+				g2.setStroke(new BasicStroke(6));
+				g.setColor(Color.BLACK);
+				if(tutorialState == firstBoatState){
+					g.drawString("OH NO! The WAKES from the ships are destroying the shore", 400, 100);
+				}
+				else if(tutorialState == grassState){
+					g.drawString("Plant Grass to heal the Shore over time", 400, 100);
+					g2.setColor(Color.green);
+					g2.drawRect(board.getGrassBucketXLoc(),board.getGrassBucketYLoc(),board.getGrassBucketWidth(),board.getGrassBucketHeight());
+				}
+				else if(tutorialState == seawallState){
+					g.drawString("Use seawalls to protect the shore", 400, 100);
+					g2.setColor(Color.green);
+					g2.drawRect(board.getSeawallBucketXLoc(),board.getSeawallBucketYLoc(),board.getSeawallBucketWidth(),board.getSeawallBucketHeight());
+				}
+				else if(tutorialState == gabionState){
+					g.drawString("Grab 3 shells to plant a gabion!", 400, 100);
+					g.drawString("Gabions are STRONGER than seawalls", 400, 200);
+					g2.setColor(Color.green);
+					g2.drawRect(board.getGabionBucketXLoc(),board.getGabionBucketYLoc(),board.getGabionBucketWidth(),board.getGabionBucketHeight());
+				}
+				else if(tutorialState == secondBoatState){
+					g.drawString("barriers block WAKES", 400, 100);
+				}
+				else if(tutorialState == finishTutorialState){
+					g.drawString("GET READY TO PLAY!!", 400, 150);
+				}
+			}//end draw tutorial stuff
+			
 			//draws crab
 			g.drawImage(crabImg,crab.getXLoc(),crab.getYLoc(),crab.getWidth(),crab.getHeight(),this);
 			
@@ -441,29 +473,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				g.drawImage(objectImgArray[crab.getCurrObject() - 1],crab.getXLoc() + crab.getWidth()/2 - heldObjectWidth/2, crab.getYLoc() + crab.getHeight() - heldObjectHeight, heldObjectWidth, heldObjectHeight, this);
 			}
 			
-			//TUTORIAL TEXT AND IMAGES
-			if(isTutorial){
-				g.setColor(Color.BLACK);
-				if(tutorialState == firstBoatState){
-					g.drawString("OH NO! The WAKES from the ships are destroying the shore", 400, 100);
-				}
-				else if(tutorialState == grassState){
-					g.drawString("Plant Grass to heal the Shore over time", 400, 100);
-				}
-				else if(tutorialState == seawallState){
-					g.drawString("Use seawalls to protect the shore", 400, 100);
-				}
-				else if(tutorialState == gabionState){
-					g.drawString("Grab 3 shells to plant a gabion!", 400, 100);
-					g.drawString("Gabions are STRONGER than seawalls", 400, 200);
-				}
-				else if(tutorialState == secondBoatState){
-					g.drawString("barriers block WAKES", 400, 100);
-				}
-				else if(tutorialState == finishTutorialState){
-					g.drawString("GET READY TO PLAY!!", 400, 150);
-				}
-			}
+			//----END DRAW EVERYTHING ELSE
 		}
 
 	}
@@ -560,7 +570,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 					board.spawnMediumBoat();
 					hasSpawnedSecondBoat = true;
 				}
-				else if(board.getGameBoats().size() < 1){
+				else if(board.getGameBoats().size() < 1 && board.getGameWaves().size() < 1){
 					tutorialState = finishTutorialTextState;
 				}
 			}
