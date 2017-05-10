@@ -16,6 +16,14 @@ public class Barrier {
 		return yLoc;
 	}
 	
+	public int getWidth(){
+		return width;
+	}
+	
+	public int getHeight(){
+		return height;
+	}
+	
 	public void setWidth(int w){
 		width = w;
 	}
@@ -25,3 +33,4 @@ public class Barrier {
 	}
 	
 }
+
