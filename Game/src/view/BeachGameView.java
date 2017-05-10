@@ -315,11 +315,15 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 						int tempYLoc = tempBC.getYLoc() + (cellHeight - tempHeight);
 						g.drawImage(sandImage, tempBC.getXLoc(), tempYLoc, tempBC.getWidth(), tempBC.getHeight(), this);
 						g.setColor(Color.BLACK);
-						// remove after testing
-						//g.drawString(Integer.toString(tempBC.getHealth()) + ": " + Boolean.toString(tempBC.getCanHoldOyster()),tempBC.getXLoc(), tempBC.getYLoc() + cellHeight/2);
 					}
-					//else
-						//g.drawString(Integer.toString(tempBC.getHealth()) + Boolean.toString(tempBC.getHasBarrier()),tempBC.getXLoc(), tempBC.getYLoc() + cellHeight/2);
+					g.setColor(Color.green);
+					if(crab.getCurrObject() == 1 && tempBC.getCanHoldGrass() && !tempBC.getHasGrass()){
+						g.drawRect( tempBC.getXLoc()+(tempBC.getWidth()/10), tempBC.getYLoc() + (tempBC.getHeight()/10), tempBC.getWidth()- (tempBC.getWidth()/5), tempBC.getHeight() - (tempBC.getHeight()/5));
+					}
+					g.setColor(Color.RED);
+					if((crab.getCurrObject() == 2 || (crab.getCurrObject() == 3 && crab.getNumOysters() >= 3)) && tempBC.getCanHoldBarrier()){
+						g.drawRect( tempBC.getXLoc()+(tempBC.getWidth()/10), tempBC.getYLoc() + (tempBC.getHeight()/10), tempBC.getWidth()- (tempBC.getWidth()/5), tempBC.getHeight() - (tempBC.getHeight()/5));
+					}
 				}
 			}
 			
