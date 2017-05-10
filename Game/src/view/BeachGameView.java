@@ -168,6 +168,19 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private String startTitleFontStyle = "TimesRoman";
 	private int startTitleX = screenWidth/2 - ((startTitleFontSize * startTitle.length())/4);
 	private int startTitleY = screenHeight/4;
+	
+	//tutorial stuff
+	private boolean isTutorial;
+	private int tutorialState;
+	private int grassState;
+	private int seawallState;
+	private int gabionState;
+	private int smallBoatState;
+	private int healthBarState;
+	
+	private int finishTutorialState;
+	
+	private boolean hasSpawnedOysters;
 
 	//=======================================================================//
 
@@ -179,14 +192,28 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 		//intialize game state
 		startScreenVisible = true;
-		startButton = new JButton("Start Game!");
+		startButton = new JButton("PLAY Game!");
 		this.add(startButton);
 		startButton.setVisible(true);
 		startButton.setFocusable(false);
+		
 
 		startButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				//game stuff
+				//tutorial Stuff
+				isTutorial = true;
+				tutorialState = 0;
+				hasSpawnedOysters = false;
+				
+				grassState = 0;
+				seawallState = 1;
+				gabionState = 2;
+				smallBoatState = 3;
+				healthBarState = 4;
+				
+				finishTutorialState = 10;
+				
+				//all game stuff
 				board = new BeachBoard(numRows,numCols,screenWidth,screenHeight);
 				grid = board.getGrid();
 
@@ -327,17 +354,6 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				}
 			}
 			
-			/*
-			//grid drawing for testing
-			for(int i = 0; i < numRows; i++){
-				for(int j = 0; j < numCols; j++){
-					BeachCell tempBC = board.getGrid()[i][j];
-					g.setColor(Color.BLACK);
-					g.drawRect(tempBC.getXLoc(), tempBC.getYLoc(), tempBC.getWidth(), tempBC.getHeight());
-				}
-			}
-			*/
-			
 			//Time Remaining Drawing
 			g.setFont(new Font(timeRemainingFontStyle,Font.BOLD,timeRemainingFontSize));
 			g.setColor(Color.WHITE);
@@ -415,6 +431,81 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		repaint();
+		
+		//tutorial tick stuff
+		board.updateCurrentCellsHealth();
+		board.updateCurrentShoreHealth();
+		
+		//tracks crab movements
+		if (
+				((crabXVel < 0) && (crab.getXLoc() - crab.getXIncr() >= 0)) || 
+				((crabXVel > 0) && (crab.getXLoc() + crab.getWidth() + crab.getXIncr() <= screenWidth)) ||
+				((crabYVel < 0) && (crab.getYLoc() - crab.getYIncr() >= board.getCrabTopLeftCell().getYLoc())) ||
+				((crabYVel > 0) && (crab.getYLoc() + crab.getYIncr() + crab.getHeight() <= screenHeight - screenHeight/20))
+				){
+			crab.move(crabXVel,crabYVel);
+		}
+		
+		//shore stuff
+		if(grassTimer >= grassTimerTick){
+			board.healCellsAboveGrass();
+			grassTimer = 0;
+		}
+		else{
+			grassTimer++;
+		}
+
+		board.sandToOcean();
+		
+		//Boat Ticks
+		for(Boat bt: gameBoats){
+			bt.move();
+			board.makeWaves(bt);
+			board.resetWaves(bt);
+		}
+		board.removeBoatsOffScreen();
+		
+			//remove oyster when grabbed by crab
+		board.removeOyster(crab);
+		
+		board.removeHitWaves();
+		board.removeDeadBarriers();
+
+		//bucket stuff
+		board.setObjectFromBucket();
+		
+		//Wave 
+		for(Wave wv: gameWaves){
+			wv.move(waveSpeed);
+		}
+		
+
+		if(isTutorial){
+			if(tutorialState == grassState){
+				if(board.getGameGrass().size() >= 1){
+					tutorialState = seawallState;
+				}
+			}
+			else if(tutorialState == seawallState){
+				if(board.getGameSeawalls().size() >= 1){
+					tutorialState = gabionState;
+				}
+			}
+			else if(tutorialState == gabionState){
+				while(board.getGameOysters().size() < 3 && !hasSpawnedOysters){
+					board.spawnOyster();
+				}
+				hasSpawnedOysters = true;
+				if(board.getGameGabs().size() >= 1){
+					tutorialState = finishTutorialState;
+				}
+			}
+			else if(tutorialState == finishTutorialState){
+				isTutorial = false;
+			}
+			return;
+		}
+		//-----------------------------------------------------------
 	
 		//Clock Time
 		timeCheck++;
@@ -437,26 +528,6 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			t.stop();
 		}
 		
-		//tracks crab movements
-		if (
-				((crabXVel < 0) && (crab.getXLoc() - crab.getXIncr() >= 0)) || 
-				((crabXVel > 0) && (crab.getXLoc() + crab.getWidth() + crab.getXIncr() <= screenWidth)) ||
-				((crabYVel < 0) && (crab.getYLoc() - crab.getYIncr() >= board.getCrabTopLeftCell().getYLoc())) ||
-				((crabYVel > 0) && (crab.getYLoc() + crab.getYIncr() + crab.getHeight() <= screenHeight - screenHeight/20))
-				){
-			crab.move(crabXVel,crabYVel);
-		}
-
-		//shore stuff
-		if(grassTimer >= grassTimerTick){
-			board.healCellsAboveGrass();
-			grassTimer = 0;
-		}
-		else{
-			grassTimer++;
-		}
-
-		board.sandToOcean();
 
 		//BOAT STUFF
 		//Boat timer increment
@@ -467,26 +538,6 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			newBoatTimerTime = 0;
 		}
 
-		//Boat Ticks
-		for(Boat bt: gameBoats){
-			bt.move();
-			board.makeWaves(bt);
-			board.resetWaves(bt);
-		}
-
-		board.removeBoatsOffScreen();
-
-
-		//Wave 
-		for(Wave wv: gameWaves){
-			wv.move(waveSpeed);
-		}
-		board.removeHitWaves();
-		board.removeDeadBarriers();
-
-		//bucket stuff
-		board.setObjectFromBucket();
-
 		//oysterStuff
 		if(oysterSpawnTimer >= oysterSpawnTick){
 			board.spawnOyster();
@@ -494,10 +545,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		}else{
 			oysterSpawnTimer++;
 		}
-		board.removeOyster(crab);
 
-		board.updateCurrentCellsHealth();
-		board.updateCurrentShoreHealth();
 
 	}
 
