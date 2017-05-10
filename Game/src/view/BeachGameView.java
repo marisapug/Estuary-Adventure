@@ -431,10 +431,10 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			if(isTutorial){
 				g.setColor(Color.BLACK);
 				if(tutorialState == firstBoatState){
-					g.drawString("OH NO! The ships are destroying the shore", 400, 100);
+					g.drawString("OH NO! The WAKES from the ships are destroying the shore", 400, 100);
 				}
 				else if(tutorialState == grassState){
-					g.drawString("Plant Grass to heal the Shore", 400, 100);
+					g.drawString("Plant Grass to heal the Shore over time", 400, 100);
 				}
 				else if(tutorialState == seawallState){
 					g.drawString("Use seawalls to protect the shore", 400, 100);
