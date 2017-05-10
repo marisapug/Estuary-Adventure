@@ -238,6 +238,11 @@ public class BeachBoard {
 			gameBoats.add(tempBoat);
 		}
 	}
+	
+	public void spawnSmallBoat(){
+		Boat tempBoat = new Boat(-smallWidth, smallBoatY, 0, 0, smallSpeed,smallWidth,smallHeight);
+		gameBoats.add(tempBoat);
+	}
 
 	public void removeBoatsOffScreen(){
 		Iterator<Boat> bt = gameBoats.iterator();

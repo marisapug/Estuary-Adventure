@@ -505,7 +505,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		if(isTutorial){
 			if(tutorialState == firstBoatState){
 				if(!hasSpawnedFirstBoat){
-					board.generateRandomBoat();
+					board.spawnSmallBoat();
 					hasSpawnedFirstBoat = true;
 				}
 				if(board.getGameBoats().size() < 1){
