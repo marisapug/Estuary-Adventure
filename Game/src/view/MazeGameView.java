@@ -90,13 +90,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 	private String tutFontStyle;
 	private int tutFontSize;
-	private int tutLitterTextXLoc;
-	private int tutPredatorTextXLoc;
-	private int tutPowerUpTextXLoc;
 	private int tutSalinityTextXLoc;
 	private int tutMiniMapTextXLoc;
 	private int tutTextYLoc;
-	
+
 	private BufferedImage upArrowImage = createImage("MazeExtraImgs/upArrow.png");
 	private BufferedImage leftArrowImage = createImage("MazeExtraImgs/leftArrow.png");
 	private int upArrowX;
@@ -105,6 +102,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int leftArrowY;
 	private int arrowWidth;
 	private int arrowHeight;
+
+	private BufferedImage wrongImage = createImage("MazeExtraImgs/redlinecircle.png");
+	private BufferedImage rightImage = createImage("MazeExtraImgs/greencircle.png");
 
 	//create the maze board
 	private MazeBoard board;
@@ -481,9 +481,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				tutSalinityTextIndex = board.getTutSalinityTextIndex();
 				tutMiniMapTextIndex = board.getTutMiniMapTextIndex();
 
-				tutLitterText = board.getTutLitterText();
-				tutPredatorText = board.getTutPredatorText();
-				tutPowerUpText = board.getTutPowerUpText();
 				tutSalinityText = board.getTutSalinityText();
 				tutMiniMapText = board.getTutMiniMapText();
 
@@ -494,19 +491,16 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				powerUpTextSeen = false;
 				salinityTextSeen = false;
 				miniMapTextSeen = false;
-				
+
 				tutPauseTotal = 200;
 				tutPauseTimer = tutPauseTotal;
 
 				tutFontStyle = "TimesRoman";
 				tutFontSize = screenHeight/30;
-				tutPowerUpTextXLoc = screenWidth/2 - ((tutFontSize * tutPowerUpText.length())/4);
-				tutPredatorTextXLoc = screenWidth/2 - ((tutFontSize * tutPredatorText.length())/4);
-				tutLitterTextXLoc = screenWidth/2 - ((tutFontSize * tutLitterText.length())/4);
 				tutSalinityTextXLoc = screenWidth/2 -((tutFontSize * tutSalinityText.length())/4);
 				tutMiniMapTextXLoc = screenWidth/2 -((tutFontSize * tutMiniMapText.length())/4);
 				tutTextYLoc = screenHeight/2;
-				
+
 			}
 		});
 
@@ -519,7 +513,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				if(!isTutorial){
 					endWinText = "Congratulations, you won!";
 				}else{
-					endWinText = "You've Fininshed the Tutorial, try your skills at the real game!!";
+					endWinText = "You've Fininshed the Tutorial, try your skills at the real game!";
 				}
 				grids = board.getGrid(); 
 				mazeWalls = board.getMazeWalls();
@@ -592,15 +586,15 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				miniMap = new MiniMap();
 				miniWidth = (screenWidth/4)/numCols;
 				miniHeight = (screenWidth/4)/numCols;
-				
+
 				arrowWidth = 125;
 				arrowHeight = 150;
 				upArrowX = meterX + meterWidth/2 - arrowWidth/2;
 				upArrowY = meterY + meterHeight;
-				
+
 				leftArrowX = miniWidth * numCols;
 				leftArrowY = (miniHeight * numCols)/2 - arrowHeight/2;
-				
+
 
 				healthImgWidth = (featuresBarHeight*3)/5;
 				healthImgHeight = healthImgWidth;
@@ -698,19 +692,32 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			}
 			//Draws litter
 			for(Litter lit : gameLitter){
-				if(lit.getXLoc()+litterWidth > 0 && lit.getXLoc() <= screenWidth && lit.getYLoc()+litterHeight > 0 && lit.getYLoc() < screenHeight)
+				if(lit.getXLoc()+litterWidth > 0 && lit.getXLoc() <= screenWidth && lit.getYLoc()+litterHeight > 0 && lit.getYLoc() < screenHeight){
 					g2.drawImage(litterTypes.get(lit.getType()), lit.getXLoc(), lit.getYLoc(),litterWidth, litterHeight, this);
+					if(!litterTextSeen && board.inWhichCell(characterXLoc,characterYLoc).getX() == tutLitterTextIndex){
+						g2.drawImage(wrongImage, lit.getXLoc() - lit.getWidth()/2, lit.getYLoc() - lit.getWidth()/2,
+								litterWidth*2, litterHeight*2, this);
+					}
+				}
 			}
 
 			//Draws Power Ups
 			for(PowerUp pu : gamePowerUps){
 				g.drawImage(powerUpImg,pu.getXLoc(),pu.getYLoc(), powerUpWidth, powerUpHeight, this);
+				if(!powerUpTextSeen && board.inWhichCell(characterXLoc,characterYLoc).getX() == tutPowerUpTextIndex){
+					g2.drawImage(rightImage, pu.getXLoc() - pu.getWidth()/2, pu.getYLoc() - pu.getWidth()/2,
+							pu.getWidth()*2, pu.getHeight()*2, this);
+				}
 			}
 
 			//DRAWS PREDATORS
 			for(Predator p: predators){
 				g.drawImage(preds[predSwitchCount%(numPredImages-1)][p.getDirection()], p.getXLoc(), p.getYLoc(), p.getWidth(), p.getHeight(), this);
 				predSwitchCount++;
+				if(!predatorTextSeen && board.inWhichCell(characterXLoc,characterYLoc).getX() == tutPredatorTextIndex){
+					g2.drawImage(wrongImage, p.getXLoc() - p.getWidth()/2, p.getYLoc() - p.getWidth()/2,
+							p.getWidth()*2, p.getHeight()*2, this);
+				}
 			}
 
 			//Features Bar Drawing
@@ -849,29 +856,31 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			if(isTutorial){
 				MazeCell tempCell = board.inWhichCell(characterXLoc, characterYLoc);
 				if(tempCell.getX() == tutLitterTextIndex && !litterTextSeen){
-					g.drawString(tutLitterText, tutLitterTextXLoc, tutTextYLoc);
+					tutPauseTotal = 200;
 					tutPauseTimer = 0;
 					litterTextSeen = true;
 				}
 				else if(tempCell.getX() == tutSalinityTextIndex && !salinityTextSeen){
 					g.drawImage(upArrowImage, upArrowX, upArrowY, arrowWidth, arrowHeight, this);
 					g.drawString(tutSalinityText, tutSalinityTextXLoc, tutTextYLoc);
+					tutPauseTotal = 500;
 					tutPauseTimer = 0;
 					salinityTextSeen = true;
 				}
 				else if(tempCell.getX() == tutPredatorTextIndex && !predatorTextSeen){
-					g.drawString(tutPredatorText, tutPredatorTextXLoc, tutTextYLoc);
+					tutPauseTotal = 200;
 					tutPauseTimer = 0;
 					predatorTextSeen = true;
 				}
 				else if(tempCell.getX() == tutMiniMapTextIndex && !miniMapTextSeen){
 					g.drawImage(leftArrowImage, leftArrowX, leftArrowY, arrowHeight, arrowWidth, this);					
 					g.drawString(tutMiniMapText, tutMiniMapTextXLoc, tutTextYLoc);
+					tutPauseTotal = 500;
 					tutPauseTimer = 0;
 					miniMapTextSeen = true;
 				}
 				else if(tempCell.getX() == tutPowerUpTextIndex && !powerUpTextSeen){
-					g.drawString(tutPowerUpText, tutPowerUpTextXLoc, tutTextYLoc);
+					tutPauseTotal = 200;
 					tutPauseTimer = 0;
 					powerUpTextSeen = true;
 				}
@@ -1055,7 +1064,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				}
 				else{
 					if(!tutIsLitterHit){
-						tutWalls.remove(0);
 						hitTimer = 0;
 						tutIsLitterHit = true;
 					}
@@ -1070,7 +1078,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				}
 				else{
 					if(!tutIsPredatorHit){
-						tutWalls.remove(0);
 						hitTimer = 0;
 						tutIsPredatorHit = true;
 					}

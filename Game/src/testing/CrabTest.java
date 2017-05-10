@@ -9,9 +9,7 @@ import model.Litter;
 import view.MazeGameView;
 import org.junit.Test;
 
-public class MazeTesting {
-
-	//======== CRAB CLASS TESTING ======== //
+public class CrabTest {
 
 	@Test
 	public void crabConstructorTest() {
@@ -68,6 +66,5 @@ public class MazeTesting {
 		assertEquals(c1.getAgeState(), 4);
 	}
 	
-	//======== MAZE BOARD CLASS TESTING ======== //
 
 }

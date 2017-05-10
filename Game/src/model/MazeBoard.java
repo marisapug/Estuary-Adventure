@@ -1,8 +1,5 @@
 package model;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.util.*;
 
 public class MazeBoard {
@@ -29,16 +26,12 @@ public class MazeBoard {
 	private int tutLitterType = 0;
 	private int tutLitterStartIndex = 5;
 	private int tutLitterTextIndex = tutLitterStartIndex - 1;
-	private String tutLitterText = "AVOID LITTER. Hit the litter to move on with the tutorial.";
 	private Predator tutPredator;
 	private int tutPredatorStartIndex = 10;
 	private int tutPredatorTextIndex = tutPredatorStartIndex - 1;
-	private String tutPredatorText = "AVOID PREDATORS! Hit the predator to move on with the tutorial.";
 	private PowerUp tutPowerUp;
 	private int tutPowerUpStartIndex = 15;
 	private int tutPowerUpTextIndex = tutPowerUpStartIndex - 1;
-	private String tutPowerUpText = 
-			"GRAB POWER UPS TO HELP YOU ALONG THE WAY! Pick up the power up to move on in the tutorial.";
 	
 	private int tutSalinityTextIndex = tutPredatorTextIndex - 1;
 	private String tutSalinityText = "Use the SALINITY INDICATOR to make sure the crab is on the right path and can grow!";
@@ -49,10 +42,10 @@ public class MazeBoard {
 	private ArrayList<MazeWall> tutWalls = new ArrayList<MazeWall>();
 	private boolean isTutorial = false;
 	
+	//===END TUTORIAL STUFF===//
 	
 	private int characterW;
 	private int characterH;
-	
 	
 	
 	ArrayList<MazeCell> stack = new ArrayList<MazeCell>();
@@ -187,14 +180,8 @@ public class MazeBoard {
 	}
 	
 	public void setUpTutWalls(){
-		MazeCell tempCell = grid[0][tutLitterStartIndex];
+		MazeCell tempCell = grid[0][tutPowerUpStartIndex];
 		MazeWall tempWall = new MazeWall(tempCell.getXLoc() + cellWidth,tempCell.getYLoc(),tempCell.getXLoc() + cellWidth,tempCell.getYLoc() + cellHeight,1);
-		tutWalls.add(tempWall);
-		tempCell = grid[0][tutPredatorStartIndex];
-		tempWall = new MazeWall(tempCell.getXLoc() + cellWidth,tempCell.getYLoc(),tempCell.getXLoc() + cellWidth,tempCell.getYLoc() + cellHeight,1);
-		tutWalls.add(tempWall);
-		tempCell = grid[0][tutPowerUpStartIndex];
-		tempWall = new MazeWall(tempCell.getXLoc() + cellWidth,tempCell.getYLoc(),tempCell.getXLoc() + cellWidth,tempCell.getYLoc() + cellHeight,1);
 		tutWalls.add(tempWall);
 	}
 	
@@ -706,18 +693,6 @@ public class MazeBoard {
 	
 	public int getTutPowerUpTextIndex(){
 		return tutPowerUpTextIndex;
-	}
-	
-	public String getTutLitterText(){
-		return tutLitterText;
-	}
-	
-	public String getTutPredatorText(){
-		return tutPredatorText;
-	}
-	
-	public String getTutPowerUpText(){
-		return tutPowerUpText;
 	}
 	
 	public int getTutSalinityTextIndex(){
