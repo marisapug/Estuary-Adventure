@@ -347,6 +347,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private JButton hardButton;
 	private JButton startButton;
 	private JButton tutorialButton;
+	private JButton goToStartButton;
 
 
 	//Age State
@@ -380,6 +381,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 		tutorialButton = new JButton("Tutorial");
 		tutorialButton.setFocusable(false);
+		
+		goToStartButton = new JButton("Go Back");
+		goToStartButton.setFocusable(false);
 
 
 		//StartScreen Visibility
@@ -413,6 +417,13 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				mediumButton.setVisible(true);
 				hardButton.setVisible(true);
 				tutorialButton.setVisible(true);
+				tutIsLitterHit = true;
+				tutIsPredatorHit = true;
+				predatorTextSeen = true;
+				litterTextSeen = true;
+				powerUpTextSeen = true;
+				salinityTextSeen = true;
+				miniMapTextSeen = true;
 			}
 
 		});
@@ -430,6 +441,13 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				mediumButton.setVisible(true);
 				hardButton.setVisible(true);
 				tutorialButton.setVisible(true);
+				tutIsLitterHit = true;
+				tutIsPredatorHit = true;
+				predatorTextSeen = true;
+				litterTextSeen = true;
+				powerUpTextSeen = true;
+				salinityTextSeen = true;
+				miniMapTextSeen = true;
 			}
 
 		});
