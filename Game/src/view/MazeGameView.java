@@ -766,6 +766,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 							p.getWidth()*2, p.getHeight()*2, this);
 				}
 			}
+			predSwitchCount = 0;
 
 			//Features Bar Drawing
 			g.setColor(Color.yellow);
