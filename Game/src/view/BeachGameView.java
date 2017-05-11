@@ -173,6 +173,15 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private String startTitleFontStyle = "TimesRoman";
 	private int startTitleX = screenWidth/2 - ((startTitleFontSize * startTitle.length())/4);
 	private int startTitleY = screenHeight/4;
+	
+	private boolean hasWon;
+	private boolean isGameOver;
+	private String winText;
+	private String loseText;
+	private int gameOverTextSize;
+	private String gameOverTextStyle;
+	private int gameOverTextX;
+	private int gameOverTextY;
 
 	//tutorial stuff
 	private boolean isTutorial;
@@ -326,7 +335,19 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 				//button visibility
 				startButton.setVisible(false);
+				
+				//GameState
 				startScreenVisible = false;
+				hasWon = false;
+				isGameOver = false;
+				
+				winText = "Congratulations, you defended the estuary!";
+				loseText = "Oh no! The estuary has been compromised!";
+				gameOverTextSize = screenHeight/30;
+				gameOverTextStyle = "TimesRoman";
+				gameOverTextX = (screenWidth/2) - (winText.length()*gameOverTextSize)/4;
+				gameOverTextY = screenHeight/3;
+
 
 				//start timer
 				t.start();
@@ -494,6 +515,18 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			if(crab.getCurrObject() != 0){
 				g.drawImage(objectImgArray[crab.getCurrObject() - 1],crab.getXLoc() + crab.getWidth()/2 - heldObjectWidth/2, crab.getYLoc() + crab.getHeight() - heldObjectHeight, heldObjectWidth, heldObjectHeight, this);
 			}
+			
+			//end game draw strings
+			if(isGameOver){
+				g.setFont(new Font(gameOverTextStyle, Font.BOLD, gameOverTextSize));
+				g.setColor(Color.BLACK);
+				if(hasWon){
+					g.drawString(winText, gameOverTextX, gameOverTextY);
+				}
+				else{
+					g.drawString(loseText, gameOverTextX, gameOverTextY);
+				}
+			}
 
 			//----END DRAW EVERYTHING ELSE
 		}
@@ -637,11 +670,15 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 		//Checks if you lose
 		if(board.getCurrentShoreHealth() <= 0){
+			hasWon = false;
+			isGameOver = true;
 			t.stop();
 		}
 
 		//Checks if you win
 		if(timeRemaining <= 0){
+			hasWon = true;
+			isGameOver = true;
 			t.stop();
 		}
 
