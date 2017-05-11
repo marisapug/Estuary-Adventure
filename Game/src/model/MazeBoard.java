@@ -80,6 +80,10 @@ public class MazeBoard {
 	//LEADERBOARD STUFF
 	private int numScores = 10; //dont alter
 	private PlayerScore[] highScores = new PlayerScore[numScores];
+	
+	private int easyScore = 10000;
+	private int mediumScore = 20000;
+	private int largeScore = 30000;
 
 	//CONSTRUCTOR for game board
 	public MazeBoard(int dif, int sWidth, int sHeight){
@@ -765,6 +769,18 @@ public class MazeBoard {
 	
 	public String getTutMiniMapText(){
 		return tutMiniMapText;
+	}
+	
+	public int getEasyScore(){
+		return easyScore;
+	}
+	
+	public int getMediumScore(){
+		return mediumScore;
+	}
+	
+	public int getLargeScore(){
+		return largeScore;
 	}
 	
 	public PlayerScore[] getHighScores(){
