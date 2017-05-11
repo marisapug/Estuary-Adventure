@@ -1,32 +1,32 @@
 package view;
 
-import java.util.Random;
-import java.util.ArrayList;
+import model.*;
+import view.DiceGameView.DiceListener;
 
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Point;
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.Timer;
 import javax.swing.event.MouseInputListener;
-import javax.swing.*;
 
-import model.*;
-
-public class DiceGameView extends JPanel implements ActionListener {
-
-	private static final long serialVersionUID = 1L;
+public class StoryCubeView extends JPanel implements ActionListener {
+	DiceGame dgame;
 
 	// Timer
 	Timer diceTimer = new Timer(50, this);
@@ -36,54 +36,24 @@ public class DiceGameView extends JPanel implements ActionListener {
 	private int screenHeight = MainFrame.getFrameHeight();
 
 	// Dice
-	DiceGame dgame;
+	private Die[] gameDice;
 	private int diceWidth = 120;
-	private int betweenDice;
-	private int betweenStory = 10;
-	private int diceStartX;
-	private int storyStartX;
-	private int diceStartY;
-	private int storyStartY;
-	private int storyTextX;
-	private int storyTextY;
-	private int numDicePlaced = 0;
-	private Font storyTextStyle;
-	private int storyFontSize = screenWidth / 25;
-	private int maxLines = 7; // maximum number of lines the text box will fit
-	private int numLines = 0;
-	private String[] storyWords = {};
-	private ArrayList<String> storyLines = new ArrayList<String>();
-	private int[] stringYCoords = new int[maxLines];
-	private boolean isRolled = false; // true if the user pressed the button to
-										// roll
-	private boolean isStorySaved = false; // true if the user pressed the button
-											// to enter a story
-	private boolean isAnimDone = false; // true if the dice have finished
-										// "rolling"
-	private boolean isSplitStoryLinesCalled = false; // to make sure the
-														// function is only
-														// called once
-	private boolean isDragging = false;
-	// TODO private boolean is
-	private String imgStrings[] = { "diceimages/appledie.png", "diceimages/bananadie.png", "diceimages/beakerdie.png",
-			"diceimages/boxdie.png", "diceimages/bucketdie.png", "diceimages/candie.png",
-			"diceimages/canwithwingsdie.png", "diceimages/chipbagdie.png", "diceimages/cleanvesseldie.png",
-			"diceimages/clipboarddie.png", "diceimages/clockdie.png", "diceimages/crabfooddie.png",
-			"diceimages/crabtrapdie.png", "diceimages/crumpledpaperdie.png", "diceimages/crushedcandie.png",
-			"diceimages/deadfishdie.png", "diceimages/dirtyvesseldie.png", "diceimages/dogpoopbagdie.png",
-			"diceimages/fishtagdie.png", "diceimages/flagdie.png" };
-	private BufferedImage[] possibleDiceImgs;
-	private BufferedImage[] diceImages;
-	private BufferedImage[] finalImages;
-	private int[] xCoordinates;
-	private int[] yCoordinates;
+	private Die selectedDie;
+
+	// Story Slots
 	private int[] storyboardX;
-	private int[] originalX;
-	private int[] originalY;
+	private int storyStartX;
+	private int storyStartY;
+	private int betweenStory = 10;
 
 	// Dice Rolling Animation
 	int numAnimations = 0;
 	int animsToDo = 50;
+	boolean isAnimDone = false;
+
+	// Game Booleans
+	private boolean isRolled = false;
+	private boolean isDieSelected = false;
 
 	// Buttons
 	private JButton startGameButton;
@@ -102,12 +72,35 @@ public class DiceGameView extends JPanel implements ActionListener {
 	private Dimension buttonSize;
 	private boolean showStoryButton;
 
+	// Story
+	private Font storyTextStyle;
+	private int storyFontSize = screenWidth / 25;
+	private boolean isStorySaved = false;
+	private int storyTextX;
+	private int storyTextY;
+	private String[] storyWords = {};
+	private boolean isSplitStoryLinesCalled = false; // to make sure the
+	// function is only
+	// called once
+	private ArrayList<String> storyLines = new ArrayList<String>();
+	private int numLines = 0;
+	private int maxLines = 7; // maximum number of lines the text box will fit
+	private int[] stringYCoords = new int[maxLines];
+
 	// TextArea
 	JTextArea storyText;
 
 	// Images
 	BufferedImage oceanBackground = createImage("background/dicebackground.jpg");
 	BufferedImage startScreen = createImage("background/dicestartscreen.jpg");
+	private String imgStrings[] = { "diceimages/appledie.png", "diceimages/bananadie.png", "diceimages/beakerdie.png",
+			"diceimages/boxdie.png", "diceimages/bucketdie.png", "diceimages/candie.png",
+			"diceimages/canwithwingsdie.png", "diceimages/chipbagdie.png", "diceimages/cleanvesseldie.png",
+			"diceimages/clipboarddie.png", "diceimages/clockdie.png", "diceimages/crabfooddie.png",
+			"diceimages/crabtrapdie.png", "diceimages/crumpledpaperdie.png", "diceimages/crushedcandie.png",
+			"diceimages/deadfishdie.png", "diceimages/dirtyvesseldie.png", "diceimages/dogpoopbagdie.png",
+			"diceimages/fishtagdie.png", "diceimages/flagdie.png" };
+	private BufferedImage[] possibleDiceImgs;
 
 	// Start Screen
 	private boolean isStartScreenVisible = true;
@@ -120,16 +113,16 @@ public class DiceGameView extends JPanel implements ActionListener {
 
 	// Mouse Listener
 	private DiceListener listener = new DiceListener();
-	private boolean toPlace = false;
-	private int clickedIndex; // index of image that you clicked on
-	private int releasedIndex;
-	private boolean canPlace = true;
 
 	// Constructor
-	public DiceGameView() {
-
+	public StoryCubeView() {
+		// TODO
 		dgame = new DiceGame(screenWidth, screenHeight, diceWidth);
-		dgame.setDice();
+
+		storyStartY = (screenHeight - diceWidth) / 2;
+		storyStartX = (screenWidth - (dgame.getNumDice() * diceWidth + (dgame.getNumDice() - 1) * betweenStory)) / 2;
+		storyTextX = diceWidth + 30;
+		storyTextY = diceWidth + 60;
 
 		// Initialize Button Appearance
 		buttonFont = new Font(titleFont, Font.BOLD, buttonFontSize);
@@ -138,26 +131,10 @@ public class DiceGameView extends JPanel implements ActionListener {
 		buttonSize = new Dimension(buttonSizeX, buttonSizeY);
 		showStoryButton = false;
 
-		// Initialize Images
+		// Initialize Arrays
 		possibleDiceImgs = new BufferedImage[dgame.getNumImgs()];
-		diceImages = new BufferedImage[dgame.getNumDice()];
-		finalImages = new BufferedImage[dgame.getNumDice()];
-		xCoordinates = new int[dgame.getNumDice()];
-		yCoordinates = new int[dgame.getNumDice()];
 		storyboardX = new int[dgame.getNumDice()];
-		originalX = new int[dgame.getNumDice()];
-		originalY = new int[dgame.getNumDice()];
-
-		// Initialize Distances
-		// betweenDice = diceWidth + 10;
-		// diceStartX = (screenWidth - (dgame.getNumDice() / 2 * diceWidth +
-		// (dgame.getNumDice() / 2 - 1) * betweenDice))
-		// / 2;
-		storyStartX = (screenWidth - (dgame.getNumDice() * diceWidth + (dgame.getNumDice() - 1) * betweenStory)) / 2;
-		// diceStartY = (screenHeight - (3 * diceWidth + 2 * betweenStory)) / 2;
-		storyStartY = (screenHeight - diceWidth) / 2;
-		storyTextX = diceWidth + 30;
-		storyTextY = diceWidth + 60;
+		gameDice = dgame.getDice();
 
 		// Buttons
 		startGameButton = new JButton("Start Game");
@@ -197,6 +174,8 @@ public class DiceGameView extends JPanel implements ActionListener {
 		this.add(rollAgainButton);
 		this.setupListeners();
 		this.setupMouseListener(listener);
+
+		initializeCoordinates();
 	}
 
 	// Getters
@@ -210,11 +189,8 @@ public class DiceGameView extends JPanel implements ActionListener {
 
 	// Set Initial Coordinates for Images
 	public void initializeCoordinates() { // change coordinates
+		// do i need this?
 		for (int i = 0; i < dgame.getNumDice(); i++) {
-			Die[] dice = dgame.getDice();
-			Die tmpDie = dice[i];
-			xCoordinates[i] = tmpDie.getXLoc();
-			yCoordinates[i] = tmpDie.getYLoc();
 			storyboardX[i] = storyStartX + (diceWidth + betweenStory) * i;
 		}
 	}
@@ -235,8 +211,7 @@ public class DiceGameView extends JPanel implements ActionListener {
 		if (!isRolled)
 			dgame.setDice();
 		for (int i = 0; i < dgame.getNumImgs(); i++) {
-			BufferedImage temp = createImage(imgStrings[i]);
-			possibleDiceImgs[i] = temp;
+			possibleDiceImgs[i] = createImage(imgStrings[i]);
 		}
 	}
 
@@ -244,7 +219,7 @@ public class DiceGameView extends JPanel implements ActionListener {
 	public void setDiceImgs() {
 		for (int i = 0; i < dgame.getNumDice(); i++) {
 			int temp = dgame.imgNums[i];
-			diceImages[i] = possibleDiceImgs[temp];
+			gameDice[i].setDieImg(possibleDiceImgs[temp]);
 		}
 		isRolled = true;
 	}
@@ -257,18 +232,18 @@ public class DiceGameView extends JPanel implements ActionListener {
 			g.setFont(new Font(titleFont, Font.BOLD, titleFontSize));
 			g.setColor(titleFontColor);
 			g.drawString(gameTitle, titleX, titleY);
+
 		} else {
 			g.drawImage(oceanBackground, 0, 0, screenWidth, screenHeight, this); // draws
-																					// background
 
 			// Dice
 			for (int i = 0; i < dgame.getNumDice(); i++) {
 				// g.drawRect(xCoordinates[i], yCoordinates[i], diceWidth,
 				// diceWidth);
 				if (isRolled) {
-					g.drawImage(diceImages[i], xCoordinates[i], yCoordinates[i], diceWidth, diceWidth, this); // draws
-																												// images
-
+					g.drawImage(gameDice[i].getDieImg(), gameDice[i].getXLoc(), gameDice[i].getYLoc(), diceWidth,
+							diceWidth, this); // draws
+					// images
 					if (isAnimDone && showStoryButton) {
 						storyButton.setVisible(true);
 						storyText.setVisible(true);
@@ -302,9 +277,8 @@ public class DiceGameView extends JPanel implements ActionListener {
 							g.drawString(storyLines.get(j), storyTextX, stringYCoords[j]);
 						}
 					}
-					// setFinalImages();
 					for (int k = 0; k < dgame.getNumDice(); k++)
-						g.drawImage(finalImages[k], storyboardX[k], screenHeight - 2 * (diceWidth + betweenStory),
+						g.drawImage(gameDice[k].getDieImg(), storyboardX[gameDice[k].getStoryIndex()], screenHeight - 2 * (diceWidth + betweenStory),
 								diceWidth, diceWidth, this);
 
 				}
@@ -312,23 +286,24 @@ public class DiceGameView extends JPanel implements ActionListener {
 		}
 	}
 
-	// Rolls Dice and Sets Images
-	void rollDice() {
+	public void rollDice() {
 		makeImages();
 		animDice();
 		isRolled = true;
 		repaint();
 	}
 
+	// Saves Story the user entered
 	void saveStory() {
 		dgame.diceStory = storyText.getText();
 		isStorySaved = true;
 	}
 
-	// Splits strings of story into lines
-	ArrayList<String> splitStoryLines() { // iterate through story words, adding
-											// a new fragment to arraylist
-		// every time the words are almost 22 characters
+	// iterate through story words, adding a new fragment to arraylist every
+	// time the words are almost 22 characters
+	ArrayList<String> splitStoryLines() {
+		// TODO
+
 		int currWord = 0;
 		ArrayList<String> lines = new ArrayList<String>();
 		stringYCoords[0] = storyTextY;
@@ -361,44 +336,53 @@ public class DiceGameView extends JPanel implements ActionListener {
 			}
 		}
 		return lines;
+
 	}
 
-	// Set Button Listeners
 	void setupListeners() {
 		startGameButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				// TODO
 				rollDiceButton.setVisible(true);
 				startGameButton.setVisible(false);
 				isStartScreenVisible = false;
 				repaint();
-				initializeCoordinates();
+				// initializeCoordinates();
 				diceTimer.start();
 			}
 		});
 		rollDiceButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				// TODO
+
 				rollDice(); // roll dice function
 				rollDiceButton.setVisible(false);
 				showStoryButton = true;
 				repaint();
+
 			}
 		});
 		storyButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				saveStory(); // save story function
-				showStoryButton = false;
+				// TODO
+
+				saveStory(); // save story function showStoryButton = false;
 				storyButton.setVisible(false);
 				storyText.setVisible(false);
 				rollAgainButton.setVisible(true);
+
 				repaint(); // print story function
+
 			}
 		});
 		rollAgainButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				// TODO
+
 				rollAgainButton.setVisible(false);
 				isRolled = false;
 				isStorySaved = false;
@@ -407,32 +391,32 @@ public class DiceGameView extends JPanel implements ActionListener {
 				dgame.setDice();
 				rollDice();
 				showStoryButton = true;
-				repaint();
-				// storyButton.setVisible(true);
-				// storyText.setVisible(true);
+				repaint(); // storyButton.setVisible(true); //
+				storyText.setVisible(true);
+
 			}
 		});
 	}
 
 	void animDice() {
 		Random rand = new Random();
-		Die[] dice = dgame.getDice();
 		for (int i = 0; i < dgame.getNumDice(); i++) {
-			dice[i].throwDie();
-			xCoordinates[i] = dice[i].getXLoc();
-			yCoordinates[i] = dice[i].getYLoc();
-			diceImages[i] = possibleDiceImgs[rand.nextInt(dgame.getNumImgs())];
+			gameDice[i].throwDie();
+			// xCoordinates[i] = dice[i].getXLoc();
+			// yCoordinates[i] = dice[i].getYLoc();
+			gameDice[i].setDieImg(possibleDiceImgs[rand.nextInt(dgame.getNumImgs())]);
 		}
 	}
 
-	void returnDice() { // returns rolled dice to their original positions
+	void returnDice() {
+		// TODO
 		System.out.println("returnDice called");
-		Die[] dice = dgame.getDice();
 		for (int i = 0; i < dgame.getNumDice(); i++) {
-			while (dice[i].getXLoc() != dice[i].getStartXLoc() | dice[i].getYLoc() != dice[i].getStartYLoc()) {
-				dice[i].finishThrowing();
-				xCoordinates[i] = dice[i].getXLoc();
-				yCoordinates[i] = dice[i].getYLoc();
+			while (gameDice[i].getXLoc() != gameDice[i].getStartXLoc()
+					| gameDice[i].getYLoc() != gameDice[i].getStartYLoc()) {
+				gameDice[i].finishThrowing();
+				// xCoordinates[i] = dice[i].getXLoc();
+				// yCoordinates[i] = dice[i].getYLoc();
 				repaint();
 				// diceImages[i] =
 				// possibleDiceImgs[rand.nextInt(dgame.getNumImgs())];
@@ -440,7 +424,9 @@ public class DiceGameView extends JPanel implements ActionListener {
 		}
 	}
 
+	// Timer
 	public void actionPerformed(ActionEvent e) {
+		// TODO
 		if (numAnimations < animsToDo) {
 			if (isRolled && !isAnimDone) {
 				animDice();
@@ -456,6 +442,7 @@ public class DiceGameView extends JPanel implements ActionListener {
 			// storyText.setVisible(true);
 			numAnimations++;
 		}
+
 	}
 
 	// Set up mouse listener
@@ -468,93 +455,101 @@ public class DiceGameView extends JPanel implements ActionListener {
 		getMouseTarget().addMouseMotionListener(listener);
 	}
 
-	// MouseInputListener class
-
 	public class DiceListener implements MouseInputListener {
-		boolean isPressing = false;
 		Point point = new Point(0, 0);
-		Point tmpPoint = new Point(0, 0);
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			repaint();
+			// TODO Auto-generated method stub
 		}
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			if (isRolled && !isStorySaved) {
-				tmpPoint = e.getPoint();
-				for (int i = 0; i < dgame.getNumDice(); i++) {
-					if (tmpPoint.x > xCoordinates[i] && tmpPoint.x < (xCoordinates[i] + diceWidth)) {
-						if (tmpPoint.y > yCoordinates[i] && tmpPoint.y < (yCoordinates[i] + diceWidth)) {
-							clickedIndex = i;
-							toPlace = true;
-							isPressing = true;
-							// isDiceUntouched = false;
-						}
-					}
-					/*
-					 * if(tmpPoint.x == storyboardX[i] && tmpPoint.y ==
-					 * storyStartY){ numDicePlaced--; }
-					 */
+			// TODO Auto-generated method stub
+			// if die is clicked on, isSelected = true
+			point = e.getPoint();
+			for (Die d : gameDice) {
+				if (point.x >= d.getXLoc() && point.x <= d.getXLoc() + diceWidth && point.y >= d.getYLoc()
+						&& point.y <= d.getYLoc() + diceWidth) {
+					d.setSelection(true);
+					isDieSelected = true;
 				}
 			}
-			repaint();
+			for (Die d : gameDice) {
+				if (d.getSelection() == true)
+					selectedDie = d;
+			}
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			for (int i = 0; i < dgame.getNumDice(); i++) {
-				if (tmpPoint.x > storyboardX[i] && tmpPoint.x < (storyboardX[i] + diceWidth)) {
-					if (tmpPoint.y > storyStartY && tmpPoint.y < (storyStartY + diceWidth)) {
-						releasedIndex = i;
-					}
-				}
-				if (storyboardX[releasedIndex] == xCoordinates[i] && storyStartY == yCoordinates[i]) {
-					canPlace = false;
-				}
-			}
+			// TODO Auto-generated method stub
+			point = e.getPoint();
+			boolean isPlaced = false;
+			// if in range of storycubes
+			if (isDieSelected) {
+				if (selectedDie != null) {
 
-			if (isRolled && isDragging) {
-				if (canPlace) {
-					xCoordinates[clickedIndex] = storyboardX[releasedIndex];
-					yCoordinates[clickedIndex] = storyStartY;
-					finalImages[releasedIndex] = diceImages[clickedIndex];
-					// numDicePlaced++;
-				} else if (toPlace) {
-					xCoordinates[clickedIndex] = originalX[clickedIndex];
-					yCoordinates[clickedIndex] = originalY[clickedIndex];
+					for (int i = 0; i < dgame.getNumDice(); i++) {
+						// for (int xStory : storyboardX) {
+						if (point.x >= storyboardX[i] && point.x <= storyboardX[i] + diceWidth && point.y >= storyStartY
+								&& point.y <= storyStartY + diceWidth) {
+							selectedDie.setXLoc(storyboardX[i]);
+							selectedDie.setYLoc(storyStartY);
+							isPlaced = true;
+							selectedDie.setStoryIndex(i);
+						}
+					}
+					for (int i = 0; i < dgame.getNumDice(); i++) {
+						if (selectedDie != gameDice[i]) {
+							if (selectedDie.getXLoc() == gameDice[i].getXLoc()
+									&& selectedDie.getYLoc() == gameDice[i].getYLoc()) {
+								selectedDie.setXLoc(selectedDie.getInitXLoc());
+								selectedDie.setYLoc(selectedDie.getInitYLoc());
+								isPlaced = false;
+							}
+						}
+					}
+					if (!isPlaced) {
+						selectedDie.setXLoc(selectedDie.getInitXLoc());
+						selectedDie.setYLoc(selectedDie.getInitYLoc());
+					}
+
+					selectedDie.setSelection(false);
+					isDieSelected = false;
 				}
 			}
-			isPressing = false;
-			canPlace = true;
-			toPlace = false;
-			isDragging = false;
 			repaint();
 		}
 
 		@Override
 		public void mouseEntered(MouseEvent e) {
+			// TODO Auto-generated method stub
+
 		}
 
 		@Override
 		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub
+
 		}
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			tmpPoint = e.getPoint();
-			if (isPressing) {
-				xCoordinates[clickedIndex] = tmpPoint.x - diceWidth / 2;
-				yCoordinates[clickedIndex] = tmpPoint.y - diceWidth / 2;
+			// TODO Auto-generated method stub
+			// update selectedDie's location to point.x and point.y
+			point = e.getPoint();
+			if (isDieSelected && selectedDie != null) {
+				selectedDie.setXLoc(point.x - diceWidth / 2);
+				selectedDie.setYLoc(point.y - diceWidth / 2);
 			}
-			if(!isDragging)
-				isDragging = true;
 			repaint();
 		}
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
+			// TODO Auto-generated method stub
+
 		}
 	}
 }

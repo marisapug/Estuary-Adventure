@@ -2,7 +2,9 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
@@ -19,8 +21,16 @@ public class MainFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	//Frame
+	
+	//what's on piazza -- will it work?
+	/*static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	private final static int frameWidth=(int) screenSize.getWidth();
+	private final static int frameHeight=(int) screenSize.getHeight();
+	*/
+	
 	private final static int frameWidth = 1200;
 	private final static int frameHeight = 700;
+	
 
 	//Main Layout
 	private BorderLayout mainLayout = new BorderLayout();
@@ -34,7 +44,7 @@ public class MainFrame extends JFrame {
 	StartScreenView currStartPanel;
 	MazeGameView currMazePanel;
 	BeachGameView currBeachPanel;
-	DiceGameView currDicePanel;
+	StoryCubeView currDicePanel;
 
 	//JMenuBar
 	private JMenuBar menuBar = new JMenuBar();
@@ -52,7 +62,7 @@ public class MainFrame extends JFrame {
 		
 		currMazePanel = new MazeGameView();
 		currStartPanel = new StartScreenView();
-		currDicePanel = new DiceGameView();
+		currDicePanel = new StoryCubeView();
 		currBeachPanel = new BeachGameView();
 		
 		miniGamesMenu = new JMenu("Mini Games");
@@ -114,7 +124,7 @@ public class MainFrame extends JFrame {
 	}
 	
 	public void resetDice(){
-		this.currDicePanel = new DiceGameView();
+		this.currDicePanel = new StoryCubeView();
 	}
 	
 	public void resetStart(){
