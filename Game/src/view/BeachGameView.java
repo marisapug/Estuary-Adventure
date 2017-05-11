@@ -45,7 +45,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	//Timer
 	private int timerSpeed = 10;
 	private Timer t = new Timer(timerSpeed,this);
-	private int totalTime = 120;
+	private int totalTime = 2;
 	private int timeRemaining = totalTime;
 	private int timeCheck = 0;
 
@@ -174,6 +174,8 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private int startTitleX = screenWidth/2 - ((startTitleFontSize * startTitle.length())/4);
 	private int startTitleY = screenHeight/4;
 	
+	private JButton goToStartButton;
+	
 	private boolean hasWon;
 	private boolean isGameOver;
 	private String winText;
@@ -228,6 +230,11 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		this.add(startButton);
 		startButton.setVisible(true);
 		startButton.setFocusable(false);
+		
+		goToStartButton = new JButton("Go to Start Screen");
+		goToStartButton.setFocusable(false);
+		goToStartButton.setVisible(false);
+		this.add(goToStartButton);
 
 		startButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -338,7 +345,10 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				
 				//GameState
 				startScreenVisible = false;
+<<<<<<< HEAD
 
+=======
+>>>>>>> d108bbea05f70eae6bbc758a104157092a54b7ef
 				hasWon = false;
 				isGameOver = false;
 				
@@ -354,6 +364,17 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				t.start();
 			}
 		});
+		
+		goToStartButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				startScreenVisible = true;
+				goToStartButton.setVisible(false);
+				startButton.setVisible(true);
+				t.stop();
+				repaint();
+			}
+		});
+		
 	}//end constructor
 
 
@@ -673,6 +694,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		if(board.getCurrentShoreHealth() <= 0){
 			hasWon = false;
 			isGameOver = true;
+			goToStartButton.setVisible(true);
 			t.stop();
 		}
 
@@ -680,6 +702,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		if(timeRemaining <= 0){
 			hasWon = true;
 			isGameOver = true;
+			goToStartButton.setVisible(true);
 			t.stop();
 		}
 

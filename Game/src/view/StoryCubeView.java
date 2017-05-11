@@ -39,6 +39,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	private Die[] gameDice;
 	private int diceWidth = 120;
 	private Die selectedDie;
+	private int dicePlaced = 0;
 
 	// Story Slots
 	private int[] storyboardX;
@@ -80,8 +81,8 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	private int storyTextY;
 	private String[] storyWords = {};
 	private boolean isSplitStoryLinesCalled = false; // to make sure the
-	// function is only
-	// called once
+														// function is only
+														// called once
 	private ArrayList<String> storyLines = new ArrayList<String>();
 	private int numLines = 0;
 	private int maxLines = 7; // maximum number of lines the text box will fit
@@ -238,18 +239,17 @@ public class StoryCubeView extends JPanel implements ActionListener {
 
 			// Dice
 			for (int i = 0; i < dgame.getNumDice(); i++) {
-				// g.drawRect(xCoordinates[i], yCoordinates[i], diceWidth,
-				// diceWidth);
 				if (isRolled) {
 					g.drawImage(gameDice[i].getDieImg(), gameDice[i].getXLoc(), gameDice[i].getYLoc(), diceWidth,
 							diceWidth, this); // draws
 					// images
-					if (isAnimDone && showStoryButton) {
-						storyButton.setVisible(true);
-						storyText.setVisible(true);
+					if (isAnimDone) {
+						//slots to drag dice into
 						g.drawRect(storyboardX[i], storyStartY, diceWidth, diceWidth); // draws
-																						// storyboard
-																						// slots
+						if (showStoryButton) {
+							storyButton.setVisible(true);
+							storyText.setVisible(true);
+						} 
 					}
 				}
 				if (isStorySaved) {
@@ -278,8 +278,8 @@ public class StoryCubeView extends JPanel implements ActionListener {
 						}
 					}
 					for (int k = 0; k < dgame.getNumDice(); k++)
-						g.drawImage(gameDice[k].getDieImg(), storyboardX[gameDice[k].getStoryIndex()], screenHeight - 2 * (diceWidth + betweenStory),
-								diceWidth, diceWidth, this);
+						g.drawImage(gameDice[k].getDieImg(), storyboardX[gameDice[k].getStoryIndex()],
+								screenHeight - 2 * (diceWidth + betweenStory), diceWidth, diceWidth, this);
 
 				}
 			}
@@ -348,7 +348,6 @@ public class StoryCubeView extends JPanel implements ActionListener {
 				startGameButton.setVisible(false);
 				isStartScreenVisible = false;
 				repaint();
-				// initializeCoordinates();
 				diceTimer.start();
 			}
 		});
@@ -359,7 +358,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 
 				rollDice(); // roll dice function
 				rollDiceButton.setVisible(false);
-				showStoryButton = true;
+				// showStoryButton = true;
 				repaint();
 
 			}
@@ -390,8 +389,8 @@ public class StoryCubeView extends JPanel implements ActionListener {
 				isAnimDone = false;
 				dgame.setDice();
 				rollDice();
-				showStoryButton = true;
-				repaint(); // storyButton.setVisible(true); //
+				// showStoryButton = true;
+				repaint();
 				storyText.setVisible(true);
 
 			}
@@ -402,8 +401,6 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		Random rand = new Random();
 		for (int i = 0; i < dgame.getNumDice(); i++) {
 			gameDice[i].throwDie();
-			// xCoordinates[i] = dice[i].getXLoc();
-			// yCoordinates[i] = dice[i].getYLoc();
 			gameDice[i].setDieImg(possibleDiceImgs[rand.nextInt(dgame.getNumImgs())]);
 		}
 	}
@@ -415,11 +412,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 			while (gameDice[i].getXLoc() != gameDice[i].getStartXLoc()
 					| gameDice[i].getYLoc() != gameDice[i].getStartYLoc()) {
 				gameDice[i].finishThrowing();
-				// xCoordinates[i] = dice[i].getXLoc();
-				// yCoordinates[i] = dice[i].getYLoc();
 				repaint();
-				// diceImages[i] =
-				// possibleDiceImgs[rand.nextInt(dgame.getNumImgs())];
 			}
 		}
 	}
@@ -498,6 +491,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 							selectedDie.setYLoc(storyStartY);
 							isPlaced = true;
 							selectedDie.setStoryIndex(i);
+							dicePlaced++;
 						}
 					}
 					for (int i = 0; i < dgame.getNumDice(); i++) {
@@ -507,6 +501,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 								selectedDie.setXLoc(selectedDie.getInitXLoc());
 								selectedDie.setYLoc(selectedDie.getInitYLoc());
 								isPlaced = false;
+								dicePlaced--;
 							}
 						}
 					}
@@ -518,6 +513,9 @@ public class StoryCubeView extends JPanel implements ActionListener {
 					selectedDie.setSelection(false);
 					isDieSelected = false;
 				}
+			}
+			if (dicePlaced == dgame.getNumDice()) {
+				showStoryButton = true;
 			}
 			repaint();
 		}
