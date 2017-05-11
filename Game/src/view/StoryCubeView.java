@@ -101,7 +101,6 @@ public class StoryCubeView extends JPanel implements ActionListener {
 			"diceimages/deadfishdie.png", "diceimages/dirtyvesseldie.png", "diceimages/dogpoopbagdie.png",
 			"diceimages/fishtagdie.png", "diceimages/flagdie.png" };
 	private BufferedImage[] possibleDiceImgs;
-	private BufferedImage[] finalImages;
 
 	// Start Screen
 	private boolean isStartScreenVisible = true;
@@ -136,7 +135,6 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		possibleDiceImgs = new BufferedImage[dgame.getNumImgs()];
 		storyboardX = new int[dgame.getNumDice()];
 		gameDice = dgame.getDice();
-		finalImages = new BufferedImage[dgame.getNumDice()];
 
 		// Buttons
 		startGameButton = new JButton("Start Game");
@@ -279,9 +277,8 @@ public class StoryCubeView extends JPanel implements ActionListener {
 							g.drawString(storyLines.get(j), storyTextX, stringYCoords[j]);
 						}
 					}
-					// setFinalImages();
 					for (int k = 0; k < dgame.getNumDice(); k++)
-						g.drawImage(finalImages[k], storyboardX[k], screenHeight - 2 * (diceWidth + betweenStory),
+						g.drawImage(gameDice[k].getDieImg(), storyboardX[gameDice[k].getStoryIndex()], screenHeight - 2 * (diceWidth + betweenStory),
 								diceWidth, diceWidth, this);
 
 				}
@@ -490,34 +487,37 @@ public class StoryCubeView extends JPanel implements ActionListener {
 			point = e.getPoint();
 			boolean isPlaced = false;
 			// if in range of storycubes
-			if (selectedDie != null) {
-				for(int i = 0; i < dgame.getNumDice(); i++){
-				//for (int xStory : storyboardX) {
-					if (point.x >= storyboardX[i] && point.x <= storyboardX[i] + diceWidth && point.y >= storyStartY
-							&& point.y <= storyStartY + diceWidth) {
-						selectedDie.setXLoc(storyboardX[i]);
-						selectedDie.setYLoc(storyStartY);
-						isPlaced = true;
-						finalImages[i] = selectedDie.getDieImg();
-					} 
-				}
-				for (int i = 0; i < dgame.getNumDice(); i++) {
-					if (selectedDie != gameDice[i]) {
-						if (selectedDie.getXLoc() == gameDice[i].getXLoc()
-								&& selectedDie.getYLoc() == gameDice[i].getYLoc()) {
-							selectedDie.setXLoc(selectedDie.getInitXLoc());
-							selectedDie.setYLoc(selectedDie.getInitYLoc());
-							isPlaced = false;
+			if (isDieSelected) {
+				if (selectedDie != null) {
+
+					for (int i = 0; i < dgame.getNumDice(); i++) {
+						// for (int xStory : storyboardX) {
+						if (point.x >= storyboardX[i] && point.x <= storyboardX[i] + diceWidth && point.y >= storyStartY
+								&& point.y <= storyStartY + diceWidth) {
+							selectedDie.setXLoc(storyboardX[i]);
+							selectedDie.setYLoc(storyStartY);
+							isPlaced = true;
+							selectedDie.setStoryIndex(i);
 						}
 					}
+					for (int i = 0; i < dgame.getNumDice(); i++) {
+						if (selectedDie != gameDice[i]) {
+							if (selectedDie.getXLoc() == gameDice[i].getXLoc()
+									&& selectedDie.getYLoc() == gameDice[i].getYLoc()) {
+								selectedDie.setXLoc(selectedDie.getInitXLoc());
+								selectedDie.setYLoc(selectedDie.getInitYLoc());
+								isPlaced = false;
+							}
+						}
+					}
+					if (!isPlaced) {
+						selectedDie.setXLoc(selectedDie.getInitXLoc());
+						selectedDie.setYLoc(selectedDie.getInitYLoc());
+					}
+
+					selectedDie.setSelection(false);
+					isDieSelected = false;
 				}
-				if(!isPlaced){
-					selectedDie.setXLoc(selectedDie.getInitXLoc());
-					selectedDie.setYLoc(selectedDie.getInitYLoc());
-				}
-				
-				selectedDie.setSelection(false);
-				isDieSelected = false;
 			}
 			repaint();
 		}

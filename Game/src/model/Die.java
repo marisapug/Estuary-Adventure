@@ -18,6 +18,7 @@ public class Die {
 	int initXLoc;
 	int initYLoc;
 	int dir;
+	int storyIndex;
 	boolean isSelected = false;
 	Random rand = new Random();
 	
@@ -160,6 +161,10 @@ public class Die {
 		return isSelected;
 	}
 	
+	public int getStoryIndex(){
+		return storyIndex;
+	}
+	
 	//Setters
 	public void setXLoc(int x){
 		xLoc = x;
@@ -191,5 +196,9 @@ public class Die {
 	
 	public void setSelection(boolean b){
 		isSelected = b;
+	}
+	
+	public void setStoryIndex(int si){
+		storyIndex = si;
 	}
 }
