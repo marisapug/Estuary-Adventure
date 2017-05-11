@@ -338,6 +338,9 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				
 				//GameState
 				startScreenVisible = false;
+<<<<<<< HEAD
+				
+=======
 				hasWon = false;
 				isGameOver = false;
 				
@@ -347,6 +350,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				gameOverTextStyle = "TimesRoman";
 				gameOverTextX = (screenWidth/2) - (winText.length()*gameOverTextSize)/4;
 				gameOverTextY = screenHeight/3;
+>>>>>>> 5a611a8c9caa915c291604578c8fa682081f93fa
 
 
 				//start timer
