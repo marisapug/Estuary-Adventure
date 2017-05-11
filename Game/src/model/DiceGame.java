@@ -55,10 +55,15 @@ public class DiceGame {
 		return dice;
 	}
 	
+	public Die getDieElem(int elem){
+		return dice[elem];
+	}
+	
 	//Setters
 	public void setAnimNum(int a){
 		animNum = a;
 	}
+	
 	
 	//Makes array of length numDice signaling whether or not an image has been chosen
 	void setImgBools(){
@@ -72,6 +77,7 @@ public class DiceGame {
 		Random rand = new Random();
 		int dieX = 0;
 		int dieY = 0;
+		
 		for (int i = 0; i < numDice; i++) {
 			if (i < 3) {
 				dieX = diceStartX + (diceWidth + betweenDice) * i - (diceWidth + betweenDice) / 2;
@@ -85,9 +91,11 @@ public class DiceGame {
 			while(imgBools[randInt]) {
 				randInt = rand.nextInt(numImgs);
 			}
-			tempDie.dieImg = randInt;
+			tempDie.dieImgNum = randInt;
 			imgBools[randInt] = true;
 			imgNums[i] = randInt;
+			tempDie.setInitXLoc(dieX);
+			tempDie.setInitYLov(dieY);
 		//	System.out.println(randInt);
 			dice[i] = tempDie;
 		}

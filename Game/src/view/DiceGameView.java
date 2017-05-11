@@ -63,7 +63,8 @@ public class DiceGameView extends JPanel implements ActionListener {
 	private boolean isSplitStoryLinesCalled = false; // to make sure the
 														// function is only
 														// called once
-	//TODO private boolean is
+	private boolean isDragging = false;
+	// TODO private boolean is
 	private String imgStrings[] = { "diceimages/appledie.png", "diceimages/bananadie.png", "diceimages/beakerdie.png",
 			"diceimages/boxdie.png", "diceimages/bucketdie.png", "diceimages/candie.png",
 			"diceimages/canwithwingsdie.png", "diceimages/chipbagdie.png", "diceimages/cleanvesseldie.png",
@@ -148,11 +149,12 @@ public class DiceGameView extends JPanel implements ActionListener {
 		originalY = new int[dgame.getNumDice()];
 
 		// Initialize Distances
-		//betweenDice = diceWidth + 10;
-		//diceStartX = (screenWidth - (dgame.getNumDice() / 2 * diceWidth + (dgame.getNumDice() / 2 - 1) * betweenDice))
-		//		/ 2;
+		// betweenDice = diceWidth + 10;
+		// diceStartX = (screenWidth - (dgame.getNumDice() / 2 * diceWidth +
+		// (dgame.getNumDice() / 2 - 1) * betweenDice))
+		// / 2;
 		storyStartX = (screenWidth - (dgame.getNumDice() * diceWidth + (dgame.getNumDice() - 1) * betweenStory)) / 2;
-		//diceStartY = (screenHeight - (3 * diceWidth + 2 * betweenStory)) / 2;
+		// diceStartY = (screenHeight - (3 * diceWidth + 2 * betweenStory)) / 2;
 		storyStartY = (screenHeight - diceWidth) / 2;
 		storyTextX = diceWidth + 30;
 		storyTextY = diceWidth + 60;
@@ -207,7 +209,7 @@ public class DiceGameView extends JPanel implements ActionListener {
 	}
 
 	// Set Initial Coordinates for Images
-	public void initializeCoordinates() { //change coordinates
+	public void initializeCoordinates() { // change coordinates
 		for (int i = 0; i < dgame.getNumDice(); i++) {
 			Die[] dice = dgame.getDice();
 			Die tmpDie = dice[i];
@@ -406,8 +408,8 @@ public class DiceGameView extends JPanel implements ActionListener {
 				rollDice();
 				showStoryButton = true;
 				repaint();
-				//storyButton.setVisible(true);
-				//storyText.setVisible(true);		
+				// storyButton.setVisible(true);
+				// storyText.setVisible(true);
 			}
 		});
 	}
@@ -422,17 +424,18 @@ public class DiceGameView extends JPanel implements ActionListener {
 			diceImages[i] = possibleDiceImgs[rand.nextInt(dgame.getNumImgs())];
 		}
 	}
-	
-	void returnDice(){ //returns rolled dice to their original positions
+
+	void returnDice() { // returns rolled dice to their original positions
 		System.out.println("returnDice called");
 		Die[] dice = dgame.getDice();
 		for (int i = 0; i < dgame.getNumDice(); i++) {
-			while(dice[i].getXLoc() != dice[i].getStartXLoc() | dice[i].getYLoc() != dice[i].getStartYLoc()){
+			while (dice[i].getXLoc() != dice[i].getStartXLoc() | dice[i].getYLoc() != dice[i].getStartYLoc()) {
 				dice[i].finishThrowing();
 				xCoordinates[i] = dice[i].getXLoc();
 				yCoordinates[i] = dice[i].getYLoc();
 				repaint();
-				//diceImages[i] = possibleDiceImgs[rand.nextInt(dgame.getNumImgs())];
+				// diceImages[i] =
+				// possibleDiceImgs[rand.nextInt(dgame.getNumImgs())];
 			}
 		}
 	}
@@ -486,6 +489,8 @@ public class DiceGameView extends JPanel implements ActionListener {
 						if (tmpPoint.y > yCoordinates[i] && tmpPoint.y < (yCoordinates[i] + diceWidth)) {
 							clickedIndex = i;
 							toPlace = true;
+							isPressing = true;
+							// isDiceUntouched = false;
 						}
 					}
 					/*
@@ -493,15 +498,12 @@ public class DiceGameView extends JPanel implements ActionListener {
 					 * storyStartY){ numDicePlaced--; }
 					 */
 				}
-				if (!isPressing)
-					isPressing = true;
 			}
 			repaint();
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			isPressing = false;
 			for (int i = 0; i < dgame.getNumDice(); i++) {
 				if (tmpPoint.x > storyboardX[i] && tmpPoint.x < (storyboardX[i] + diceWidth)) {
 					if (tmpPoint.y > storyStartY && tmpPoint.y < (storyStartY + diceWidth)) {
@@ -513,19 +515,21 @@ public class DiceGameView extends JPanel implements ActionListener {
 				}
 			}
 
-			if (isRolled) {
+			if (isRolled && isDragging) {
 				if (canPlace) {
 					xCoordinates[clickedIndex] = storyboardX[releasedIndex];
 					yCoordinates[clickedIndex] = storyStartY;
 					finalImages[releasedIndex] = diceImages[clickedIndex];
 					// numDicePlaced++;
-				} else if(toPlace){
+				} else if (toPlace) {
 					xCoordinates[clickedIndex] = originalX[clickedIndex];
 					yCoordinates[clickedIndex] = originalY[clickedIndex];
 				}
 			}
+			isPressing = false;
 			canPlace = true;
 			toPlace = false;
+			isDragging = false;
 			repaint();
 		}
 
@@ -540,21 +544,17 @@ public class DiceGameView extends JPanel implements ActionListener {
 		@Override
 		public void mouseDragged(MouseEvent e) {
 			tmpPoint = e.getPoint();
-			if (toPlace) {
+			if (isPressing) {
 				xCoordinates[clickedIndex] = tmpPoint.x - diceWidth / 2;
 				yCoordinates[clickedIndex] = tmpPoint.y - diceWidth / 2;
 			}
+			if(!isDragging)
+				isDragging = true;
 			repaint();
 		}
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			tmpPoint = e.getPoint();
-			if (toPlace) {
-				xCoordinates[clickedIndex] = tmpPoint.x - diceWidth / 2;
-				yCoordinates[clickedIndex] = tmpPoint.y - diceWidth / 2;
-			}
-			repaint();
 		}
 	}
 }

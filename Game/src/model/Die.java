@@ -1,10 +1,11 @@
 package model;
 
+import java.awt.image.BufferedImage;
 import java.util.Random;
 
 public class Die {
-	int dieImg = 0;
-	int dieNum;
+	BufferedImage dieImg;
+	int dieImgNum = 0;
 	static int imgWidth;
 	static int screenWidth;
 	static int screenHeight;
@@ -14,12 +15,15 @@ public class Die {
 	int yLoc;
 	int startXLoc;
 	int startYLoc;
+	int initXLoc;
+	int initYLoc;
 	int dir;
+	boolean isSelected = false;
 	Random rand = new Random();
 	
 	public Die(int n, int x, int y, int imgW, int sWidth, int sHeight){
 		dir = rand.nextInt(4);
-		dieNum = n;
+		dieImgNum = n;
 		xLoc = x;
 		startXLoc = x;
 		yLoc = y;
@@ -138,5 +142,54 @@ public class Die {
 	
 	public int getStartYLoc(){
 		return startYLoc;
+	}
+	
+	public int getInitXLoc(){
+		return initXLoc;
+	}
+	
+	public int getInitYLoc(){
+		return initYLoc;
+	}
+	
+	public BufferedImage getDieImg(){
+		return dieImg;
+	}
+	
+	public boolean getSelection(){
+		return isSelected;
+	}
+	
+	//Setters
+	public void setXLoc(int x){
+		xLoc = x;
+	}
+	
+	public void setYLoc(int y){
+		yLoc = y;
+	}
+	
+	public void setStartXLoc(int sx){
+		startXLoc = sx;
+	}
+	
+	public void setStartYLoc(int sy){
+		startYLoc = sy;
+	}
+	
+	public void setInitXLoc(int ix){
+		initXLoc = ix;
+	}
+	
+	public void setInitYLov(int iy){
+		initYLoc = iy;
+	}
+	
+	public void setDieImg(BufferedImage img){
+		dieImg = img;
+	}
+	
+	public void setSelection(boolean b){
+		isSelected = b;
 	}
 }
