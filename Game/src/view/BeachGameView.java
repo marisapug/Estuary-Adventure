@@ -327,6 +327,8 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				//button visibility
 				startButton.setVisible(false);
 				startScreenVisible = false;
+				
+
 
 				//start timer
 				t.start();

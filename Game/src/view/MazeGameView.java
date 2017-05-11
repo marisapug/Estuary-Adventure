@@ -354,6 +354,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int ageStateCellMediumCount;
 	private int ageStateCellLargeCount;
 	private int ageStateCellCurrentCount;
+	
+	//scoreboard
+	JTextField nameTextField;
+	JButton enterNameButton;
 
 	//=================================================================//
 
@@ -379,6 +383,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 		tutorialButton = new JButton("Tutorial");
 		tutorialButton.setFocusable(false);
+		
+		enterNameButton = new JButton("Enter Score");
+		enterNameButton.setFocusable(false);
 
 		goToStartButton = new JButton("Go to Start Screen");
 		goToStartButton.setFocusable(false);
@@ -405,6 +412,14 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 		//initialize crab
 		testCrab = new Crab(5,0,screenWidth/2 + 10 ,screenHeight/2 + 10);
+		
+		//scoreboard
+		nameTextField = new JTextField("Enter your name here");
+		nameTextField.setBackground(Color.WHITE);
+		this.add(nameTextField);
+		this.add(enterNameButton);
+		nameTextField.setVisible(false);
+		enterNameButton.setVisible(false);
 
 		//Button Listeners
 		bCrabButton.addActionListener(new ActionListener(){
@@ -521,7 +536,27 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				tutSalinityTextXLoc = screenWidth/2 -((tutFontSize * tutSalinityText.length())/4);
 				tutMiniMapTextXLoc = screenWidth/2 -((tutFontSize * tutMiniMapText.length())/4);
 				tutTextYLoc = screenHeight/2;
+				
+				nameTextField.setVisible(false);
+				enterNameButton.setVisible(false);
 
+			}
+		});
+		
+		enterNameButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				String tempName = nameTextField.getText();
+				board.insertScore(tempName, 10);
+				try {
+					board.writeScoresToFile();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				board.printHighScores();
+				goToStartButton.setVisible(true);
+				enterNameButton.setVisible(false);
+				nameTextField.setVisible(false);
 			}
 		});
 
@@ -549,6 +584,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				}else{
 					endWinText = "You've Fininshed the Tutorial, try your skills at the real game!";
 				}
+				
+				nameTextField.setVisible(false);
+				enterNameButton.setVisible(false);
 
 				//crab
 				health = testCrab.getHealth();
@@ -668,6 +706,19 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				startButton.setVisible(false);
 				timeRemaining = totalTime;
 
+	
+				//scoreStuff
+				try {
+					board.readScoresFromFile();
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+	
 				//Start Timer
 				t.start();
 			}
@@ -1043,7 +1094,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		if(testCrab.getXLoc() > endCell.getXLoc() && testCrab.getYLoc() > endCell.getYLoc()){
 			hasWon = true;
 			endScreenVisible = true;
-			goToStartButton.setVisible(true);
+			nameTextField.setVisible(true);
+			enterNameButton.setVisible(true);
 			t.stop();
 		}
 

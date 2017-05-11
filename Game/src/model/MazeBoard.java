@@ -1,5 +1,12 @@
 package model;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.*;
 
 public class MazeBoard {
@@ -68,8 +75,11 @@ public class MazeBoard {
 	
 	//POWER UPs
 	private int numPowerUps;
-//	private PowerUp[] gamePowerUps;
 	private ArrayList<PowerUp> gamePowerUps = new ArrayList<PowerUp>();
+	
+	//LEADERBOARD STUFF
+	private int numScores = 10; //dont alter
+	private PlayerScore[] highScores = new PlayerScore[numScores];
 
 	//CONSTRUCTOR for game board
 	public MazeBoard(int dif, int sWidth, int sHeight){
@@ -587,6 +597,52 @@ public class MazeBoard {
 	}
 	
 	
+	//HIGHSCORE UPDATING 
+	public void insertScore(String newName, double newScore){
+		PlayerScore prevPlayer;
+		PlayerScore currPlayer;
+		PlayerScore tempPlayer;
+		if(highScores[numScores - 1] == null || highScores[numScores - 1].getScore() < newScore){
+			highScores[numScores - 1] = new PlayerScore(newName, newScore);
+			
+			for(int i = numScores - 2; i >= 0; i--){
+				prevPlayer = highScores[i + 1];
+				currPlayer = highScores[i];
+				if(currPlayer == null || prevPlayer.getScore() > currPlayer.getScore()){
+					tempPlayer = currPlayer;
+					highScores[i] = prevPlayer;
+					highScores[i + 1] = tempPlayer;
+				}
+			}//for
+		}//if
+	}//insertScore
+	
+	public void writeScoresToFile() throws IOException{
+		File file = new File("highScores.tmp");
+		FileOutputStream fos = new FileOutputStream(file);
+		ObjectOutputStream oos = new ObjectOutputStream(fos);
+		oos.writeObject(highScores);
+		oos.close();
+	}
+	
+	public void readScoresFromFile() throws IOException, ClassNotFoundException{
+		FileInputStream fis = new FileInputStream("highScores.tmp");
+		ObjectInputStream ois = new ObjectInputStream(fis);
+		highScores = (PlayerScore[]) ois.readObject();
+		ois.close();
+	}
+	
+	public void printHighScores(){
+		for(PlayerScore pS : highScores){
+			if(pS != null)
+				System.out.println("Name: " + pS.getName() + " -- Score: " + pS.getScore());
+			else
+				System.out.println("null");
+		}
+		System.out.println("All scores printed");
+	}
+	
+	
 	
 	//GETTERS-----------------------------------------------------------------------------------------
 	
@@ -709,6 +765,10 @@ public class MazeBoard {
 	
 	public String getTutMiniMapText(){
 		return tutMiniMapText;
+	}
+	
+	public PlayerScore[] getHighScores(){
+		return highScores;
 	}
 
 	//SETTERS
