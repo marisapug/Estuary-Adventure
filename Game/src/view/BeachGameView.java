@@ -192,6 +192,17 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private boolean hasSpawnedOysters;
 	private boolean hasSpawnedFirstBoat;
 	private boolean hasSpawnedSecondBoat;
+	
+	private String tutorialTextStyle;
+	private int tutorialTextSize;
+	
+	private String firstBoatStateText;
+	private String grassStateText;
+	private String seawallStateText;
+	private String oysterStateText;
+	private String gabionStateText;
+	private String secondBoatStateText;
+	private String finishTutorialStateText;
 
 	//=======================================================================//
 
@@ -252,7 +263,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				grassTimer = 0;
 
 				oysterSpawnTimer = 0; 
-				oysterSpawnTick = 200; // 2 seconds
+				oysterSpawnTick = 400; // 4 seconds
 
 				//features bar intialization
 				featuresBarWidth = board.getFeaturesBarWidth();
@@ -291,7 +302,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				healthTitleY = featuresBarHeight - (featuresBarHeight - healthTitleFontSize)/2;
 				healthTitleFontStyle = "TimesRoman";
 
-				//oyster count intialization	
+				//oyster count initialization	
 				oysterCountLabel = "Oyster Count: ";
 				oysterCountFontStyle = "TimesRoman";
 				oysterCountFontSize = screenWidth/60;
@@ -299,6 +310,18 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				oysterCountLabelYLoc = featuresBarHeight - (featuresBarHeight - oysterCountFontSize)/2;
 				oysterCountXLoc = oysterCountLabelXLoc + oysterCountLabel.length()*oysterCountFontSize/2;
 				oysterCountYLoc = oysterCountLabelYLoc;
+				
+				//tutorial text initializations
+				tutorialTextStyle = "TimesRoman";
+				tutorialTextSize = screenHeight/40;
+				
+				firstBoatStateText = "Oh No! The WAKES from the ships are destroying the shore!";
+				grassStateText = "Plant grass to heal the shore over time";
+				seawallStateText = "Use seawalls to protect the shore";
+				oysterStateText = "You need three oysters to set an oyster gabion";
+				gabionStateText = "Gabions are STRONGER than seawalls";
+				secondBoatStateText = "Barriers block the WAKES!";
+				finishTutorialStateText = "GET READY TO PLAY!";
 
 
 				//button visibility
@@ -433,33 +456,34 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			}
 
 			//TUTORIAL TEXT AND IMAGES
+			g.setFont(new Font(tutorialTextStyle,Font.BOLD,tutorialTextSize));
 			if(isTutorial){
 				g2.setStroke(new BasicStroke(6));
 				g.setColor(Color.BLACK);
 				if(tutorialState == firstBoatState){
-					g.drawString("OH NO! The WAKES from the ships are destroying the shore", 400, 100);
+					g.drawString(firstBoatStateText, screenWidth/2 - (firstBoatStateText.length()*tutorialTextSize)/5, screenHeight/3);
 				}
 				else if(tutorialState == grassState){
-					g.drawString("Plant Grass to heal the Shore over time", 400, 100);
+					g.drawString(grassStateText, screenWidth/2 - (grassStateText.length()*tutorialTextSize)/5, screenHeight/3);
 					g2.setColor(Color.green);
 					g2.drawRect(board.getGrassBucketXLoc(),board.getGrassBucketYLoc(),board.getGrassBucketWidth(),board.getGrassBucketHeight());
 				}
 				else if(tutorialState == seawallState){
-					g.drawString("Use seawalls to protect the shore", 400, 100);
+					g.drawString(seawallStateText, screenWidth/2 - (seawallStateText.length()*tutorialTextSize)/5, screenHeight/3);
 					g2.setColor(Color.green);
 					g2.drawRect(board.getSeawallBucketXLoc(),board.getSeawallBucketYLoc(),board.getSeawallBucketWidth(),board.getSeawallBucketHeight());
 				}
 				else if(tutorialState == gabionState){
-					g.drawString("Grab 3 shells to plant a gabion!", 400, 100);
-					g.drawString("Gabions are STRONGER than seawalls", 400, 200);
+					g.drawString(oysterStateText, screenWidth/2 - (oysterStateText.length()*tutorialTextSize)/5, screenHeight/3);
+					g.drawString(gabionStateText, screenWidth/2 - (gabionStateText.length()*tutorialTextSize)/5, screenHeight/3 + tutorialTextSize);
 					g2.setColor(Color.green);
 					g2.drawRect(board.getGabionBucketXLoc(),board.getGabionBucketYLoc(),board.getGabionBucketWidth(),board.getGabionBucketHeight());
 				}
 				else if(tutorialState == secondBoatState){
-					g.drawString("barriers block WAKES", 400, 100);
+					g.drawString(secondBoatStateText, screenWidth/2 - (secondBoatStateText.length()*tutorialTextSize)/5, screenHeight/3);
 				}
 				else if(tutorialState == finishTutorialState){
-					g.drawString("GET READY TO PLAY!!", 400, 150);
+					g.drawString(finishTutorialStateText, screenWidth/2 - (finishTutorialStateText.length()*tutorialTextSize)/5, screenHeight/3);
 				}
 			}//end draw tutorial stuff
 
@@ -608,7 +632,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		}
 
 		if(timeRemaining < 60){
-			newBoatTimer = 200;
+			newBoatTimer = 300;
 		}
 
 		//Checks if you lose
