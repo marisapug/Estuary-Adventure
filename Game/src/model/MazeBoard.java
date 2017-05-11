@@ -83,7 +83,8 @@ public class MazeBoard {
 	
 	private int easyScore = 10000;
 	private int mediumScore = 20000;
-	private int largeScore = 30000;
+	private int hardScore = 30000;
+	private int scoreDecrementOnHit = 500;
 
 	//CONSTRUCTOR for game board
 	public MazeBoard(int dif, int sWidth, int sHeight){
@@ -779,8 +780,12 @@ public class MazeBoard {
 		return mediumScore;
 	}
 	
-	public int getLargeScore(){
-		return largeScore;
+	public int getHardScore(){
+		return hardScore;
+	}
+	
+	public int getScoreDecrementOnHit(){
+		return scoreDecrementOnHit;
 	}
 	
 	public PlayerScore[] getHighScores(){
