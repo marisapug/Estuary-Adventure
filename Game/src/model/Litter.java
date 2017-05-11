@@ -67,11 +67,11 @@ public class Litter {
 	 */
 	public boolean hitLitter(int xL, int yL, int w, int h){
 		if((
-				(xL > xLoc && xL < xLoc + width)   || (xL + w > xLoc && xL + w < xLoc + width)) &&
-				((yL > yLoc && yL < yLoc + height) || (yL + h > yLoc && yL + h < yLoc + height))
+				(xL > xLoc && xL < xLoc + getWidth())   || (xL + w > xLoc && xL + w < xLoc + getWidth())) &&
+				((yL > yLoc && yL < yLoc + getHeight()) || (yL + h > yLoc && yL + h < yLoc + getHeight()))
 				||
-				((xLoc > xL && xLoc < xL + w )|| (xLoc + width > xL && xLoc + width < xL + w)) &&
-				((yLoc > yL && yLoc < yL + h) ||(yLoc + height > yL && yLoc + height < yL + h))
+				((xLoc > xL && xLoc < xL + w )|| (xLoc + getWidth() > xL && xLoc + getWidth() < xL + w)) &&
+				((yLoc > yL && yLoc < yL + h) ||(yLoc + getHeight() > yL && yLoc + getHeight() < yL + h))
 				){
 			return true;
 		}
