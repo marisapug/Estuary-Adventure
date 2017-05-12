@@ -38,21 +38,18 @@ public class DiceGameView extends JPanel implements ActionListener {
 	// Dice
 	DiceGame dgame;
 	private int diceWidth = 120;
-	private int betweenDice;
 	private int betweenStory = 10;
-	private int diceStartX;
 	private int storyStartX;
-	private int diceStartY;
 	private int storyStartY;
 	private int storyTextX;
 	private int storyTextY;
-	private int numDicePlaced = 0;
 	private Font storyTextStyle;
 	private int storyFontSize = screenWidth / 25;
 	private int maxLines = 7; // maximum number of lines the text box will fit
 	private int numLines = 0;
-	private String[] storyWords = {};
+	private ArrayList<String> storyWords = new ArrayList<String>();
 	private ArrayList<String> storyLines = new ArrayList<String>();
+	private int numCharsOnLine = screenWidth / 55;
 	private int[] stringYCoords = new int[maxLines];
 	private boolean isRolled = false; // true if the user pressed the button to
 										// roll
@@ -104,6 +101,8 @@ public class DiceGameView extends JPanel implements ActionListener {
 
 	// TextArea
 	JTextArea storyText;
+	String storyString;
+	
 
 	// Images
 	BufferedImage oceanBackground = createImage("background/dicebackground.jpg");
@@ -286,10 +285,23 @@ public class DiceGameView extends JPanel implements ActionListener {
 					Color navy = new Color(3, 0, 130);
 					g.setColor(navy);
 					g.setFont(storyTextStyle);
-					if (dgame.getDiceStory().length() <= 35) {
+					if (dgame.getDiceStory().length() <= numCharsOnLine) {
 						g.drawString(dgame.getDiceStory(), storyTextX, storyTextY);
 					} else {
-						storyWords = dgame.getDiceStory().split(" ");
+						String[] storyWordsTmp = dgame.getDiceStory().split(" ");
+						for (String s: storyWordsTmp){
+							if(s.length() > numCharsOnLine){
+								int numSplits = s.length() / numCharsOnLine;
+								for(int j = 0; j < numSplits; j++){
+									String piece = s.substring(j * numCharsOnLine, (j + 1) * numCharsOnLine);
+									storyWords.add(piece);
+								}
+								String lastPiece = s.substring(numSplits * numCharsOnLine);
+								storyWords.add(lastPiece);
+							}
+							else
+								storyWords.add(s);
+						}
 						if (!isSplitStoryLinesCalled) {
 							storyLines = splitStoryLines();
 							numLines = storyLines.size();
@@ -298,7 +310,7 @@ public class DiceGameView extends JPanel implements ActionListener {
 							}
 							isSplitStoryLinesCalled = true;
 						}
-						for (int j = 0; j < numLines; j++) {
+						for (int j = 0; j < storyLines.size(); j++) {
 							g.drawString(storyLines.get(j), storyTextX, stringYCoords[j]);
 						}
 					}
@@ -326,43 +338,42 @@ public class DiceGameView extends JPanel implements ActionListener {
 	}
 
 	// Splits strings of story into lines
-	ArrayList<String> splitStoryLines() { // iterate through story words, adding
-											// a new fragment to arraylist
-		// every time the words are almost 22 characters
-		int currWord = 0;
-		ArrayList<String> lines = new ArrayList<String>();
-		stringYCoords[0] = storyTextY;
-		for (int k = 1; k < maxLines; k++) {
-			stringYCoords[k] = 0;
-		}
-		int yCoordIndex = 0;
-		while (currWord < storyWords.length) {
-			String fragment = "";
-			int j = currWord;
-			boolean lineOver = false;
-			int numChars = storyWords[currWord].length();
-			while (j < storyWords.length && !lineOver) {
-				numChars += storyWords[j].length();
-				fragment = fragment + storyWords[j] + " ";
-				if (j < (storyWords.length - 1) && numChars + storyWords[j + 1].length() > 35) {
-					if (stringYCoords[yCoordIndex] == 0)
-						stringYCoords[yCoordIndex] = stringYCoords[yCoordIndex - 1] + 50;
-					lineOver = true;
-					yCoordIndex++;
-					lines.add(fragment);
-				} else if (j == (storyWords.length - 1) && yCoordIndex > 0) {
-					stringYCoords[yCoordIndex] = stringYCoords[yCoordIndex - 1] + 50;
-					lineOver = true;
-					yCoordIndex++;
-					lines.add(fragment);
-				}
-				j++;
-				currWord = j;
+		ArrayList<String> splitStoryLines() { 
+			int currWord = 0;
+			ArrayList<String> lines = new ArrayList<String>();
+			stringYCoords[0] = storyTextY;
+			for (int k = 1; k < maxLines; k++) { //initializing array to all 0's 
+				stringYCoords[k] = 0;
 			}
+			int yCoordIndex = 0;
+			int numStrings = storyWords.size();
+			while (currWord < storyWords.size()) {
+				String fragment = "";
+				int j = currWord;
+				boolean lineOver = false;
+				int numChars = storyWords.get(currWord).length();
+				while (j < storyWords.size() && !lineOver) {
+					numChars += storyWords.get(j).length();
+					fragment = fragment + storyWords.get(j) + " ";
+					if (j < (storyWords.size() - 1) && numChars + storyWords.get(j + 1).length() > numCharsOnLine) {
+						if (stringYCoords[yCoordIndex] == 0)
+							stringYCoords[yCoordIndex] = stringYCoords[yCoordIndex - 1] + 50;
+						lineOver = true;
+						yCoordIndex++;
+						lines.add(fragment);
+					} else if (j == (storyWords.size() - 1) && yCoordIndex > 0) {
+						stringYCoords[yCoordIndex] = stringYCoords[yCoordIndex - 1] + 50;
+						lineOver = true;
+						yCoordIndex++;
+						lines.add(fragment);
+					}
+					j++;
+					currWord = j;
+				}
+			}
+			return lines;
 		}
-		return lines;
-	}
-
+		
 	// Set Button Listeners
 	void setupListeners() {
 		startGameButton.addActionListener(new ActionListener() {
@@ -407,6 +418,8 @@ public class DiceGameView extends JPanel implements ActionListener {
 				dgame.setDice();
 				rollDice();
 				showStoryButton = true;
+				storyWords.clear();
+				storyLines.clear();
 				repaint();
 				// storyButton.setVisible(true);
 				// storyText.setVisible(true);
@@ -417,46 +430,62 @@ public class DiceGameView extends JPanel implements ActionListener {
 	void animDice() {
 		Random rand = new Random();
 		Die[] dice = dgame.getDice();
-		for (int i = 0; i < dgame.getNumDice(); i++) {
-			dice[i].throwDie();
-			xCoordinates[i] = dice[i].getXLoc();
-			yCoordinates[i] = dice[i].getYLoc();
-			diceImages[i] = possibleDiceImgs[rand.nextInt(dgame.getNumImgs())];
-		}
-	}
-
-	void returnDice() { // returns rolled dice to their original positions
-		System.out.println("returnDice called");
-		Die[] dice = dgame.getDice();
-		for (int i = 0; i < dgame.getNumDice(); i++) {
-			while (dice[i].getXLoc() != dice[i].getStartXLoc() | dice[i].getYLoc() != dice[i].getStartYLoc()) {
-				dice[i].finishThrowing();
+		if(!isAnimDone){
+			for (int i = 0; i < dgame.getNumDice(); i++) {
+				dice[i].throwDie();
 				xCoordinates[i] = dice[i].getXLoc();
 				yCoordinates[i] = dice[i].getYLoc();
-				repaint();
-				// diceImages[i] =
-				// possibleDiceImgs[rand.nextInt(dgame.getNumImgs())];
+				diceImages[i] = possibleDiceImgs[rand.nextInt(dgame.getNumImgs())];
 			}
+		}
+		else{
+			System.out.println("else");
+			for (int i = 0; i < dgame.getNumDice(); i++) {
+				while(dice[i].getXLoc() != dice[i].getStartXLoc() | dice[i].getYLoc() != dice[i].getStartYLoc()){
+					System.out.println("while");
+					repaint();
+					dice[i].finishThrowing();
+					xCoordinates[i] = dice[i].getXLoc();
+					yCoordinates[i] = dice[i].getYLoc();
+					System.out.println("repainting");
+					//diceImages[i] = possibleDiceImgs[rand.nextInt(dgame.getNumImgs())];
+				}
+			}		
 		}
 	}
 
-	public void actionPerformed(ActionEvent e) {
-		if (numAnimations < animsToDo) {
-			if (isRolled && !isAnimDone) {
-				animDice();
-				repaint();
-				numAnimations++;
-			}
-		} else if (numAnimations == animsToDo) {
-			isAnimDone = true;
-			returnDice();
-			setDiceImgs();
+	/*	void returnDice(){ //returns rolled dice to their original positions
+	System.out.println("returnDice called");
+	Die[] dice = dgame.getDice();
+	for (int i = 0; i < dgame.getNumDice(); i++) {
+		while(dice[i].getXLoc() != dice[i].getStartXLoc() | dice[i].getYLoc() != dice[i].getStartYLoc()){
+			dice[i].finishThrowing();
+			xCoordinates[i] = dice[i].getXLoc();
+			yCoordinates[i] = dice[i].getYLoc();
 			repaint();
-			// storyButton.setVisible(true);
-			// storyText.setVisible(true);
-			numAnimations++;
+			//diceImages[i] = possibleDiceImgs[rand.nextInt(dgame.getNumImgs())];
 		}
 	}
+} */
+
+public void actionPerformed(ActionEvent e) {
+	if (numAnimations < animsToDo) {
+		if (isRolled && !isAnimDone) {
+			animDice();
+			repaint();
+			numAnimations++;
+		}
+	} else if (numAnimations == animsToDo) {
+		isAnimDone = true;
+		animDice();
+		setDiceImgs();
+		//repaint();
+		// storyButton.setVisible(true);
+		// storyText.setVisible(true);
+		numAnimations++;
+	}
+}
+
 
 	// Set up mouse listener
 	private Component getMouseTarget() {
