@@ -5,6 +5,7 @@ import model.MazeBoard;
 import model.MazeCell;
 import model.MazeWall;
 import model.MiniMap;
+import model.PlayerScore;
 import model.PowerUp;
 import model.Predator;
 import model.Litter;
@@ -338,6 +339,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 	//Game state
 	private boolean hasWon;
+	private boolean isEasyMode;
+	private boolean isMediumMode;
+	private boolean isHardMode;
 
 	//Board Buttons
 	private JButton easyButton;
@@ -356,8 +360,14 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int ageStateCellCurrentCount;
 	
 	//scoreboard
-	JTextField nameTextField;
-	JButton enterNameButton;
+	private JTextField nameTextField;
+	private JButton enterNameButton;
+	private int gameScore;
+	private int scoreDecrementTimer;
+	private int scoreDecrementLimit;
+	private int scoreDecrementOnHit;
+	private boolean isScoreBoardView;
+	
 
 	//=================================================================//
 
@@ -442,6 +452,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				powerUpTextSeen = true;
 				salinityTextSeen = true;
 				miniMapTextSeen = true;
+				
+				isEasyMode = false;
+				isMediumMode = false;
+				isHardMode = false;
 			}
 
 		});
@@ -466,6 +480,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				powerUpTextSeen = true;
 				salinityTextSeen = true;
 				miniMapTextSeen = true;
+				
+				isEasyMode = false;
+				isMediumMode = false;
+				isHardMode = false;
 			}
 
 		});
@@ -478,6 +496,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				hardButton.setVisible(false);
 				tutorialButton.setVisible(false);
 				startButton.setVisible(true);
+				isEasyMode = true;
 			}
 		});
 
@@ -489,6 +508,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				hardButton.setVisible(false);
 				tutorialButton.setVisible(false);
 				startButton.setVisible(true);
+				isMediumMode = true;
 			}
 		});
 
@@ -500,6 +520,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				hardButton.setVisible(false);
 				tutorialButton.setVisible(false);
 				startButton.setVisible(true);
+				isHardMode = true;
 			}
 		});
 
@@ -537,8 +558,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				tutMiniMapTextXLoc = screenWidth/2 -((tutFontSize * tutMiniMapText.length())/4);
 				tutTextYLoc = screenHeight/2;
 				
+				//tutorial stuff
 				nameTextField.setVisible(false);
 				enterNameButton.setVisible(false);
+
 
 			}
 		});
@@ -546,7 +569,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		enterNameButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				String tempName = nameTextField.getText();
-				board.insertScore(tempName, 10);
+				board.insertScore(tempName, gameScore);
 				try {
 					board.writeScoresToFile();
 				} catch (IOException e1) {
@@ -557,6 +580,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				goToStartButton.setVisible(true);
 				enterNameButton.setVisible(false);
 				nameTextField.setVisible(false);
+				isScoreBoardView = true;
+				repaint();
 			}
 		});
 
@@ -573,6 +598,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				t.stop();
 				repaint();
 				board = null;
+				isScoreBoardView = false;
 			}
 		});
 
@@ -587,6 +613,20 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				
 				nameTextField.setVisible(false);
 				enterNameButton.setVisible(false);
+				isScoreBoardView = false;
+				
+				scoreDecrementLimit = 1;
+				scoreDecrementTimer = 0;
+				scoreDecrementOnHit = board.getScoreDecrementOnHit();
+				
+				if(isEasyMode){
+					gameScore = board.getEasyScore();
+				}else if(isMediumMode){
+					gameScore = board.getMediumScore();
+				}else if(isHardMode){
+					gameScore = board.getHardScore();
+				}
+				
 
 				//crab
 				health = testCrab.getHealth();
@@ -753,8 +793,15 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			g.drawString(titleText,titleStringX,titleStringY);
 
 		}//if
-
-
+		else if(isScoreBoardView){
+			int shift = 40;
+			g.setFont(new Font(titleFontStyle,Font.BOLD,titleFontSize));
+			g.setColor(Color.WHITE);
+			for(PlayerScore pS: board.getHighScores()){
+				g.drawString(pS.getName() + " -- " + pS.getScore(), screenWidth/2, shift + 100);
+				shift += titleFontSize * 2;
+			}
+		}
 		//EVERYTHING ELSE
 		else{
 
@@ -878,6 +925,14 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				g.setColor(Color.BLACK);
 				g.drawString(timeRemainingLabel, timeRemainingLabelXLoc, timeRemainingLabelYLoc);
 				g.drawString(String.valueOf(timeRemaining), timeXLoc, timeYLoc);
+			}
+			
+			//ScoreDrawing
+			if(!isTutorial){
+				g.setFont(new Font(titleFontStyle,Font.BOLD,timeRemainingFontSize));
+				g.setColor(Color.BLACK);
+				g.drawString("Score: ", timeRemainingLabelXLoc, timeRemainingLabelYLoc + timeRemainingFontSize);
+				g.drawString(String.valueOf(gameScore), timeXLoc, timeYLoc + timeRemainingFontSize);
 			}
 
 			//Crab Health Drawing
@@ -1046,6 +1101,12 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				timeRemaining--;
 				timeCheck = 0;
 			}
+			if(scoreDecrementTimer >= scoreDecrementLimit){
+				scoreDecrementTimer = 0;
+				gameScore = gameScore - 1;
+			}else{
+				scoreDecrementTimer++;
+			}
 		}
 
 		//curr power up timer
@@ -1170,6 +1231,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				if(!isTutorial){
 					health -= 1;
 					hitTimer = 0;
+					gameScore = gameScore - scoreDecrementOnHit;
 				}
 				else{
 					if(!tutIsLitterHit){
@@ -1184,6 +1246,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				if(!isTutorial){
 					health -= 1;
 					hitTimer = 0;
+					gameScore = gameScore - scoreDecrementOnHit;
 				}
 				else{
 					if(!tutIsPredatorHit){

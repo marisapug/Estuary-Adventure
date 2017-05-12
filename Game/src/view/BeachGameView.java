@@ -355,6 +355,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				
 				//GameState
 				startScreenVisible = false;
+
 				hasWon = false;
 				isGameOver = false;
 				
