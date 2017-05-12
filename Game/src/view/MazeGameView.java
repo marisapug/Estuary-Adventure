@@ -798,7 +798,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			g.setFont(new Font(titleFontStyle,Font.BOLD,titleFontSize));
 			g.setColor(Color.WHITE);
 			for(PlayerScore pS: board.getHighScores()){
-				g.drawString(pS.getName() + " -- " + pS.getScore(), screenWidth/2, shift + 100);
+				if(pS != null){
+					g.drawString(pS.getName() + " -- " + pS.getScore(), screenWidth/2, shift + 100);
+				}else{
+					g.drawString( " -- " , screenWidth/2, shift + 100);
+				}
 				shift += titleFontSize * 2;
 			}
 		}

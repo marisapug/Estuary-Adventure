@@ -603,7 +603,7 @@ public class MazeBoard {
 	
 	
 	//HIGHSCORE UPDATING 
-	public void insertScore(String newName, double newScore){
+	public void insertScore(String newName, int newScore){
 		PlayerScore prevPlayer;
 		PlayerScore currPlayer;
 		PlayerScore tempPlayer;

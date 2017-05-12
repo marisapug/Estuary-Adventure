@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 public class PlayerScore implements Serializable{
 	private String name;
-	private double score;
+	private int score;
 	
-	public PlayerScore(String n, double s){
+	public PlayerScore(String n, int s){
 		name = n;
 		score = s;
 	}
@@ -15,7 +15,7 @@ public class PlayerScore implements Serializable{
 	public String getName(){
 		return name;
 	}
-	public double getScore(){
+	public int getScore(){
 		return score;
 	}
 	
@@ -23,7 +23,7 @@ public class PlayerScore implements Serializable{
 	public void setName(String n){
 		name = n;
 	}
-	public void setScore(double s){
+	public void setScore(int s){
 		score = s;
 	}
 	
