@@ -12,6 +12,7 @@ import model.Litter;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -19,6 +20,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -38,11 +40,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	//=================================================================//
 
 	private static final long serialVersionUID = 1L;
-
-	//Layout
-	GridBagLayout mainLayout = new GridBagLayout();
-	GridBagConstraints gbc = new GridBagConstraints();
-
+	
+	
 	//Timer
 	Timer t = new Timer(10,this);
 	private int totalTime = 120;
@@ -385,11 +384,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	//Constructor
 	public MazeGameView(){
 		
-		//layout
-		this.setLayout(mainLayout);
-		
-		
-
 		//Buttons
 		hCrabButton = new JButton("Horseshoe Crab");
 		hCrabButton.setFocusable(false);
@@ -438,6 +432,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 		goToStartButton = new JButton("Go to Start Screen");
 		goToStartButton.setFocusable(false);
+		
 
 
 		//StartScreen Visibility
