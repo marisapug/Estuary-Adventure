@@ -86,7 +86,7 @@ public class Die {
 	}
 	
 	public void finishThrowing(){
-		System.out.println("finishthrowing called");
+	//	System.out.println("finishthrowing called");
 		if(xLoc < startXLoc){
 			if(yLoc < startYLoc){
 				xLoc += xIncr;
