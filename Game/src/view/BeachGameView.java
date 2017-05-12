@@ -174,14 +174,24 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	//Game State
 	private boolean startScreenVisible;
 	private BufferedImage startBackground = createImage("background/Estuary_Background_1.jpg");
-	private JButton startButton;
 	private String startTitle = "Defend the Estuary!";
-	private int startTitleFontSize = screenWidth/50;
+	private int startTitleFontSize = screenWidth/10;
 	private String startTitleFontStyle = "TimesRoman";
-	private int startTitleX = screenWidth/2 - ((startTitleFontSize * startTitle.length())/4);
+	private int startTitleX = screenWidth/2 - (((startTitleFontSize * startTitle.length())*2)/9);
 	private int startTitleY = screenHeight/4;
 	
+	
+	private JButton startButton;
+	private int startButtonXLoc;
+	private int startButtonYLoc;
+	private int startButtonWidth;
+	private int startButtonHeight;
+	
 	private JButton goToStartButton;
+	private int goToStartButtonXLoc;
+	private int goToStartButtonYLoc;
+	private int goToStartButtonWidth;
+	private int goToStartButtonHeight;
 	
 	private boolean hasWon;
 	private boolean isGameOver;
@@ -231,19 +241,38 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		this.setFocusable(true);
 		this.setFocusTraversalKeysEnabled(false);
 		
-		this.setLayout(new BorderLayout());
+		this.setLayout(null);
 		
 		//intialize game state
 		startScreenVisible = true;
-		startButton = new JButton("PLAY Game!");
+		
+		//initialize buttons
+		startButtonWidth = screenWidth/8;
+		startButtonHeight = screenHeight/12;
+		startButtonXLoc = screenWidth/2 - (startButtonWidth/2);
+		startButtonYLoc = screenHeight/3;
+		
+		goToStartButtonWidth = screenWidth/6;
+		goToStartButtonHeight = screenHeight/12;
+		goToStartButtonXLoc = screenWidth/2 - (goToStartButtonWidth/2);
+		goToStartButtonYLoc = screenHeight/2;
+
+		startButton = new JButton("Play!");
+		startButton.setBackground(Color.GREEN);
+		startButton.setOpaque(true);
+		startButton.setBorderPainted(false);
 		startButton.setVisible(true);
 		startButton.setFocusable(false);
-		startButton.setPreferredSize(new Dimension(200,100));
-		this.add(startButton, BorderLayout.CENTER);
+		startButton.setBounds(startButtonXLoc,startButtonYLoc,startButtonWidth,startButtonHeight);
+		this.add(startButton);
 		
 		goToStartButton = new JButton("Go to Start Screen");
-		goToStartButton.setFocusable(false);
+		goToStartButton.setBackground(Color.MAGENTA);
+		goToStartButton.setOpaque(true);
+		goToStartButton.setBorderPainted(false);
 		goToStartButton.setVisible(false);
+		goToStartButton.setFocusable(false);
+		goToStartButton.setBounds(goToStartButtonXLoc,goToStartButtonYLoc,goToStartButtonWidth,goToStartButtonHeight);
 		this.add(goToStartButton);
 
 		startButton.addActionListener(new ActionListener(){
