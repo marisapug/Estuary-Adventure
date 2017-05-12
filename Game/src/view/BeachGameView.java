@@ -9,10 +9,16 @@ import model.OysterGabion;
 import model.Seawall;
 
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -23,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -224,12 +231,15 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		this.setFocusable(true);
 		this.setFocusTraversalKeysEnabled(false);
 		
+		this.setLayout(new BorderLayout());
+		
 		//intialize game state
 		startScreenVisible = true;
 		startButton = new JButton("PLAY Game!");
-		this.add(startButton);
 		startButton.setVisible(true);
 		startButton.setFocusable(false);
+		startButton.setPreferredSize(new Dimension(200,100));
+		this.add(startButton, BorderLayout.CENTER);
 		
 		goToStartButton = new JButton("Go to Start Screen");
 		goToStartButton.setFocusable(false);
