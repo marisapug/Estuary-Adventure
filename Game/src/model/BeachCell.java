@@ -35,7 +35,7 @@ public class BeachCell {
 	 * @param startYLoc, the beginning location, will be added to the height
 	 * @param matter, 0 = sand, 1 = ocean
 */
-	BeachCell(int xInp, int yInp, int cWidth, int cHeight,int startYLoc ,int matter){
+	public BeachCell(int xInp, int yInp, int cWidth, int cHeight,int startYLoc ,int matter){
 		x = xInp;
 		y = yInp;
 		xLoc = x*cWidth;
