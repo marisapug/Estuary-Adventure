@@ -5,6 +5,7 @@ import model.MazeBoard;
 import model.MazeCell;
 import model.MazeWall;
 import model.MiniMap;
+import model.PlayerScore;
 import model.PowerUp;
 import model.Predator;
 import model.Litter;
@@ -365,6 +366,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int scoreDecrementTimer;
 	private int scoreDecrementLimit;
 	private int scoreDecrementOnHit;
+	private boolean isScoreBoardView;
 	
 
 	//=================================================================//
@@ -578,6 +580,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				goToStartButton.setVisible(true);
 				enterNameButton.setVisible(false);
 				nameTextField.setVisible(false);
+				isScoreBoardView = true;
+				repaint();
 			}
 		});
 
@@ -594,6 +598,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				t.stop();
 				repaint();
 				board = null;
+				isScoreBoardView = false;
 			}
 		});
 
@@ -608,6 +613,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				
 				nameTextField.setVisible(false);
 				enterNameButton.setVisible(false);
+				isScoreBoardView = false;
 				
 				scoreDecrementLimit = 1;
 				scoreDecrementTimer = 0;
@@ -787,8 +793,15 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			g.drawString(titleText,titleStringX,titleStringY);
 
 		}//if
-
-
+		else if(isScoreBoardView){
+			int shift = 40;
+			g.setFont(new Font(titleFontStyle,Font.BOLD,titleFontSize));
+			g.setColor(Color.WHITE);
+			for(PlayerScore pS: board.getHighScores()){
+				g.drawString(pS.getName() + " -- " + pS.getScore(), screenWidth/2, shift + 100);
+				shift += titleFontSize * 2;
+			}
+		}
 		//EVERYTHING ELSE
 		else{
 
