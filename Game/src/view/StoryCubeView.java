@@ -79,17 +79,19 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	private boolean isStorySaved = false;
 	private int storyTextX;
 	private int storyTextY;
-	private String[] storyWords = {};
 	private boolean isSplitStoryLinesCalled = false; // to make sure the
 														// function is only
 														// called once
+	private ArrayList<String> storyWords = new ArrayList<String>();
 	private ArrayList<String> storyLines = new ArrayList<String>();
 	private int numLines = 0;
 	private int maxLines = 7; // maximum number of lines the text box will fit
+	private int numCharsOnLine;
 	private int[] stringYCoords = new int[maxLines];
 
 	// TextArea
 	JTextArea storyText;
+	String storyString;
 
 	// Images
 	BufferedImage oceanBackground = createImage("background/dicebackground.jpg");
@@ -166,6 +168,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		storyText.setVisible(false);
 		storyText.setPreferredSize(new Dimension(400, 96));
 		storyText.setFont(new Font(titleFont, Font.PLAIN, 16));
+		numCharsOnLine = screenWidth / 55;
 
 		// Add Buttons
 		this.add(startGameButton);
@@ -261,10 +264,23 @@ public class StoryCubeView extends JPanel implements ActionListener {
 					Color navy = new Color(3, 0, 130);
 					g.setColor(navy);
 					g.setFont(storyTextStyle);
-					if (dgame.getDiceStory().length() <= 35) {
+					if (dgame.getDiceStory().length() <= numCharsOnLine) {
 						g.drawString(dgame.getDiceStory(), storyTextX, storyTextY);
 					} else {
-						storyWords = dgame.getDiceStory().split(" ");
+						String[] storyWordsTmp = dgame.getDiceStory().split(" ");
+						for (String s: storyWordsTmp){
+							if(s.length() > numCharsOnLine){
+								int numSplits = s.length() / numCharsOnLine;
+								for(int j = 0; j < numSplits; j++){
+									String piece = s.substring(j * numCharsOnLine, (j + 1) * numCharsOnLine);
+									storyWords.add(piece);
+								}
+								String lastPiece = s.substring(numSplits * numCharsOnLine);
+								storyWords.add(lastPiece);
+							}
+							else
+								storyWords.add(s);
+						}
 						if (!isSplitStoryLinesCalled) {
 							storyLines = splitStoryLines();
 							numLines = storyLines.size();
@@ -273,11 +289,10 @@ public class StoryCubeView extends JPanel implements ActionListener {
 							}
 							isSplitStoryLinesCalled = true;
 						}
-						for (int j = 0; j < numLines; j++) {
+						for (int j = 0; j < storyLines.size(); j++) {
 							g.drawString(storyLines.get(j), storyTextX, stringYCoords[j]);
 						}
-					}
-					for (int k = 0; k < dgame.getNumDice(); k++)
+					}					for (int k = 0; k < dgame.getNumDice(); k++)
 						g.drawImage(gameDice[k].getDieImg(), storyboardX[gameDice[k].getStoryIndex()],
 								screenHeight - 2 * (diceWidth + betweenStory), diceWidth, diceWidth, this);
 
@@ -301,43 +316,42 @@ public class StoryCubeView extends JPanel implements ActionListener {
 
 	// iterate through story words, adding a new fragment to arraylist every
 	// time the words are almost 22 characters
-	ArrayList<String> splitStoryLines() {
-		// TODO
-
-		int currWord = 0;
-		ArrayList<String> lines = new ArrayList<String>();
-		stringYCoords[0] = storyTextY;
-		for (int k = 1; k < maxLines; k++) {
-			stringYCoords[k] = 0;
-		}
-		int yCoordIndex = 0;
-		while (currWord < storyWords.length) {
-			String fragment = "";
-			int j = currWord;
-			boolean lineOver = false;
-			int numChars = storyWords[currWord].length();
-			while (j < storyWords.length && !lineOver) {
-				numChars += storyWords[j].length();
-				fragment = fragment + storyWords[j] + " ";
-				if (j < (storyWords.length - 1) && numChars + storyWords[j + 1].length() > 35) {
-					if (stringYCoords[yCoordIndex] == 0)
-						stringYCoords[yCoordIndex] = stringYCoords[yCoordIndex - 1] + 50;
-					lineOver = true;
-					yCoordIndex++;
-					lines.add(fragment);
-				} else if (j == (storyWords.length - 1) && yCoordIndex > 0) {
-					stringYCoords[yCoordIndex] = stringYCoords[yCoordIndex - 1] + 50;
-					lineOver = true;
-					yCoordIndex++;
-					lines.add(fragment);
+	// Splits strings of story into lines
+			ArrayList<String> splitStoryLines() { 
+				int currWord = 0;
+				ArrayList<String> lines = new ArrayList<String>();
+				stringYCoords[0] = storyTextY;
+				for (int k = 1; k < maxLines; k++) { //initializing array to all 0's 
+					stringYCoords[k] = 0;
 				}
-				j++;
-				currWord = j;
+				int yCoordIndex = 0;
+				int numStrings = storyWords.size();
+				while (currWord < storyWords.size()) {
+					String fragment = "";
+					int j = currWord;
+					boolean lineOver = false;
+					int numChars = storyWords.get(currWord).length();
+					while (j < storyWords.size() && !lineOver) {
+						numChars += storyWords.get(j).length();
+						fragment = fragment + storyWords.get(j) + " ";
+						if (j < (storyWords.size() - 1) && numChars + storyWords.get(j + 1).length() > numCharsOnLine) {
+							if (stringYCoords[yCoordIndex] == 0)
+								stringYCoords[yCoordIndex] = stringYCoords[yCoordIndex - 1] + 50;
+							lineOver = true;
+							yCoordIndex++;
+							lines.add(fragment);
+						} else if (j == (storyWords.size() - 1) && yCoordIndex > 0) {
+							stringYCoords[yCoordIndex] = stringYCoords[yCoordIndex - 1] + 50;
+							lineOver = true;
+							yCoordIndex++;
+							lines.add(fragment);
+						}
+						j++;
+						currWord = j;
+					}
+				}
+				return lines;
 			}
-		}
-		return lines;
-
-	}
 
 	void setupListeners() {
 		startGameButton.addActionListener(new ActionListener() {
@@ -399,12 +413,25 @@ public class StoryCubeView extends JPanel implements ActionListener {
 
 	void animDice() {
 		Random rand = new Random();
+		if(!isAnimDone){
 		for (int i = 0; i < dgame.getNumDice(); i++) {
 			gameDice[i].throwDie();
 			gameDice[i].setDieImg(possibleDiceImgs[rand.nextInt(dgame.getNumImgs())]);
 		}
+		}
+		else{
+			for (int i = 0; i < dgame.getNumDice(); i++) {
+				while(gameDice[i].getXLoc() != gameDice[i].getStartXLoc() | gameDice[i].getYLoc() != gameDice[i].getStartYLoc()){
+					System.out.println("while");
+					repaint();
+					gameDice[i].finishThrowing();
+					System.out.println("repainting");
+					//diceImages[i] = possibleDiceImgs[rand.nextInt(dgame.getNumImgs())];
+				}
+			}
+		}
 	}
-
+/*
 	void returnDice() {
 		// TODO
 		System.out.println("returnDice called");
@@ -415,7 +442,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 				repaint();
 			}
 		}
-	}
+	} */
 
 	// Timer
 	public void actionPerformed(ActionEvent e) {
@@ -428,7 +455,8 @@ public class StoryCubeView extends JPanel implements ActionListener {
 			}
 		} else if (numAnimations == animsToDo) {
 			isAnimDone = true;
-			returnDice();
+			animDice();
+			//returnDice();
 			setDiceImgs();
 			repaint();
 			// storyButton.setVisible(true);

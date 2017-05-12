@@ -99,7 +99,7 @@ public class MainFrame extends JFrame {
 		cardPanel.add(currMazePanel, "maze");
 		cardPanel.add(currBeachPanel, "beach");
 		cardPanel.add(currDicePanel, "dice");
-		this.add(cardPanel, BorderLayout.CENTER);	
+		this.add(cardPanel);	
 		cl.show(cardPanel, "start");
 
 		this.setVisible(true);
