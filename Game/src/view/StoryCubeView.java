@@ -1,7 +1,6 @@
 package view;
 
 import model.*;
-import view.DiceGameView.DiceListener;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -88,6 +87,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	private int maxLines = 7; // maximum number of lines the text box will fit
 	private int numCharsOnLine;
 	private int[] stringYCoords = new int[maxLines];
+	private boolean isStoryShowing = false;
 
 	// TextArea
 	JTextArea storyText;
@@ -247,12 +247,12 @@ public class StoryCubeView extends JPanel implements ActionListener {
 							diceWidth, this); // draws
 					// images
 					if (isAnimDone) {
-						//slots to drag dice into
+						// slots to drag dice into
 						g.drawRect(storyboardX[i], storyStartY, diceWidth, diceWidth); // draws
 						if (showStoryButton) {
 							storyButton.setVisible(true);
 							storyText.setVisible(true);
-						} 
+						}
 					}
 				}
 				if (isStorySaved) {
@@ -268,17 +268,16 @@ public class StoryCubeView extends JPanel implements ActionListener {
 						g.drawString(dgame.getDiceStory(), storyTextX, storyTextY);
 					} else {
 						String[] storyWordsTmp = dgame.getDiceStory().split(" ");
-						for (String s: storyWordsTmp){
-							if(s.length() > numCharsOnLine){
+						for (String s : storyWordsTmp) {
+							if (s.length() > numCharsOnLine) {
 								int numSplits = s.length() / numCharsOnLine;
-								for(int j = 0; j < numSplits; j++){
+								for (int j = 0; j < numSplits; j++) {
 									String piece = s.substring(j * numCharsOnLine, (j + 1) * numCharsOnLine);
 									storyWords.add(piece);
 								}
 								String lastPiece = s.substring(numSplits * numCharsOnLine);
 								storyWords.add(lastPiece);
-							}
-							else
+							} else
 								storyWords.add(s);
 						}
 						if (!isSplitStoryLinesCalled) {
@@ -292,7 +291,8 @@ public class StoryCubeView extends JPanel implements ActionListener {
 						for (int j = 0; j < storyLines.size(); j++) {
 							g.drawString(storyLines.get(j), storyTextX, stringYCoords[j]);
 						}
-					}					for (int k = 0; k < dgame.getNumDice(); k++)
+					}
+					for (int k = 0; k < dgame.getNumDice(); k++)
 						g.drawImage(gameDice[k].getDieImg(), storyboardX[gameDice[k].getStoryIndex()],
 								screenHeight - 2 * (diceWidth + betweenStory), diceWidth, diceWidth, this);
 
@@ -317,41 +317,41 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	// iterate through story words, adding a new fragment to arraylist every
 	// time the words are almost 22 characters
 	// Splits strings of story into lines
-			ArrayList<String> splitStoryLines() { 
-				int currWord = 0;
-				ArrayList<String> lines = new ArrayList<String>();
-				stringYCoords[0] = storyTextY;
-				for (int k = 1; k < maxLines; k++) { //initializing array to all 0's 
-					stringYCoords[k] = 0;
+	ArrayList<String> splitStoryLines() {
+		int currWord = 0;
+		ArrayList<String> lines = new ArrayList<String>();
+		stringYCoords[0] = storyTextY;
+		for (int k = 1; k < maxLines; k++) { // initializing array to all 0's
+			stringYCoords[k] = 0;
+		}
+		int yCoordIndex = 0;
+		int numStrings = storyWords.size();
+		while (currWord < storyWords.size()) {
+			String fragment = "";
+			int j = currWord;
+			boolean lineOver = false;
+			int numChars = storyWords.get(currWord).length();
+			while (j < storyWords.size() && !lineOver) {
+				numChars += storyWords.get(j).length();
+				fragment = fragment + storyWords.get(j) + " ";
+				if (j < (storyWords.size() - 1) && numChars + storyWords.get(j + 1).length() > numCharsOnLine) {
+					if (stringYCoords[yCoordIndex] == 0)
+						stringYCoords[yCoordIndex] = stringYCoords[yCoordIndex - 1] + 50;
+					lineOver = true;
+					yCoordIndex++;
+					lines.add(fragment);
+				} else if (j == (storyWords.size() - 1) && yCoordIndex > 0) {
+					stringYCoords[yCoordIndex] = stringYCoords[yCoordIndex - 1] + 50;
+					lineOver = true;
+					yCoordIndex++;
+					lines.add(fragment);
 				}
-				int yCoordIndex = 0;
-				int numStrings = storyWords.size();
-				while (currWord < storyWords.size()) {
-					String fragment = "";
-					int j = currWord;
-					boolean lineOver = false;
-					int numChars = storyWords.get(currWord).length();
-					while (j < storyWords.size() && !lineOver) {
-						numChars += storyWords.get(j).length();
-						fragment = fragment + storyWords.get(j) + " ";
-						if (j < (storyWords.size() - 1) && numChars + storyWords.get(j + 1).length() > numCharsOnLine) {
-							if (stringYCoords[yCoordIndex] == 0)
-								stringYCoords[yCoordIndex] = stringYCoords[yCoordIndex - 1] + 50;
-							lineOver = true;
-							yCoordIndex++;
-							lines.add(fragment);
-						} else if (j == (storyWords.size() - 1) && yCoordIndex > 0) {
-							stringYCoords[yCoordIndex] = stringYCoords[yCoordIndex - 1] + 50;
-							lineOver = true;
-							yCoordIndex++;
-							lines.add(fragment);
-						}
-						j++;
-						currWord = j;
-					}
-				}
-				return lines;
+				j++;
+				currWord = j;
 			}
+		}
+		return lines;
+	}
 
 	void setupListeners() {
 		startGameButton.addActionListener(new ActionListener() {
@@ -386,6 +386,8 @@ public class StoryCubeView extends JPanel implements ActionListener {
 				storyButton.setVisible(false);
 				storyText.setVisible(false);
 				rollAgainButton.setVisible(true);
+				showStoryButton = false;
+				isStoryShowing = true;
 
 				repaint(); // print story function
 
@@ -400,12 +402,14 @@ public class StoryCubeView extends JPanel implements ActionListener {
 				isRolled = false;
 				isStorySaved = false;
 				numAnimations = 0;
+				dicePlaced = 0;
 				isAnimDone = false;
+				isStoryShowing = false;
 				dgame.setDice();
 				rollDice();
 				// showStoryButton = true;
 				repaint();
-				storyText.setVisible(true);
+				//storyText.setVisible(true);
 
 			}
 		});
@@ -413,36 +417,32 @@ public class StoryCubeView extends JPanel implements ActionListener {
 
 	void animDice() {
 		Random rand = new Random();
-		if(!isAnimDone){
-		for (int i = 0; i < dgame.getNumDice(); i++) {
-			gameDice[i].throwDie();
-			gameDice[i].setDieImg(possibleDiceImgs[rand.nextInt(dgame.getNumImgs())]);
-		}
-		}
-		else{
+		if (!isAnimDone) {
 			for (int i = 0; i < dgame.getNumDice(); i++) {
-				while(gameDice[i].getXLoc() != gameDice[i].getStartXLoc() | gameDice[i].getYLoc() != gameDice[i].getStartYLoc()){
-					System.out.println("while");
+				gameDice[i].throwDie();
+				gameDice[i].setDieImg(possibleDiceImgs[rand.nextInt(dgame.getNumImgs())]);
+			}
+		} else {
+			for (int i = 0; i < dgame.getNumDice(); i++) {
+				while (gameDice[i].getXLoc() != gameDice[i].getStartXLoc()
+						| gameDice[i].getYLoc() != gameDice[i].getStartYLoc()) {
+					//System.out.println("while");
 					repaint();
 					gameDice[i].finishThrowing();
-					System.out.println("repainting");
-					//diceImages[i] = possibleDiceImgs[rand.nextInt(dgame.getNumImgs())];
+					//System.out.println("repainting");
+					// diceImages[i] =
+					// possibleDiceImgs[rand.nextInt(dgame.getNumImgs())];
 				}
 			}
 		}
 	}
-/*
-	void returnDice() {
-		// TODO
-		System.out.println("returnDice called");
-		for (int i = 0; i < dgame.getNumDice(); i++) {
-			while (gameDice[i].getXLoc() != gameDice[i].getStartXLoc()
-					| gameDice[i].getYLoc() != gameDice[i].getStartYLoc()) {
-				gameDice[i].finishThrowing();
-				repaint();
-			}
-		}
-	} */
+	/*
+	 * void returnDice() { // TODO System.out.println("returnDice called"); for
+	 * (int i = 0; i < dgame.getNumDice(); i++) { while (gameDice[i].getXLoc()
+	 * != gameDice[i].getStartXLoc() | gameDice[i].getYLoc() !=
+	 * gameDice[i].getStartYLoc()) { gameDice[i].finishThrowing(); repaint(); }
+	 * } }
+	 */
 
 	// Timer
 	public void actionPerformed(ActionEvent e) {
@@ -456,7 +456,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		} else if (numAnimations == animsToDo) {
 			isAnimDone = true;
 			animDice();
-			//returnDice();
+			// returnDice();
 			setDiceImgs();
 			repaint();
 			// storyButton.setVisible(true);
@@ -500,6 +500,13 @@ public class StoryCubeView extends JPanel implements ActionListener {
 				if (d.getSelection() == true)
 					selectedDie = d;
 			}
+			for (int sbx : storyboardX) {
+				if (point.x >= sbx && point.x <= sbx + diceWidth && point.y >= storyStartX
+						&& point.y <= storyStartY + diceWidth && isDieSelected) {
+					dicePlaced--;
+					System.out.println("diceplaced--");
+				}
+			}
 		}
 
 		@Override
@@ -510,7 +517,6 @@ public class StoryCubeView extends JPanel implements ActionListener {
 			// if in range of storycubes
 			if (isDieSelected) {
 				if (selectedDie != null) {
-
 					for (int i = 0; i < dgame.getNumDice(); i++) {
 						// for (int xStory : storyboardX) {
 						if (point.x >= storyboardX[i] && point.x <= storyboardX[i] + diceWidth && point.y >= storyStartY
@@ -520,6 +526,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 							isPlaced = true;
 							selectedDie.setStoryIndex(i);
 							dicePlaced++;
+							System.out.println("dicePlaced++");
 						}
 					}
 					for (int i = 0; i < dgame.getNumDice(); i++) {
@@ -530,6 +537,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 								selectedDie.setYLoc(selectedDie.getInitYLoc());
 								isPlaced = false;
 								dicePlaced--;
+								System.out.println("dicePlaced--");
 							}
 						}
 					}
@@ -542,7 +550,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 					isDieSelected = false;
 				}
 			}
-			if (dicePlaced == dgame.getNumDice()) {
+			if (dicePlaced == dgame.getNumDice() && !isStoryShowing) {
 				showStoryButton = true;
 			}
 			repaint();
