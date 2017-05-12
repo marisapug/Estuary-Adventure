@@ -13,9 +13,12 @@ import model.Litter;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -36,6 +39,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 	private static final long serialVersionUID = 1L;
 
+	//Layout
+	GridBagLayout mainLayout = new GridBagLayout();
+	GridBagConstraints gbc = new GridBagConstraints();
 
 	//Timer
 	Timer t = new Timer(10,this);
@@ -196,7 +202,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 	//Features bar
 	private final int featuresBarWidth = screenWidth;
-	private final int featuresBarHeight = screenHeight/16;
+	private final int featuresBarHeight = screenHeight/10;
 
 	//Time Remaining Label
 	private String timeRemainingLabel;	
@@ -268,6 +274,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int healthImgHeight;
 	private int healthImgXLoc;
 	private int healthImgYLoc;
+	private int healthFontSize;
 
 	//PowerUps
 	private ArrayList<PowerUp> gamePowerUps;
@@ -298,14 +305,12 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 	//StartScreen
 	private boolean startScreenVisible;
-	private JButton hCrabButton;
-	private JButton bCrabButton;
 
 	private BufferedImage startBackgroundImg = createImage("background/2D_estuary.jpg");
-	private int titleFontSize = screenWidth/50;
+	private int titleFontSize = screenWidth/20;
 	private String titleFontStyle = "TimesRoman";
 	private String titleText = "Estuary Maze Adventure!";
-	private int titleStringX = screenWidth/2 - ((titleFontSize * titleText.length())/4);
+	private int titleStringX = screenWidth/2 - (((titleFontSize * titleText.length())*2)/9);
 	private int titleStringY = screenHeight/4;
 
 	//End Screen
@@ -314,7 +319,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private String endTitleFontStyle = "TimesRoman";
 	private String endLoseText = "Oh no! You lost!";
 	private String endWinText;
-	private int endTitleStringX = screenWidth/2 - ((titleFontSize * titleText.length())/4);
+	private int endTitleStringX = screenWidth/2 - ((endTitleFontSize * titleText.length())/4);
 	private int endTitleStringY = screenHeight/4;
 
 	private String endWinTimeText = "Your Time: ";
@@ -344,13 +349,15 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private boolean isHardMode;
 
 	//Board Buttons
+	private JButton hCrabButton;
+	private JButton bCrabButton;
 	private JButton easyButton;
 	private JButton mediumButton;
 	private JButton hardButton;
 	private JButton startButton;
 	private JButton tutorialButton;
 	private JButton goToStartButton;
-
+	
 
 	//Age State
 	private ArrayList<MazeCell> ageStateCells = new ArrayList<MazeCell>();
@@ -377,25 +384,54 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 	//Constructor
 	public MazeGameView(){
+		
+		//layout
+		this.setLayout(mainLayout);
+		
+		
 
 		//Buttons
 		hCrabButton = new JButton("Horseshoe Crab");
-		bCrabButton = new JButton("Blue Crab");
 		hCrabButton.setFocusable(false);
+		hCrabButton.setBackground(Color.GREEN);
+		hCrabButton.setOpaque(true);
+		hCrabButton.setBorderPainted(false);
+		
+		bCrabButton = new JButton("Blue Crab");
 		bCrabButton.setFocusable(false);
+		bCrabButton.setBackground(Color.ORANGE);
+		bCrabButton.setOpaque(true);
+		bCrabButton.setBorderPainted(false);
 
 		easyButton = new JButton("Easy");
 		easyButton.setFocusable(false);
+		easyButton.setBackground(Color.GREEN);
+		easyButton.setOpaque(true);
+		easyButton.setBorderPainted(false);
+		
 		mediumButton = new JButton("Medium");
 		mediumButton.setFocusable(false);
+		mediumButton.setBackground(Color.ORANGE);
+		mediumButton.setOpaque(true);
+		mediumButton.setBorderPainted(false);
+		
 		hardButton = new JButton("Hard");
 		hardButton.setFocusable(false);
+		hardButton.setBackground(Color.GREEN);
+		hardButton.setOpaque(true);
+		hardButton.setBorderPainted(false);
 
 		startButton = new JButton("Start Game!");
 		startButton.setFocusable(false);
+		startButton.setBackground(Color.RED);
+		startButton.setOpaque(true);
+		startButton.setBorderPainted(false);
 
 		tutorialButton = new JButton("Tutorial");
 		tutorialButton.setFocusable(false);
+		tutorialButton.setBackground(Color.MAGENTA);
+		tutorialButton.setOpaque(true);
+		tutorialButton.setBorderPainted(false);
 		
 		enterNameButton = new JButton("Enter Score");
 		enterNameButton.setFocusable(false);
@@ -667,9 +703,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				timeRemainingLabel = "Time Remaining: ";	
 				timeRemainingFontSize = screenWidth/50;
 				timeRemainingLabelXLoc = (screenWidth/2) - (timeRemainingLabel.length()*timeRemainingFontSize)/4;
-				timeRemainingLabelYLoc = featuresBarHeight - (featuresBarHeight - timeRemainingFontSize)/2;
+				timeRemainingLabelYLoc = featuresBarHeight - ((featuresBarHeight - timeRemainingFontSize)*3)/4;
 				timeXLoc = timeRemainingLabelXLoc + timeRemainingLabel.length()*timeRemainingFontSize/2;
 				timeYLoc = timeRemainingLabelYLoc;
+				
+				healthFontSize = screenHeight/20;
 
 				salinityTitleText = "Current Salinity:";
 				salinityTitleX = timeXLoc + screenWidth/8;
@@ -794,7 +832,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		//START SCREEN DRAWING
 		if(startScreenVisible){
 			g.drawImage(startBackgroundImg,0,0,screenWidth,screenHeight,this);
-
+			g.setColor(Color.BLUE);
 			g.setFont(new Font(titleFontStyle,Font.BOLD,titleFontSize));
 			g.drawString(titleText,titleStringX,titleStringY);
 
@@ -947,7 +985,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 			//Crab Health Drawing
 			g.setColor(Color.BLACK);
-			g.setFont(new Font(titleFontStyle,Font.BOLD,titleFontSize));
+			g.setFont(new Font(titleFontStyle,Font.BOLD,healthFontSize));
 			g.drawString(String.valueOf(health), healthImgXLoc + healthImgWidth, healthImgYLoc + healthImgHeight);
 			g.drawImage(healthImg, healthImgXLoc, healthImgYLoc, healthImgWidth, healthImgHeight, this);
 
