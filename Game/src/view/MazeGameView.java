@@ -427,7 +427,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		testCrab = new Crab(5,0,screenWidth/2 + 10 ,screenHeight/2 + 10);
 		
 		//scoreboard
-		nameTextField = new JTextField("Enter your name here");
+		nameTextField = new JTextField("Enter your name here", 3);
 		nameTextField.setBackground(Color.WHITE);
 		this.add(nameTextField);
 		this.add(enterNameButton);
@@ -579,7 +579,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				board.printHighScores();
+	//			board.printHighScores();
 				goToStartButton.setVisible(true);
 				enterNameButton.setVisible(false);
 				nameTextField.setVisible(false);
@@ -1165,8 +1165,12 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		if(testCrab.getXLoc() > endCell.getXLoc() && testCrab.getYLoc() > endCell.getYLoc()){
 			hasWon = true;
 			endScreenVisible = true;
+			if(!isTutorial){
 			nameTextField.setVisible(true);
 			enterNameButton.setVisible(true);
+			}else{
+				goToStartButton.setVisible(true);
+			}
 			t.stop();
 		}
 
