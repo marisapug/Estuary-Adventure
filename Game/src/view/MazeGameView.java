@@ -368,6 +368,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int scoreDecrementOnHit;
 	private boolean isScoreBoardView;
 	
+	private String scoreFontStyle;
+	private int scoreFontSize;
+	
 
 	//=================================================================//
 
@@ -619,6 +622,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				scoreDecrementTimer = 0;
 				scoreDecrementOnHit = board.getScoreDecrementOnHit();
 				
+				scoreFontStyle = "TimesRoman";
+				scoreFontSize = 20;
+				
 				if(isEasyMode){
 					gameScore = board.getEasyScore();
 				}else if(isMediumMode){
@@ -794,16 +800,16 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 		}//if
 		else if(isScoreBoardView){
-			int shift = 40;
-			g.setFont(new Font(titleFontStyle,Font.BOLD,titleFontSize));
+			int scoreYStart = screenHeight/10;
+			g.setFont(new Font(scoreFontStyle,Font.BOLD,scoreFontSize));
 			g.setColor(Color.WHITE);
+			int nameXLoc;
 			for(PlayerScore pS: board.getHighScores()){
+				nameXLoc = screenWidth/2 - (((pS.getName().length() + 2 + String.valueOf(pS.getScore()).length()) * scoreFontSize)*2)/9;
 				if(pS != null){
-					g.drawString(pS.getName() + " -- " + pS.getScore(), screenWidth/2, shift + 100);
-				}else{
-					g.drawString( " -- " , screenWidth/2, shift + 100);
+					g.drawString(pS.getName() + " -- " + pS.getScore(), nameXLoc, scoreYStart);
 				}
-				shift += titleFontSize * 2;
+				scoreYStart += scoreFontSize * 2;
 			}
 		}
 		//EVERYTHING ELSE
