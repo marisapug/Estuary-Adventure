@@ -666,11 +666,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				    		nameTextField.setText("");
 				    	}
 				    	else if(board.getBadWordsList().contains(nameTextField.getText() + e.getKeyChar())){
-				    		System.out.println("contains bad word");
 				    		e.consume(); 
 				    	}
 				    	else if (nameTextField.getText().length() >= 3){
-				    		System.out.println("contains too many letters");
 				            e.consume(); 
 				    	}
 				    }  
