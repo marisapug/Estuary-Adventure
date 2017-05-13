@@ -168,7 +168,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		storyText.setVisible(false);
 		storyText.setPreferredSize(new Dimension(400, 96));
 		storyText.setFont(new Font(titleFont, Font.PLAIN, 16));
-		numCharsOnLine = screenWidth / 55;
+		numCharsOnLine = screenWidth / 28;
 
 		// Add Buttons
 		this.add(startGameButton);
