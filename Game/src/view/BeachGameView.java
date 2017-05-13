@@ -52,7 +52,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	//Timer
 	private int timerSpeed = 10;
 	private Timer t = new Timer(timerSpeed,this);
-	private int totalTime = 2;
+	private int totalTime = 120;
 	private int timeRemaining = totalTime;
 	private int timeCheck = 0;
 
@@ -723,7 +723,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		}
 
 		if(timeRemaining < 60){
-			newBoatTimer = 300;
+			newBoatTimer = 200;
 		}
 
 		//Checks if you lose

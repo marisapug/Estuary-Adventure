@@ -621,6 +621,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				
 	//			board.printHighScores();
 				goToStartButton.setVisible(true);
 				enterNameButton.setVisible(false);
@@ -660,8 +661,18 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				nameTextField.setVisible(false);
 				nameTextField.addKeyListener(new KeyAdapter() {
 				    public void keyTyped(KeyEvent e) { 
-				        if (nameTextField.getText().length() >= 3 ) // limit textfield to 3 characters
+				    	//limits text to 3 letter and stops bad words
+				    	if(nameTextField.getText().length() >= 4){
+				    		nameTextField.setText("");
+				    	}
+				    	else if(board.getBadWordsList().contains(nameTextField.getText() + e.getKeyChar())){
+				    		System.out.println("contains bad word");
+				    		e.consume(); 
+				    	}
+				    	else if (nameTextField.getText().length() >= 3){
+				    		System.out.println("contains too many letters");
 				            e.consume(); 
+				    	}
 				    }  
 				});
 				enterNameButton.setVisible(false);
@@ -814,6 +825,18 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				
+				
+				try {
+					board.readBadWordsFromFile();
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				System.out.println(board.getBadWordsList());
 				
 				//cheatCodes
 				isWallCheat = false;

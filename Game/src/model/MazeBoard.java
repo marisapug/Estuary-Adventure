@@ -80,6 +80,7 @@ public class MazeBoard {
 	//LEADERBOARD STUFF
 	private int numScores = 10; //dont alter
 	private PlayerScore[] highScores = new PlayerScore[numScores];
+	private ArrayList<String> badWordsList = new ArrayList<String>();
 	
 	private int easyScore = 10000;
 	private int mediumScore = 20000;
@@ -140,6 +141,7 @@ public class MazeBoard {
 		predWidth = 70;
 		predHeight = 70;
 		generatePredators(numPred);
+		
 	}
 	
 	//CONSTRUCTOR for TUTORIAL BOARD
@@ -647,6 +649,26 @@ public class MazeBoard {
 		System.out.println("All scores printed");
 	}
 	
+		//profanity checker
+	public void writeBadWordsToFile() throws IOException{
+		File file = new File("badWords.tmp");
+		FileOutputStream fos = new FileOutputStream(file);
+		ObjectOutputStream oos = new ObjectOutputStream(fos);
+		oos.writeObject(badWordsList);
+		oos.close();
+	}
+	public void readBadWordsFromFile() throws IOException, ClassNotFoundException{
+		FileInputStream fis = new FileInputStream("badWords.tmp");
+		ObjectInputStream ois = new ObjectInputStream(fis);
+		badWordsList = (ArrayList<String>) ois.readObject();
+		ois.close();
+	}
+	
+	public void addBadWordToList(String s){
+		badWordsList.add(s);
+	}
+
+	
 	
 	
 	//GETTERS-----------------------------------------------------------------------------------------
@@ -790,6 +812,10 @@ public class MazeBoard {
 	
 	public PlayerScore[] getHighScores(){
 		return highScores;
+	}
+	
+	public ArrayList<String> getBadWordsList(){
+		return badWordsList;
 	}
 
 	//SETTERS
