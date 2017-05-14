@@ -9,8 +9,8 @@ public class Die {
 	static int imgWidth;
 	static int screenWidth;
 	static int screenHeight;
-	final int xIncr = 10;
-	final int yIncr = 7;
+	final int xIncr = 9;
+	final int yIncr = 6;
 	int xLoc;
 	int yLoc;
 	int startXLoc;
@@ -25,68 +25,16 @@ public class Die {
 	public Die(int n, int x, int y, int imgW, int sWidth, int sHeight){
 		dir = rand.nextInt(4);
 		dieImgNum = n;
-		xLoc = x;
 		startXLoc = x;
-		yLoc = y;
 		startYLoc = y;
 		imgWidth = imgW;
 		screenWidth = sWidth;
 		screenHeight = sHeight;
-	}
-
-	public void throwDie(){
-		if(dir == 0){//north east
-			if(xLoc + imgWidth <= screenWidth && yLoc >= 0){
-				xLoc += xIncr;
-				yLoc -= yIncr;
-			}
-			else if(yLoc <= 0){
-				dir = 2;
-			}
-			else{
-				dir = 1;
-			}
-		}
-		else if(dir == 1){//northwest
-			if(xLoc >= 0 && yLoc >= 0){
-				xLoc -= xIncr;
-				yLoc -= yIncr;
-			}
-			else if(yLoc - yIncr >= 0){
-				dir = 0;
-			}
-			else{
-				dir = 3;
-			}
-		}
-		else if(dir == 2){//southeast
-			if(xLoc + imgWidth <= screenWidth && yLoc + (imgWidth * 1.5) <= screenHeight){
-				xLoc += xIncr;
-				yLoc += yIncr;
-			}
-			else if(yLoc + (imgWidth * 1.5) <= screenHeight){
-				dir = 3;
-			}
-			else{
-				dir = 0;
-			}
-		}
-		else{//southwest
-			if(xLoc >= 0 && yLoc + (imgWidth * 1.5) <= screenHeight){
-				xLoc -= xIncr;
-				yLoc += yIncr;
-			}
-			else if(yLoc + (imgWidth * 1.5) <= screenHeight){
-				dir = 2;
-			}
-			else{
-				dir = 1;
-			}
-		}
+		xLoc = screenWidth / 2 - (imgWidth / 2);
+		yLoc = screenHeight / 2 - (imgWidth / 2);
 	}
 	
-	public void finishThrowing(){
-	//	System.out.println("finishthrowing called");
+	public void throwDie(){
 		if(xLoc < startXLoc){
 			if(yLoc < startYLoc){
 				xLoc += xIncr;
@@ -119,9 +67,6 @@ public class Die {
 			}
 			else if(yLoc > startYLoc){
 				yLoc -= yIncr;
-			}
-			else{
-				System.out.println("dice placed");
 			}
 		}
 	}

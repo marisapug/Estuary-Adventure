@@ -48,7 +48,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 
 	// Dice Rolling Animation
 	int numAnimations = 0;
-	int animsToDo = 50;
+	int animsToDo = 30;
 	boolean isAnimDone = false;
 
 	// Game Booleans
@@ -165,6 +165,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 
 		// Text Fields
 		storyText = new JTextArea("Enter Story Here");
+		storyText.setLineWrap(true);
 		storyText.setVisible(false);
 		storyText.setPreferredSize(new Dimension(400, 96));
 		storyText.setFont(new Font(titleFont, Font.PLAIN, 16));
@@ -288,7 +289,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 							}
 							isSplitStoryLinesCalled = true;
 						}
-						for (int j = 0; j < storyLines.size(); j++) {
+						for (int j = 0; j < numLines; j++) {
 							g.drawString(storyLines.get(j), storyTextX, stringYCoords[j]);
 						}
 					}
@@ -314,8 +315,6 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		isStorySaved = true;
 	}
 
-	// iterate through story words, adding a new fragment to arraylist every
-	// time the words are almost 22 characters
 	// Splits strings of story into lines
 	ArrayList<String> splitStoryLines() {
 		int currWord = 0;
@@ -422,27 +421,8 @@ public class StoryCubeView extends JPanel implements ActionListener {
 				gameDice[i].throwDie();
 				gameDice[i].setDieImg(possibleDiceImgs[rand.nextInt(dgame.getNumImgs())]);
 			}
-		} else {
-			for (int i = 0; i < dgame.getNumDice(); i++) {
-				while (gameDice[i].getXLoc() != gameDice[i].getStartXLoc()
-						| gameDice[i].getYLoc() != gameDice[i].getStartYLoc()) {
-					//System.out.println("while");
-					repaint();
-					gameDice[i].finishThrowing();
-					//System.out.println("repainting");
-					// diceImages[i] =
-					// possibleDiceImgs[rand.nextInt(dgame.getNumImgs())];
-				}
-			}
 		}
-	}
-	/*
-	 * void returnDice() { // TODO System.out.println("returnDice called"); for
-	 * (int i = 0; i < dgame.getNumDice(); i++) { while (gameDice[i].getXLoc()
-	 * != gameDice[i].getStartXLoc() | gameDice[i].getYLoc() !=
-	 * gameDice[i].getStartYLoc()) { gameDice[i].finishThrowing(); repaint(); }
-	 * } }
-	 */
+	} 
 
 	// Timer
 	public void actionPerformed(ActionEvent e) {
@@ -453,19 +433,17 @@ public class StoryCubeView extends JPanel implements ActionListener {
 				repaint();
 				numAnimations++;
 			}
-		} else if (numAnimations == animsToDo) {
+		} else if (numAnimations == animsToDo && !isAnimDone) {
 			isAnimDone = true;
 			animDice();
-			// returnDice();
 			setDiceImgs();
 			repaint();
 			// storyButton.setVisible(true);
 			// storyText.setVisible(true);
 			numAnimations++;
 		}
-
 	}
-
+	
 	// Set up mouse listener
 	private Component getMouseTarget() {
 		return this;

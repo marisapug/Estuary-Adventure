@@ -26,9 +26,9 @@ public class DiceGame {
 		screenWidth = sWidth;
 		screenHeight = sHeight;
 		diceWidth = dWidth;
-		betweenDice = diceWidth + 10;
+		betweenDice = diceWidth + (screenWidth / 60);
 		diceStartX = (screenWidth - (numDice / 2 * diceWidth + (numDice / 2 - 1) * betweenDice)) / 2;
-		diceStartY = (screenHeight - (3 * diceWidth + 2 * betweenStory)) / 2;
+		diceStartY = (screenHeight - (4 * diceWidth + 2 * betweenStory)) / 2;
 		
 		
 	}
