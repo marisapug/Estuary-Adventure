@@ -662,10 +662,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				nameTextField.addKeyListener(new KeyAdapter() {
 				    public void keyTyped(KeyEvent e) { 
 				    	//limits text to 3 letter and stops bad words
-				    	if(nameTextField.getText().length() >= 4){
+
+				    	if(nameTextField.getText().length() > 4){
 				    		nameTextField.setText("");
 				    	}
-				    	else if(board.getBadWordsList().contains(nameTextField.getText() + e.getKeyChar())){
+				    	else if(board.getBadWordsList().contains(nameTextField.getText().toLowerCase() + Character.toLowerCase(e.getKeyChar()))){
 				    		e.consume(); 
 				    	}
 				    	else if (nameTextField.getText().length() >= 3){
@@ -834,7 +835,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				System.out.println(board.getBadWordsList());
 				
 				//cheatCodes
 				isWallCheat = false;
