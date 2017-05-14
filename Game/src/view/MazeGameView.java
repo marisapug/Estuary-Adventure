@@ -899,11 +899,14 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			scoreYLoc += scoreFontSize;
 			int currRank = 1;
 			for(PlayerScore pS: board.getHighScores()){
+				g.drawString(String.valueOf(currRank),scoreNameXLoc - 2*scoreFontSize, scoreYLoc);
 				if(pS != null){
-					g.drawString(String.valueOf(currRank),scoreNameXLoc - 2*scoreFontSize, scoreYLoc);
 					g.drawString(pS.getName(), scoreNameXLoc, scoreYLoc);
 					g.drawString(String.valueOf(pS.getScore()), scoreScoreXLoc, scoreYLoc);
 					currRank++;
+				}else{
+					g.drawString("---", scoreNameXLoc, scoreYLoc);
+					g.drawString("---", scoreScoreXLoc, scoreYLoc);
 				}
 				scoreYLoc += scoreFontSize;
 			}
