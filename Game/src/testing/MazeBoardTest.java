@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import model.MazeBoard;
+import model.MazeCell;
 
 public class MazeBoardTest {
 
@@ -14,6 +15,12 @@ public class MazeBoardTest {
 		assertEquals(tempBoard.getGameLitter().size(), 1);
 		assertEquals(tempBoard.getPredators().size(), 1);
 		assertEquals(tempBoard.getGamePowerUps().size(), 1);
+		assertEquals(tempBoard.getTutWalls().size(), 1);
+	}
+	
+	@Test
+	public void makeGridTest(){
+		MazeBoard tempBoard = new MazeBoard(1,500,500);
 	}
 
 }

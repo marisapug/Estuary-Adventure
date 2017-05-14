@@ -148,12 +148,12 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				
-				cardPanel.remove(currMazePanel);
+				removeKeyListener(currMazePanel);
 				removeKeyListener(currBeachPanel);
+				cardPanel.remove(currMazePanel);
 				resetMaze();
-				addKeyListener(currMazePanel);
 				cardPanel.add(currMazePanel, "maze");
+				addKeyListener(currMazePanel);
 				cl.show(cardPanel, "maze");
 			}
 		});
@@ -162,11 +162,12 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				cardPanel.remove(currBeachPanel);
 				removeKeyListener(currMazePanel);
+				removeKeyListener(currBeachPanel);
+				cardPanel.remove(currBeachPanel);
 				resetBeach();
-				addKeyListener(currBeachPanel);
 				cardPanel.add(currBeachPanel, "beach");
+				addKeyListener(currBeachPanel);
 				cl.show(cardPanel, "beach");
 			}
 		});

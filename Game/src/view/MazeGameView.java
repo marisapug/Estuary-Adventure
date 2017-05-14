@@ -972,7 +972,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		}
 
 		//sets crabs speed back to initial (after power up)
-		if(powerUpSpeedTimer == powerUpSpeedLimit){
+		if(powerUpSpeedTimer == powerUpSpeedLimit && !isSuperSpeedCheat){
 			xIncr = testCrab.getXIncr();
 			yIncr = testCrab.getYIncr();
 		}
