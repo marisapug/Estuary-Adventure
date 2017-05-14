@@ -81,5 +81,8 @@ public class MazeWall {
 	public int getEndY(){
 		return endY;
 	}
+	public int getDir(){
+		return dir;
+	}
 	
 }
