@@ -367,7 +367,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int ageStateCellCurrentCount;
 	
 	//scoreboard
-	private JTextField nameTextField;
+	private JTextArea nameTextField;
 	private JButton enterNameButton;
 	private int gameScore;
 	private int scoreDecrementTimer;
@@ -475,7 +475,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		testCrab = new Crab(5,0,screenWidth/2 + 10 ,screenHeight/2 + 10);
 		
 		//scoreboard
-		nameTextField = new JTextField("Enter your name here", 3);
+		nameTextField = new JTextArea("Enter your name here",1,5);
 		nameTextField.setBackground(Color.WHITE);
 		this.add(nameTextField);
 		this.add(enterNameButton);
@@ -1477,6 +1477,24 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				isWallCheat = true;
 			}
 		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		int code = e.getKeyCode();
+		if(code == KeyEvent.VK_UP){
+			yVel = 0;
+		}
+		else if(code == KeyEvent.VK_DOWN){
+			yVel = 0;
+		}
+		else if(code == KeyEvent.VK_LEFT){
+			xVel = 0;
+		}
+		else if(code == KeyEvent.VK_RIGHT){
+			xVel = 0;
+		}
 		else if(code == KeyEvent.VK_I){
 			if(isInvCheat){
 				powerUpInvLimit = powerUpInvLimitOriginal;
@@ -1497,24 +1515,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				yIncr = superSpeedYIncr;
 				isSuperSpeedCheat = true;
 			}
-		}
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		int code = e.getKeyCode();
-		if(code == KeyEvent.VK_UP){
-			yVel = 0;
-		}
-		else if(code == KeyEvent.VK_DOWN){
-			yVel = 0;
-		}
-		else if(code == KeyEvent.VK_LEFT){
-			xVel = 0;
-		}
-		else if(code == KeyEvent.VK_RIGHT){
-			xVel = 0;
 		}
 	}
 
