@@ -940,6 +940,7 @@ public class MazeBoard {
 	public ArrayList<String> getBadWordsList(){
 		return badWordsList;
 	}
+	
 
 	//SETTERS
 	public void setNumRows(int rows){
