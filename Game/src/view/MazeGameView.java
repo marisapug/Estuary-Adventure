@@ -413,13 +413,13 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		//Buttons
 		hCrabButton = new JButton("Horseshoe Crab");
 		hCrabButton.setFocusable(false);
-		hCrabButton.setBackground(Color.GREEN);
+		hCrabButton.setBackground(Color.ORANGE);
 		hCrabButton.setOpaque(true);
 		hCrabButton.setBorderPainted(false);
 		
 		bCrabButton = new JButton("Blue Crab");
 		bCrabButton.setFocusable(false);
-		bCrabButton.setBackground(Color.ORANGE);
+		bCrabButton.setBackground(Color.CYAN);
 		bCrabButton.setOpaque(true);
 		bCrabButton.setBorderPainted(false);
 
@@ -437,13 +437,13 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		
 		hardButton = new JButton("Hard");
 		hardButton.setFocusable(false);
-		hardButton.setBackground(Color.GREEN);
+		hardButton.setBackground(Color.RED);
 		hardButton.setOpaque(true);
 		hardButton.setBorderPainted(false);
 
 		startButton = new JButton("Start Game!");
 		startButton.setFocusable(false);
-		startButton.setBackground(Color.RED);
+		startButton.setBackground(Color.MAGENTA);
 		startButton.setOpaque(true);
 		startButton.setBorderPainted(false);
 
