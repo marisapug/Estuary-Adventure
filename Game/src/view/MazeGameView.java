@@ -377,6 +377,12 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	
 	private String scoreFontStyle;
 	private int scoreFontSize;
+	private int scoreNameXLoc;
+	private int scoreScoreXLoc;
+	private int scoreYLoc;
+	
+	private String currScoreName;
+	private int currScoreScore;
 	
 	//cheatCodes for presentation
 	private boolean isWallCheat;
@@ -627,6 +633,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				enterNameButton.setVisible(false);
 				nameTextField.setVisible(false);
 				isScoreBoardView = true;
+				currScoreName = tempName;
+				currScoreScore = gameScore;
 				repaint();
 			}
 		});
@@ -683,6 +691,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				
 				scoreFontStyle = "TimesRoman";
 				scoreFontSize = 20;
+				scoreNameXLoc = screenWidth/2 - (6*scoreFontSize);
+				scoreScoreXLoc = scoreNameXLoc + (6*scoreFontSize);
+				scoreYLoc = screenHeight/7;
 				
 				if(isEasyMode){
 					gameScore = board.getEasyScore();
@@ -876,16 +887,25 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 		}//if
 		else if(isScoreBoardView){
-			int scoreYStart = screenHeight/10;
 			g.setFont(new Font(scoreFontStyle,Font.BOLD,scoreFontSize));
+			g.setColor(Color.RED);
+			
+			g.drawString(currScoreName, scoreNameXLoc, scoreYLoc - 2*scoreFontSize);
+			g.drawString(String.valueOf(currScoreScore), scoreScoreXLoc, scoreYLoc - 2*scoreFontSize);
+
 			g.setColor(Color.WHITE);
-			int nameXLoc;
+			g.drawString("NAME", scoreNameXLoc, scoreYLoc);
+			g.drawString("SCORE", scoreScoreXLoc, scoreYLoc);
+			scoreYLoc += scoreFontSize;
+			int currRank = 1;
 			for(PlayerScore pS: board.getHighScores()){
 				if(pS != null){
-					nameXLoc = screenWidth/2 - (((pS.getName().length() + 2 + String.valueOf(pS.getScore()).length()) * scoreFontSize)*2)/9;
-					g.drawString(pS.getName() + " -- " + pS.getScore(), nameXLoc, scoreYStart);
+					g.drawString(String.valueOf(currRank),scoreNameXLoc - 2*scoreFontSize, scoreYLoc);
+					g.drawString(pS.getName(), scoreNameXLoc, scoreYLoc);
+					g.drawString(String.valueOf(pS.getScore()), scoreScoreXLoc, scoreYLoc);
+					currRank++;
 				}
-				scoreYStart += scoreFontSize * 2;
+				scoreYLoc += scoreFontSize;
 			}
 		}
 		//EVERYTHING ELSE
