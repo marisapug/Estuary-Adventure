@@ -620,22 +620,24 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		enterNameButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				String tempName = nameTextField.getText();
-				board.insertScore(tempName, gameScore);
-				try {
-					board.writeScoresToFile();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				if(tempName.length() == 3){
+					board.insertScore(tempName, gameScore);
+					try {
+						board.writeScoresToFile();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+					//			board.printHighScores();
+					goToStartButton.setVisible(true);
+					enterNameButton.setVisible(false);
+					nameTextField.setVisible(false);
+					isScoreBoardView = true;
+					currScoreName = tempName;
+					currScoreScore = gameScore;
+					repaint();
 				}
-				
-	//			board.printHighScores();
-				goToStartButton.setVisible(true);
-				enterNameButton.setVisible(false);
-				nameTextField.setVisible(false);
-				isScoreBoardView = true;
-				currScoreName = tempName;
-				currScoreScore = gameScore;
-				repaint();
 			}
 		});
 
