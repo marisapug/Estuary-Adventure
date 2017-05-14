@@ -9,6 +9,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.*;
 
+/**
+ * Class containing all elements of the Maze Game
+ * includes: maze grid, predators, litters, power ups, crab, etc...
+ * @author Maaz
+ *
+ */
 public class MazeBoard {
 	private int numRows;
 	private int numCols;
@@ -87,7 +93,12 @@ public class MazeBoard {
 	private int hardScore = 30000;
 	private int scoreDecrementOnHit = 500;
 
-	//CONSTRUCTOR for game board
+	/**
+	 * Constructor, creates and instance of a game MazeBoard
+	 * @param dif difficulty of maze (1-3)
+	 * @param sWidth width of the screen
+	 * @param sHeight height of the screen
+	 */
 	public MazeBoard(int dif, int sWidth, int sHeight){
 		
 		if(dif == 0){
@@ -144,7 +155,11 @@ public class MazeBoard {
 		
 	}
 	
-	//CONSTRUCTOR for TUTORIAL BOARD
+	/**
+	 * Constructor, creates an instance of a tutorial MazeBoard
+	 * @param sWidth width of screen
+	 * @param sHeight height of screen
+	 */
 	public MazeBoard(int sWidth, int sHeight){
 		screenWidth = sWidth;
 		screenHeight = sHeight;
@@ -185,7 +200,9 @@ public class MazeBoard {
 	//TUTORIAL STUFF---------------------------------------------------------------------------
 	//-----------------------------------------------------------------------------------------
 
-
+	/**
+	 * Initializes litter, predator and power up for the tutorial board
+	 */
 	public void setUpTutObjects(){
 		tutLitter = new Litter(tutLitterType, grid[0][tutLitterStartIndex].getXLoc(), grid[0][tutLitterStartIndex].getYLoc() + cellHeight/2);
 		tutPredator = new Predator(grid[0][tutPredatorStartIndex].getXLoc(), grid[0][tutPredatorStartIndex].getYLoc() + cellHeight/2 - predHeight/2, 3, predWidth, predHeight);
@@ -196,6 +213,9 @@ public class MazeBoard {
 		
 	}
 	
+	/**
+	 * Initializes extra walls for the tutorial
+	 */
 	public void setUpTutWalls(){
 		MazeCell tempCell = grid[0][tutPowerUpStartIndex];
 		MazeWall tempWall = new MazeWall(tempCell.getXLoc() + cellWidth,tempCell.getYLoc(),tempCell.getXLoc() + cellWidth,tempCell.getYLoc() + cellHeight,1);
@@ -206,7 +226,11 @@ public class MazeBoard {
 	//END OF TUTORIAL STUFF---------------------------------------------------------------------------
 	//-----------------------------------------------------------------------------------------
 	
-	//Makes grid based on user num rows and cols input
+	/**
+	 * Makes grid based on number of rows and number of columns 
+	 * @param xStart x Location of the full Maze (top left)
+	 * @param yStart y Location of the full Maze (top Left)
+	 */
 	void makeGrid(int xStart, int yStart){
 		for(int i = 0; i < numRows; i++){
 			for(int j = 0; j < numCols; j++){
@@ -215,7 +239,11 @@ public class MazeBoard {
 		}
 	}
 	
-	//Checks neighbors of a cell that havent been visited
+	/**
+	 * Checks neighbors (adjacent) of a cell that haven't been visited and returns a random cell
+	 * @param curr MazeCell whose neighbors are being checked
+	 * @return previously unvisited neighbor. If no unvisited neighbor then returns current cell
+	 */
 	MazeCell checkNeighbors(MazeCell curr){
 		ArrayList<MazeCell> neighbors = new ArrayList<MazeCell>();
 
@@ -245,7 +273,10 @@ public class MazeBoard {
 			return curr;
 	}
 
-	//Recursively creates Maze by removing walls in cells
+	/**
+	 * Recursively creates Maze by removing walls in cells
+	 * @param curr starting location for the construction of the maze
+	 */
 	void generateMaze(MazeCell curr){
 		curr.visited = true;
 		MazeCell next = checkNeighbors(curr);
@@ -262,7 +293,11 @@ public class MazeBoard {
 		}
 	}
 	
-	//Checks neighbors without walls between them and havent been visited
+	/**
+	 * Checks neighbors that do not have walls between them and have not been visited
+	 * @param curr MazeCell whose neighbors are being checked
+	 * @return Appropriate neighbor (No wall, not previously visited). if no neighbor then returns current MazeCell
+	 */
 	MazeCell checkCorrectNeighbors(MazeCell curr){
 		ArrayList<MazeCell> neighbors = new ArrayList<MazeCell>();
 		
@@ -292,7 +327,9 @@ public class MazeBoard {
 			return curr;
 	}
 	
-	//resets visited of every cell to false
+	/**
+	 * resets visited boolean of every MazeCell to false
+	 */
 	void resetVisited(){
 		for(int i = 0; i < numRows; i++){
 			for(int j = 0; j < numCols; j++){
@@ -301,7 +338,10 @@ public class MazeBoard {
 		} 
 	}
 	
-	//Generates the correct path from one maze cell to another
+	/**
+	 * Generates the a path from one maze cell to another
+	 * Sets boolean isCorrect path to true if a MazeCell is on the solved path
+	 */
 	void generateShortestPath(MazeCell curr, MazeCell end){
 		curr.isCorrectPath = true;
 		curr.visited = true;
@@ -321,7 +361,9 @@ public class MazeBoard {
 		}
 	}
 	
-	//adds all the cells on the correct path to an array list correctPath
+	/**
+	 * Adds all the cells on the correct path to an array list correctPath
+	 */
 	void getPath(){
 		for(int i = 0; i < numRows; i++){
 			for(int j = 0; j < numCols; j++){
@@ -332,7 +374,11 @@ public class MazeBoard {
 		} 
 	}
 
-	//removes walls between two cells
+	/**
+	 * removes walls between two adjacent cells
+	 * @param a MazeCell 1
+	 * @param b MazeCell 2
+	 */
 	void removeWalls(MazeCell a, MazeCell b){
 		int xWall = a.x - b.x;
 		int yWall = a.y - b.y;
@@ -355,20 +401,13 @@ public class MazeBoard {
 
 	}
 
-	//Checks if something has hit a wall of the maze
-	public boolean hitGridWalls(int xCor, int yCor, int xIncr, int yIncr, int dir){
-		boolean result = false;
-		for(int i = 0; i < numRows; i++){
-			for(int j = 0; j < numCols; j++){
-				if(grid[i][j].hitCellWall(xCor,yCor,xIncr,yIncr,dir)){
-					result = true;
-				}
-			}
-		}
-		return result;
-	}
 
-	//moves the grid by and x and y increment
+
+	/**
+	 * moves the board by an x and y increment (including all elements)
+	 * @param xIncr change in the x direction
+	 * @param yIncr change in the y direction
+	 */
 	public void moveGrid(int xIncr, int yIncr){
 		for(int i = 0; i < numRows; i++){
 			for(int j = 0; j < numCols; j++){
@@ -392,7 +431,12 @@ public class MazeBoard {
 		}
 	}
 
-	//checks if a given x and y location falls on a correct path cell
+	/**
+	 * checks if a given x and y location falls on a correct path MazeCell
+	 * @param x x location of the object
+	 * @param y y location of the object
+	 * @return boolean of whether the object is in a correct path MazeCell
+	 */
 	public boolean isOnCorrectPath(int x, int y){
 		for(MazeCell m : correctPath){
 			if(x >= m.xLoc && x <= m.xLoc + m.width &&
@@ -403,7 +447,12 @@ public class MazeBoard {
 		return false;
 	}
 
-	//returns cell that contains the given x and y location
+	/**
+	 * returns cell that contains the given x and y location
+	 * @param xL any x location 
+	 * @param yL any y location
+	 * @return MazeCell containing the given x and y coordinate (if no such MazeCell exists return top left MazeCell) 
+	 */
 	public MazeCell inWhichCell(int xL, int yL){
 		for(int i = 0; i < numRows; i++){
 			for(int j = 0; j < numCols; j++){
@@ -419,6 +468,9 @@ public class MazeBoard {
 	//-------------------------------------------------------------------------------
 	//WALL STUFF-------------------------------------------------------------------
 	//--------------------------------------------------------------------------------
+	/**
+	 * Creates MazeWalls corresponding to the walls of the MazeCells in the grid
+	 */
 	private void setWalls(){
 		for(int i = 0; i < numRows; i++){
 			for(int j =0; j < numCols; j++){
@@ -452,6 +504,14 @@ public class MazeBoard {
 		}
 	}
 	
+	/**
+	 * determines if a given x and y location is hitting a wall
+	 * @param xLoc
+	 * @param yLoc
+	 * @param w
+	 * @param h
+	 * @return
+	 */
 	public boolean isHittingAnyWalls(int xLoc, int yLoc, int w, int h){
 		boolean tempBool = false;
 		for(MazeWall wall: mazeWalls){
@@ -472,7 +532,10 @@ public class MazeBoard {
 	
 	//LITTER STUFF----------------------------------------------------------
 	
-	//gets a random cell from the grid
+	/**
+	 * gets a random cell from the grid
+	 * @return random cell
+	 */
 	public MazeCell getRandomCell(){
 		Random rand = new Random();
 		int x = rand.nextInt(numRows-1);
@@ -480,7 +543,10 @@ public class MazeBoard {
 		return grid[x][y];
 	}
 	
-	//generates given amount of litter randomly throughout maze
+	/**
+	 * generates set amount of litter randomly throughout maze
+	 * @param amount amount of litter to be generated
+	 */
 	public void generateLitter(int amount){
 		Random rand = new Random();
 		for(int i = 0; i < amount; i++){
@@ -491,21 +557,32 @@ public class MazeBoard {
 		}
 	}
 	
-	//floats all pieces of litter
+	/**
+	 * floats all pieces of litter to the right
+	 */
 	public void floatAllLitterRight(){
 		for(Litter lit: gameLitter){
 			lit.floatLitterRight();
 		}
 	}
 	
-	//floats all pieces of litter
+	/**
+	 * floats all pieces of litter to the left
+	 */
 	public void floatAllLitterLeft(){
 		for(Litter lit: gameLitter){
 			lit.floatLitterLeft();
 		}
 	}
 	
-	//checks if anyLitter is hit
+	/**
+	 * checks if anyLitter is hit
+	 * @param xL x location of object
+	 * @param yL y location of object
+	 * @param w width of object
+	 * @param h height of object
+	 * @return boolean of whether a litter was hit (true) or not (false)
+	 */
 	public boolean hitAnyLitter(int xL, int yL, int w, int h){
 		for(Litter lit: gameLitter){
 			if(lit.hitLitter(xL, yL, w, h)){
@@ -518,7 +595,10 @@ public class MazeBoard {
 	//----------------------------------------------------------------------------------
 	//PREDATOR STUFF-------------------------------------------------------------------
 	//-------------------------------------------------------------------------------------
-	
+	/**
+	 * generates a set amount of predators randomly in the board
+	 * @param amount amount of predators to be generated
+	 */
 	public void generatePredators(int amount){
 		Random rand = new Random();
 		for(int i = 0; i < amount; i++){
@@ -529,6 +609,9 @@ public class MazeBoard {
 		}
 	}
 	
+	/**
+	 * sets a random direction for predators that have hit a wall
+	 */
 	public void setRandomDirections(){
 		for(Predator pred: predators){
 			if(pred.getDirection() == 0){
@@ -551,6 +634,9 @@ public class MazeBoard {
 		}
 	}
 	
+	/**
+	 * Moves all predators on the board
+	 */
 	public void moveAllPredators(){
 		for(Predator pred: predators){
 			if((pred.getDirection() == 0) &&
@@ -570,7 +656,14 @@ public class MazeBoard {
 		}
 	}
 	
-	//checks if anyLitter is hit
+	/**
+	 * checks if any predator is hit
+	 * @param xL x location of the object
+	 * @param yL y location of the object
+	 * @param w width of the object
+	 * @param h height of the object
+	 * @return boolean of whether a predator was hit (true) or not (false)
+	 */
 	public boolean hitAnyPreds(int xL, int yL, int w, int h){
 		for(Predator pred: predators){
 			if(pred.hitPred(xL, yL, w, h)){
@@ -583,6 +676,10 @@ public class MazeBoard {
 	
 	//===== POWER UPS ======
 	
+	/**
+	 * generates a set amount of power ups randomly throughout the board
+	 * @param amount amount of power ups to be generated
+	 */
 	public void generatePowerUps(int amount){
 		Random rand = new Random();
 		for(int i = 0; i < amount; i++){
@@ -593,7 +690,14 @@ public class MazeBoard {
 		}
 	}
 	
-	//checks if any power up is hit
+	/**
+	 * checks if any power up is hit
+	 * @param xL x location of the object
+	 * @param yL y location of the object
+	 * @param w width of the object
+	 * @param h height of the object
+	 * @return boolean of whether a power up was hit (true) or not (false)
+	 */
 	public boolean hitAnyPowerUps(int xL, int yL, int w, int h){
 		for(PowerUp pu: gamePowerUps){
 			if(pu.hitPowerUp(xL, yL, w, h)){
@@ -605,6 +709,11 @@ public class MazeBoard {
 	
 	
 	//HIGHSCORE UPDATING 
+	/**
+	 * updates leader board of the given score is ranked
+	 * @param newName name of the Player
+	 * @param newScore score achieved by the Player
+	 */
 	public void insertScore(String newName, int newScore){
 		PlayerScore prevPlayer;
 		PlayerScore currPlayer;
@@ -624,6 +733,10 @@ public class MazeBoard {
 		}//if
 	}//insertScore
 	
+	/**
+	 * writes highscores to a file
+	 * @throws IOException
+	 */
 	public void writeScoresToFile() throws IOException{
 		File file = new File("highScores.tmp");
 		FileOutputStream fos = new FileOutputStream(file);
@@ -632,6 +745,11 @@ public class MazeBoard {
 		oos.close();
 	}
 	
+	/**
+	 * reads previous highscores from a file
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
 	public void readScoresFromFile() throws IOException, ClassNotFoundException{
 		FileInputStream fis = new FileInputStream("highScores.tmp");
 		ObjectInputStream ois = new ObjectInputStream(fis);
@@ -639,17 +757,12 @@ public class MazeBoard {
 		ois.close();
 	}
 	
-	public void printHighScores(){
-		for(PlayerScore pS : highScores){
-			if(pS != null)
-				System.out.println("Name: " + pS.getName() + " -- Score: " + pS.getScore());
-			else
-				System.out.println("null");
-		}
-		System.out.println("All scores printed");
-	}
 	
 		//profanity checker
+	/**
+	 * writes profane words to a file (if new bad words are to be added)
+	 * @throws IOException
+	 */
 	public void writeBadWordsToFile() throws IOException{
 		File file = new File("badWords.tmp");
 		FileOutputStream fos = new FileOutputStream(file);
@@ -657,6 +770,12 @@ public class MazeBoard {
 		oos.writeObject(badWordsList);
 		oos.close();
 	}
+	
+	/**
+	 * reads into an arrayList a list of profane words
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
 	public void readBadWordsFromFile() throws IOException, ClassNotFoundException{
 		FileInputStream fis = new FileInputStream("badWords.tmp");
 		ObjectInputStream ois = new ObjectInputStream(fis);
@@ -664,6 +783,10 @@ public class MazeBoard {
 		ois.close();
 	}
 	
+	/**
+	 * adds a new word to the arrayList of bad words
+	 * @param s
+	 */
 	public void addBadWordToList(String s){
 		badWordsList.add(s);
 	}
