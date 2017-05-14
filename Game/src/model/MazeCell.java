@@ -39,7 +39,7 @@ public class MazeCell {
 	 * @param sWidth screen width
 	 * @param sHeight screen height
 	 */
-	MazeCell(int row, int column, int width, int height, int xStart, int yStart, int sWidth, int sHeight){
+	public MazeCell(int row, int column, int width, int height, int xStart, int yStart, int sWidth, int sHeight){
 		y = row;
 		x = column;
 		this.width = width;
@@ -167,7 +167,7 @@ public class MazeCell {
 		hasLeftWall = b;
 	}
 	
-	public void setHasRigthWall(boolean b){
+	public void setHasRightWall(boolean b){
 		hasRightWall = b;
 	}
 	
