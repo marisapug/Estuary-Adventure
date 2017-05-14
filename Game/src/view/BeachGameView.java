@@ -37,6 +37,12 @@ import javax.swing.Timer;
 import model.ShoreCrab;
 import model.Wave;
 
+/**
+ * BeachGameView class contains all the information relating to the user interface and on-screen displays
+ * for MiniGame2, the estuary defense game. Also holds information such as button listeners and timers.
+ * @author Logan
+ *
+ */
 public class BeachGameView extends JPanel implements KeyListener, ActionListener {
 
 	private static final long serialVersionUID = 1L;
@@ -179,20 +185,20 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private String startTitleFontStyle = "TimesRoman";
 	private int startTitleX = screenWidth/2 - (((startTitleFontSize * startTitle.length())*2)/9);
 	private int startTitleY = screenHeight/4;
-	
-	
+
+
 	private JButton startButton;
 	private int startButtonXLoc;
 	private int startButtonYLoc;
 	private int startButtonWidth;
 	private int startButtonHeight;
-	
+
 	private JButton goToStartButton;
 	private int goToStartButtonXLoc;
 	private int goToStartButtonYLoc;
 	private int goToStartButtonWidth;
 	private int goToStartButtonHeight;
-	
+
 	private boolean hasWon;
 	private boolean isGameOver;
 	private String winText;
@@ -220,10 +226,10 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	private boolean hasSpawnedOysters;
 	private boolean hasSpawnedFirstBoat;
 	private boolean hasSpawnedSecondBoat;
-	
+
 	private String tutorialTextStyle;
 	private int tutorialTextSize;
-	
+
 	private String firstBoatStateText;
 	private String grassStateText;
 	private String seawallStateText;
@@ -234,24 +240,27 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 	//=======================================================================//
 
-	//CONSTRUCTOR 
+	/**
+	 * Constructor, creates a new instance of a BeachGameView, initializes button listeners and game states, and
+	 * information needed for the view of the game.
+	 */
 	public BeachGameView(){
 
 		addKeyListener(this);
 		this.setFocusable(true);
 		this.setFocusTraversalKeysEnabled(false);
-		
+
 		this.setLayout(null);
-		
+
 		//intialize game state
 		startScreenVisible = true;
-		
+
 		//initialize buttons
 		startButtonWidth = screenWidth/8;
 		startButtonHeight = screenHeight/12;
 		startButtonXLoc = screenWidth/2 - (startButtonWidth/2);
 		startButtonYLoc = screenHeight/3;
-		
+
 		goToStartButtonWidth = screenWidth/6;
 		goToStartButtonHeight = screenHeight/12;
 		goToStartButtonXLoc = screenWidth/2 - (goToStartButtonWidth/2);
@@ -265,7 +274,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		startButton.setFocusable(false);
 		startButton.setBounds(startButtonXLoc,startButtonYLoc,startButtonWidth,startButtonHeight);
 		this.add(startButton);
-		
+
 		goToStartButton = new JButton("Go to Start Screen");
 		goToStartButton.setBackground(Color.MAGENTA);
 		goToStartButton.setOpaque(true);
@@ -275,146 +284,16 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		goToStartButton.setBounds(goToStartButtonXLoc,goToStartButtonYLoc,goToStartButtonWidth,goToStartButtonHeight);
 		this.add(goToStartButton);
 
-		startButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				
-				//tutorial Stuff
-				isTutorial = true;
-				hasSpawnedOysters = false;
-				hasSpawnedFirstBoat = false;
-				hasSpawnedSecondBoat = false;
+		//initialize button listeners
+		setupListeners();
 
-				firstBoatState = 0;
-				grassState = 1;
-				seawallState = 2;
-				gabionState = 3;
-				secondBoatState = 4;
-
-				finishTutorialTextState = 9;
-				finishTutorialState = 10;
-				tutorialState = firstBoatState;
-
-				tutPauseTotal = 300;
-				tutPauseTimer = tutPauseTotal;
-
-				//all game stuff
-				board = new BeachBoard(numRows,numCols,screenWidth,screenHeight);
-
-				cellWidth = board.getCellWidth();
-				cellHeight = board.getCellHeight();
-
-				crab = board.getGameCrab();
-				crabXVel = crab.getXVel();
-				crabYVel = crab.getYVel();
-
-				barrierImgWidth = cellWidth;
-				barrierImgHeight = cellHeight;
-
-				totalSandHealth = board.getTotalSandHealth();
-
-				grassImgWidth = cellWidth/3;
-				grassImgHeight = cellWidth/3;
-				grassTimerTick = 50; //half a second
-				grassTimer = 0;
-
-				oysterSpawnTimer = 0; 
-				oysterSpawnTick = 400; // 4 seconds
-
-				//features bar intialization
-				featuresBarWidth = board.getFeaturesBarWidth();
-				featuresBarHeight = board.getFeaturesBarHeight();
-
-				//health bar intialization
-				meterX = screenWidth - screenWidth/4;
-				meterY = featuresBarHeight/8;
-				meterWidth = screenWidth/5;
-				meterHeight = (featuresBarHeight*4)/5;
-				totalShoreHealth = board.getTotalShoreHealth();
-
-				gameBoats = board.getGameBoats();
-				newBoatTimer = 600;
-				newBoatTimerTime = 0;
-
-				gameWaves = board.getGameWaves();
-				waveSpeed = board.getWaveSpeed();
-
-				heldObjectWidth = crab.getWidth()/2;
-				heldObjectHeight = crab.getHeight()/2;
-
-				//timer initialization
-				timeRemainingLabel = "Time Remaining: ";
-				timeRemainingFontStyle = "TimesRoman";
-				timeRemainingFontSize = screenWidth/50;
-				timeRemainingLabelXLoc = (screenWidth/2) - (timeRemainingLabel.length()*timeRemainingFontSize)/4;
-				timeRemainingLabelYLoc = featuresBarHeight - (featuresBarHeight - timeRemainingFontSize)/2;
-				timeXLoc = timeRemainingLabelXLoc + timeRemainingLabel.length()*timeRemainingFontSize/2;
-				timeYLoc = timeRemainingLabelYLoc;
-
-				//health initialization
-				healthTitleText = "Estuary Health";
-				healthTitleX = meterX + (meterWidth/4);
-				healthTitleFontSize = screenWidth/60;
-				healthTitleY = featuresBarHeight - (featuresBarHeight - healthTitleFontSize)/2;
-				healthTitleFontStyle = "TimesRoman";
-
-				//oyster count initialization	
-				oysterCountLabel = "Oyster Count: ";
-				oysterCountFontStyle = "TimesRoman";
-				oysterCountFontSize = screenWidth/60;
-				oysterCountLabelXLoc = (screenWidth/4) - (oysterCountLabel.length()*oysterCountFontSize)/4;
-				oysterCountLabelYLoc = featuresBarHeight - (featuresBarHeight - oysterCountFontSize)/2;
-				oysterCountXLoc = oysterCountLabelXLoc + oysterCountLabel.length()*oysterCountFontSize/2;
-				oysterCountYLoc = oysterCountLabelYLoc;
-				
-				//tutorial text initializations
-				tutorialTextStyle = "TimesRoman";
-				tutorialTextSize = screenHeight/40;
-				
-				firstBoatStateText = "Oh No! The WAKES from the ships are destroying the shore!";
-				grassStateText = "Plant grass to heal the shore over time";
-				seawallStateText = "Use seawalls to protect the shore";
-				oysterStateText = "You need three oysters to set an oyster gabion";
-				gabionStateText = "Gabions are STRONGER than seawalls";
-				secondBoatStateText = "Barriers block the WAKES!";
-				finishTutorialStateText = "GET READY TO PLAY!";
-
-
-				//button visibility
-				startButton.setVisible(false);
-				
-				//GameState
-				startScreenVisible = false;
-
-				hasWon = false;
-				isGameOver = false;
-				
-				winText = "Congratulations, you defended the estuary!";
-				loseText = "Oh no! The estuary has been compromised!";
-				gameOverTextSize = screenHeight/30;
-				gameOverTextStyle = "TimesRoman";
-				gameOverTextX = (screenWidth/2) - (winText.length()*gameOverTextSize)/4;
-				gameOverTextY = screenHeight/3;
-
-
-				//start timer
-				t.start();
-			}
-		});
-		
-		goToStartButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				startScreenVisible = true;
-				goToStartButton.setVisible(false);
-				startButton.setVisible(true);
-				t.stop();
-				repaint();
-			}
-		});
-		
 	}//end constructor
 
 
-	//PAINT COMPONENT
+	/**
+	 * Draws all current images and graphics on the screen, called through repaint method.
+	 * @param g graphics
+	 */
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 
@@ -573,7 +452,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			if(crab.getCurrObject() != 0){
 				g.drawImage(objectImgArray[crab.getCurrObject() - 1],crab.getXLoc() + crab.getWidth()/2 - heldObjectWidth/2, crab.getYLoc() + crab.getHeight() - heldObjectHeight, heldObjectWidth, heldObjectHeight, this);
 			}
-			
+
 			//end game draw strings
 			if(isGameOver){
 				g.setFont(new Font(gameOverTextStyle, Font.BOLD, gameOverTextSize));
@@ -592,11 +471,14 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	}
 
 
-	//ACTION PERFORMED
+	/**
+	 * Handles all events that occur every tick of the timer for the whole game.
+	 * @param e action event
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		repaint();
-		
+
 		//Swim speed (rendering crab movement)
 		if(swimTimer > 0){
 			swimTimer--;
@@ -610,8 +492,8 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			crabPicNum = (crabPicNum + 1) % crabNumPics;
 			swimTimer = swimSpeed;
 		}
-		
-		
+
+
 		if(tutPauseTimer < tutPauseTotal){
 			tutPauseTimer++;
 			return;
@@ -768,22 +650,36 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 	}//actionPerformed
 
 
-	//MOVE CRAB IMAGE
+	/**
+	 * Moves the crab image up on the screen using information from the model.
+	 */
 	public void moveCrabImgUp(){
 		crabIsMoving = true;
 		crabXVel = 0;
 		crabYVel = -crab.getYIncr();
 	}
+	
+	/**
+	 * Moves the crab image down on the screen using information from the model.
+	 */
 	public void moveCrabImgDown(){
 		crabIsMoving = true;
 		crabXVel = 0;
 		crabYVel = crab.getYIncr();
 	}
+	
+	/**
+	 * Moves the crab image left on the screen using information from the model.
+	 */
 	public void moveCrabImgLeft(){
 		crabIsMoving = true;
 		crabXVel = -crab.getXIncr();
 		crabYVel = 0;
 	}
+	
+	/**
+	 * Moves the crab image right on the screen using information from the model.
+	 */
 	public void moveCrabImgRight(){
 		crabIsMoving = true;
 		crabXVel = crab.getXIncr();
@@ -792,12 +688,19 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 
 
 
-	//KEY METHODS
+	/**
+	 * Handles actions performed when a key is typed
+	 * @param e key event
+	 */
 	@Override
 	public void keyTyped(KeyEvent e) {
 
 	}
 
+	/**
+	 * Handles actions performed when a key is pressed
+	 * @param e key event
+	 */
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int code = e.getKeyCode();
@@ -818,6 +721,11 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			board.placeObject(crab.getCurrObject(), crab.getXLoc(), crab.getYLoc(), crab.getWidth(), crab.getHeight());
 		}
 	}
+	
+	/**
+	 * Handles actions performed when a key is released
+	 * @param e key event
+	 */
 	@Override
 	public void keyReleased(KeyEvent e) {
 		int code = e.getKeyCode();
@@ -835,7 +743,11 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		}
 	}
 
-	//CREATE IMAGE
+	/**
+	 * Reads in file name and turns file into a buffered image
+	 * @param fileName name of file to read in
+	 * @return a buffered image based on the fileName passed in
+	 */
 	public BufferedImage createImage(String fileName){
 		BufferedImage bufferedImage;
 		try {
@@ -845,6 +757,148 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	
+	/**
+	 * initializes all button listeners for game
+	 */
+	public void setupListeners(){
+		startButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+
+				//tutorial Stuff
+				isTutorial = true;
+				hasSpawnedOysters = false;
+				hasSpawnedFirstBoat = false;
+				hasSpawnedSecondBoat = false;
+
+				firstBoatState = 0;
+				grassState = 1;
+				seawallState = 2;
+				gabionState = 3;
+				secondBoatState = 4;
+
+				finishTutorialTextState = 9;
+				finishTutorialState = 10;
+				tutorialState = firstBoatState;
+
+				tutPauseTotal = 300;
+				tutPauseTimer = tutPauseTotal;
+
+				//all game stuff
+				board = new BeachBoard(numRows,numCols,screenWidth,screenHeight);
+
+				cellWidth = board.getCellWidth();
+				cellHeight = board.getCellHeight();
+
+				crab = board.getGameCrab();
+				crabXVel = crab.getXVel();
+				crabYVel = crab.getYVel();
+
+				barrierImgWidth = cellWidth;
+				barrierImgHeight = cellHeight;
+
+				totalSandHealth = board.getTotalSandHealth();
+
+				grassImgWidth = cellWidth/3;
+				grassImgHeight = cellWidth/3;
+				grassTimerTick = 50; //half a second
+				grassTimer = 0;
+
+				oysterSpawnTimer = 0; 
+				oysterSpawnTick = 400; // 4 seconds
+
+				//features bar intialization
+				featuresBarWidth = board.getFeaturesBarWidth();
+				featuresBarHeight = board.getFeaturesBarHeight();
+
+				//health bar intialization
+				meterX = screenWidth - screenWidth/4;
+				meterY = featuresBarHeight/8;
+				meterWidth = screenWidth/5;
+				meterHeight = (featuresBarHeight*4)/5;
+				totalShoreHealth = board.getTotalShoreHealth();
+
+				gameBoats = board.getGameBoats();
+				newBoatTimer = 600;
+				newBoatTimerTime = 0;
+
+				gameWaves = board.getGameWaves();
+				waveSpeed = board.getWaveSpeed();
+
+				heldObjectWidth = crab.getWidth()/2;
+				heldObjectHeight = crab.getHeight()/2;
+
+				//timer initialization
+				timeRemainingLabel = "Time Remaining: ";
+				timeRemainingFontStyle = "TimesRoman";
+				timeRemainingFontSize = screenWidth/50;
+				timeRemainingLabelXLoc = (screenWidth/2) - (timeRemainingLabel.length()*timeRemainingFontSize)/4;
+				timeRemainingLabelYLoc = featuresBarHeight - (featuresBarHeight - timeRemainingFontSize)/2;
+				timeXLoc = timeRemainingLabelXLoc + timeRemainingLabel.length()*timeRemainingFontSize/2;
+				timeYLoc = timeRemainingLabelYLoc;
+
+				//health initialization
+				healthTitleText = "Estuary Health";
+				healthTitleX = meterX + (meterWidth/4);
+				healthTitleFontSize = screenWidth/60;
+				healthTitleY = featuresBarHeight - (featuresBarHeight - healthTitleFontSize)/2;
+				healthTitleFontStyle = "TimesRoman";
+
+				//oyster count initialization	
+				oysterCountLabel = "Oyster Count: ";
+				oysterCountFontStyle = "TimesRoman";
+				oysterCountFontSize = screenWidth/60;
+				oysterCountLabelXLoc = (screenWidth/4) - (oysterCountLabel.length()*oysterCountFontSize)/4;
+				oysterCountLabelYLoc = featuresBarHeight - (featuresBarHeight - oysterCountFontSize)/2;
+				oysterCountXLoc = oysterCountLabelXLoc + oysterCountLabel.length()*oysterCountFontSize/2;
+				oysterCountYLoc = oysterCountLabelYLoc;
+
+				//tutorial text initializations
+				tutorialTextStyle = "TimesRoman";
+				tutorialTextSize = screenHeight/40;
+
+				firstBoatStateText = "Oh No! The WAKES from the ships are destroying the shore!";
+				grassStateText = "Plant grass to heal the shore over time";
+				seawallStateText = "Use seawalls to protect the shore";
+				oysterStateText = "You need three oysters to set an oyster gabion";
+				gabionStateText = "Gabions are STRONGER than seawalls";
+				secondBoatStateText = "Barriers block the WAKES!";
+				finishTutorialStateText = "GET READY TO PLAY!";
+
+
+				//button visibility
+				startButton.setVisible(false);
+
+				//GameState
+				startScreenVisible = false;
+
+				hasWon = false;
+				isGameOver = false;
+
+				winText = "Congratulations, you defended the estuary!";
+				loseText = "Oh no! The estuary has been compromised!";
+				gameOverTextSize = screenHeight/30;
+				gameOverTextStyle = "TimesRoman";
+				gameOverTextX = (screenWidth/2) - (winText.length()*gameOverTextSize)/4;
+				gameOverTextY = screenHeight/3;
+
+
+				//start timer
+				t.start();
+			}
+		});
+
+		goToStartButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				startScreenVisible = true;
+				goToStartButton.setVisible(false);
+				startButton.setVisible(true);
+				t.stop();
+				repaint();
+			}
+		});
 	}
 
 }//END CLASS
