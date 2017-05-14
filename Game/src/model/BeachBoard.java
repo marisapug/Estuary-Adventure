@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
+/**
+ * BeachBoard class contains all information and data used during the entire duration of the beach game.
+ * Info and data includes crab, boats, grass, barriers, and shore.
+ * @author Logan
+ *
+ */
 public class BeachBoard {
 
 	private int screenWidth;
@@ -108,7 +114,13 @@ public class BeachBoard {
 
 
 
-	//CONSTRUCTOR
+	/**
+	 * Constructor, creates an initialized instance of a BeachBoard object
+	 * @param rows number of rows
+	 * @param cols number of columns
+	 * @param sWidth screen width
+	 * @param sHeight screen height
+	 */
 	public BeachBoard(int rows, int cols, int sWidth, int sHeight){
 		numRows = rows;
 		numCols = cols;
@@ -178,7 +190,11 @@ public class BeachBoard {
 		currentShoreHealth = totalShoreHealth;
 	}
 
-	//creates beach board grid
+	/**
+	 * Creates a grid for the shore 
+	 * @param cWidth cell width
+	 * @param cHeight cell height
+	 */
 	private void makeGrid(int cWidth, int cHeight){
 		for(int i = 0; i < numRows; i++){
 			for(int j = 0; j < numCols; j++){
@@ -187,7 +203,9 @@ public class BeachBoard {
 		}
 	}
 
-	//intitialzes what type of item a cell can hold and the type of the cell
+	/**
+	 * intitialzes what type of item a cell can hold and the type of the cell
+	 */
 	private void initializeCells(){
 		for(int i = 0; i < numRows; i++){
 			grid[i][3].setCanHoldGrass(true);
@@ -208,6 +226,9 @@ public class BeachBoard {
 		}
 	}
 	
+	/**
+	 * resets the shore back to its intial state
+	 */
 	public void resetShore(){
 		gameGrass = new ArrayList<Grass>();
 		gameWalls = new ArrayList<Seawall>();
@@ -217,7 +238,12 @@ public class BeachBoard {
 	}
 
 
-	//returns cell that contains the given x and y location
+	/**
+	 * returns cell that contains the given x and y location
+	 * @param xL x-location
+	 * @param yL y-location
+	 * @return cell at given location
+	 */
 	public BeachCell inWhichCell(int xL, int yL){
 		for(int i = 0; i < numRows; i++){
 			for(int j = 0; j < numCols; j++){
@@ -230,7 +256,9 @@ public class BeachBoard {
 		return null;
 	}
 
-	//BOAT STUFF
+	/**
+	 * Generates a random-sized boat
+	 */
 	public void generateRandomBoat(){
 		Random rand = new Random();
 		int boatType = rand.nextInt(30);
@@ -245,19 +273,31 @@ public class BeachBoard {
 		}
 	}
 	
+	/**
+	 * creates a small-sized boat object and adds it into game boats array list
+	 */
 	public void spawnSmallBoat(){
 		Boat tempBoat = new Boat(-smallWidth, smallBoatY, 0, 0, smallSpeed,smallWidth,smallHeight);
 		gameBoats.add(tempBoat);
 	}
+	/**
+	 * creates a medium-sized boat object and adds it into game boats array list
+	 */
 	public void spawnMediumBoat(){
 		Boat tempBoat = new Boat(screenWidth, mediumBoatY, 1, 1, mediumSpeed,mediumWidth,mediumHeight);
 		gameBoats.add(tempBoat);
 	}
+	/**
+	 * creats a large-sized boat object and adds it into game boats array list
+	 */
 	public void spawnLargeBoat(){
 		Boat tempBoat = new Boat(-largeWidth, largeBoatY, 2, 0, largeSpeed,largeWidth,largeHeight);
 		gameBoats.add(tempBoat);
 	}
 
+	/**
+	 * iterates through gameBoats array list and removes boats that exit the screen view
+	 */
 	public void removeBoatsOffScreen(){
 		Iterator<Boat> bt = gameBoats.iterator();
 		while(bt.hasNext()){
@@ -272,6 +312,11 @@ public class BeachBoard {
 
 	}
 
+	/**
+	 * Determines which wave cell a given x-location is in
+	 * @param xl x-location
+	 * @return wave cell that given x-location falls in
+	 */
 	public WaveCell inWhichWaveCell(int xl){
 		for(int i = 0; i < numRows;i++){
 			if(xl >= waveCells[i].getXLoc() && xl < waveCells[i].getXLoc() + waveCellWidth)
@@ -281,6 +326,9 @@ public class BeachBoard {
 	}
 
 	//shore stuff
+	/**
+	 * Turns a given "sand" cell into an "ocean" cell and resets the cell's properties, such as what items it can hold
+	 */
 	public void sandToOcean(){
 		for(int i = 0; i < numRows; i++){
 			for(int j = 0; j < numCols-1; j++){
@@ -306,7 +354,11 @@ public class BeachBoard {
 		}
 	}
 
-	//removes grass given a xL and yL; called in sandToOcean method
+	/**
+	 * removes grass given a xL and yL; called in sandToOcean method
+	 * @param xL x-location
+	 * @param yL y-location
+	 */
 	public void removeDestroyedGrass(int xL, int yL){
 		Iterator<Grass> grassI = gameGrass.iterator();
 		while(grassI.hasNext()){
@@ -317,7 +369,9 @@ public class BeachBoard {
 		}
 	}
 
-	//heals the cell above a grass cell
+	/**
+	 * 	heals the cell above a cell that contains a grass object
+	 */
 	public void healCellsAboveGrass(){
 		for(Grass gr: gameGrass){
 			BeachCell healCell = inWhichCell(gr.getXLoc()+1, gr.getYLoc()-1);
@@ -330,7 +384,15 @@ public class BeachBoard {
 	}
 
 	//OBJECT STUFF
-	//PLACE OBJECT
+	
+	/**
+	 * places the crab's current held object at given x and y locations
+	 * @param object current obkect
+	 * @param xL x-location
+	 * @param yL y-location
+	 * @param width cell width
+	 * @param height cell height
+	 */
 	public void placeObject(int object, int xL, int yL, int width, int height){
 		switch(object){
 		case 1: //GRASS
@@ -388,7 +450,9 @@ public class BeachBoard {
 
 	}//method
 
-	//SET OBJECT
+	/**
+	 * Sets crab current object based on which "bucket" its x and y location fall into
+	 */
 	public void setObjectFromBucket(){
 		//grassBucket = 1
 		int width = gameCrab.getWidth();
@@ -414,6 +478,10 @@ public class BeachBoard {
 		}
 	}
 	
+	/**
+	 * Sets crab's current object if it matches the specific objectNum given and if crab is within specific bucket
+	 * @param objectNum object
+	 */
 	public void setSpecificObjectFromBucket(int objectNum){
 		int width = gameCrab.getWidth();
 		int height = gameCrab.getHeight();
@@ -442,7 +510,9 @@ public class BeachBoard {
 
 	
 
-	//Oyster stuff
+	/**
+	 * generates an oyster in a random cell that can hold an oyster object
+	 */
 	public void spawnOyster(){
 		Random rand = new Random();
 		boolean spawned = false;
@@ -460,7 +530,10 @@ public class BeachBoard {
 		}
 	}
 
-	//makes waves per cell per boat
+	/**
+	 * makes waves for each cell column that a boat passes through
+	 * @param b boat
+	 */
 	public void makeWaves(Boat b){
 		WaveCell tempCell;
 		if(b.getDirection() == 0){
@@ -495,7 +568,11 @@ public class BeachBoard {
 		}
 	}
 
-	//resets hasWave for a cell
+	/**
+	 * resets hasWave for a cell
+	 * @param cell cell
+	 * @param size size of boat
+	 */
 	public void resetWaveBasedOnBoatSize(WaveCell cell, int size){
 		if(cell != null){
 			if(size == 0){
@@ -510,7 +587,10 @@ public class BeachBoard {
 		}
 	}
 
-	//resets a cell once a boat passes
+	/**
+	 * resets a a wave cell once a boat passes through it
+	 * @param b boat
+	 */
 	public void resetWaves(Boat b){
 		if(b.getDirection() == 0){
 			WaveCell forwardCell = inWhichWaveCell(b.getXLoc());
@@ -528,7 +608,9 @@ public class BeachBoard {
 		}
 	}
 
-	//removes a wave from the list when it has hit a sand cell
+	/**
+	 * removes a wave from the game waves list when it has hit a sand cell
+	 */
 	public void removeHitWaves(){
 		Iterator<Wave> wv = gameWaves.iterator();
 		while(wv.hasNext()){
@@ -544,7 +626,11 @@ public class BeachBoard {
 		}
 	}
 
-	//removes a barrier gives the xLoc and yLoc of the cell (same as its own xLoc and yLoc)
+	/**
+	 * removes a barrier from given the xLoc and yLoc of the cell (same as its own xLoc and yLoc)
+	 * @param xL x-location
+	 * @param yL y-location
+	 */
 	public void removeBarrier(int xL, int yL){
 		Iterator<OysterGabion> gi = gameGabions.iterator();
 		Iterator<Seawall> si = gameWalls.iterator();
@@ -565,7 +651,9 @@ public class BeachBoard {
 	}
 
 
-	//removes barriers with zero-health barriers, updates cells that can hold barriers/has barriers
+	/**
+	 * removes barriers with zero-health barriers, updates cells that can hold barriers/has barriers
+	 */
 	public void removeDeadBarriers(){
 		Iterator<Wave> wv = gameWaves.iterator();
 		while(wv.hasNext()){
@@ -585,7 +673,10 @@ public class BeachBoard {
 		}
 	}
 
-	//sets what cells can hold barriers
+	/**
+	 * sets what cells can hold barriers
+	 * @param tempCell temporary cell
+	 */
 	public void setAdjacent(BeachCell tempCell){
 		if(tempCell.getX() == 1){
 			grid[tempCell.getX()-1][tempCell.getY()].setCanHoldBarrier(true);
@@ -603,22 +694,35 @@ public class BeachBoard {
 		}
 	}
 
+	/**
+	 * updates right adjacent cells status on whether it can hold a barrier or not
+	 * @param tempCell
+	 */
 	public void setRightAdjacent(BeachCell tempCell){
 		if(grid[tempCell.getX()+2][tempCell.getY()] != null && !grid[tempCell.getX()+2][tempCell.getY()].getHasBarrier())
 			grid[tempCell.getX()+1][tempCell.getY()].setCanHoldBarrier(true);
 	}
+	/**
+	 * updates left adjacent cells status on whether it can hold a barrier or not
+	 * @param tempCell
+	 */
 	public void setLeftAdjacent(BeachCell tempCell){
 		if(grid[tempCell.getX()-2][tempCell.getY()] != null && !grid[tempCell.getX()-2][tempCell.getY()].getHasBarrier())
 			grid[tempCell.getX()-1][tempCell.getY()].setCanHoldBarrier(true);
 	}
-	//initializes waveCell to false
+	/**
+	 * initializes waveCell to false
+	 */
 	public void initializeWaveCells(){
 		for(int i = 0; i < numRows; i++){
 			waveCells[i] = new WaveCell(cellWidth, i);
 		}
 	}
 
-	//removes oysters from the list
+	/**
+	 * removes oysters from the list once it is picked up
+	 * @param s crab
+	 */
 	public void removeOyster(ShoreCrab s){
 		Iterator<Oyster> it = gameOysters.iterator();
 		int xL = s.getXLoc();
@@ -649,7 +753,9 @@ public class BeachBoard {
 		}
 	}
 	
-	//updating shore health
+	/**
+	 * updates current shore health
+	 */
 	public void updateCurrentCellsHealth(){
 		int total = 0;
 		for(int i = 0; i < numRows; i++){
@@ -668,18 +774,31 @@ public class BeachBoard {
 	}
 
 
-	//modifying arraylists
-
+	/**
+	 * adds a grass object to the game grass list
+	 * @param x x-location
+	 * @param y y-location
+	 */
 	public void addGrass(int x, int y){
 		Grass g1 = new Grass(x,y);
 		gameGrass.add(g1);
 	}
 
+	/**
+	 * adds a seawall object to the game seawall list
+	 * @param x x-location
+	 * @param y y-location
+	 */
 	public void addWall(int x, int y){
 		Seawall s1 = new Seawall(x,y);
 		gameWalls.add(s1);
 	}
 
+	/**
+	 * adds a gabion object to the game gabion list
+	 * @param x x-location
+	 * @param y y-location
+	 */
 	public void addGabion(int x, int y){
 		OysterGabion s1 = new OysterGabion(x,y);
 		gameGabions.add(s1);

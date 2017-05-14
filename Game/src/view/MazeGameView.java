@@ -36,6 +36,12 @@ import java.util.Iterator;
 import java.util.Random;
 
 
+/**
+ * MazeGameView contains all the information for MiniGame1, the maze game. Includes
+ * images, buttons, button listeners, and timer.
+ * @author Logan
+ *
+ */
 public class MazeGameView extends JPanel implements KeyListener, ActionListener {
 
 	//=================================================================//
@@ -398,7 +404,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	//=================================================================//
 
 
-	//Constructor
+	/**
+	 * Constructor, creates an instance of a MazeGameView object
+	 * Initalizes all buttons and apsects of the game, including game states and timers.
+	 */
 	public MazeGameView(){
 		
 		//Buttons
@@ -482,382 +491,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		nameTextField.setVisible(false);
 		enterNameButton.setVisible(false);
 
-		//Button Listeners
-		bCrabButton.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				//initializes type of crab
-				testCrab.setType(1);
-				testCrab.setDir(0);
-				crabNumPics = 3;
-				bCrabButton.setVisible(false);
-				hCrabButton.setVisible(false);
-				easyButton.setVisible(true);
-				mediumButton.setVisible(true);
-				hardButton.setVisible(true);
-				tutorialButton.setVisible(true);
-				tutIsLitterHit = true;
-				tutIsPredatorHit = true;
-				predatorTextSeen = true;
-				litterTextSeen = true;
-				powerUpTextSeen = true;
-				salinityTextSeen = true;
-				miniMapTextSeen = true;
-				
-				isEasyMode = false;
-				isMediumMode = false;
-				isHardMode = false;
-			}
-
-		});
-
-		hCrabButton.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				//initializes type of crab
-				testCrab.setType(0);
-				testCrab.setDir(2);
-				crabNumPics = 2;
-				bCrabButton.setVisible(false);
-				hCrabButton.setVisible(false);
-				easyButton.setVisible(true);
-				mediumButton.setVisible(true);
-				hardButton.setVisible(true);
-				tutorialButton.setVisible(true);
-				tutIsLitterHit = true;
-				tutIsPredatorHit = true;
-				predatorTextSeen = true;
-				litterTextSeen = true;
-				powerUpTextSeen = true;
-				salinityTextSeen = true;
-				miniMapTextSeen = true;
-				
-				isEasyMode = false;
-				isMediumMode = false;
-				isHardMode = false;
-			}
-
-		});
-
-		easyButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				board = new MazeBoard(0, screenWidth,screenHeight);
-				easyButton.setVisible(false);
-				mediumButton.setVisible(false);
-				hardButton.setVisible(false);
-				tutorialButton.setVisible(false);
-				startButton.setVisible(true);
-				isEasyMode = true;
-			}
-		});
-
-		mediumButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				board = new MazeBoard(1, screenWidth,screenHeight);
-				easyButton.setVisible(false);
-				mediumButton.setVisible(false);
-				hardButton.setVisible(false);
-				tutorialButton.setVisible(false);
-				startButton.setVisible(true);
-				isMediumMode = true;
-			}
-		});
-
-		hardButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				board = new MazeBoard(2, screenWidth,screenHeight);
-				easyButton.setVisible(false);
-				mediumButton.setVisible(false);
-				hardButton.setVisible(false);
-				tutorialButton.setVisible(false);
-				startButton.setVisible(true);
-				isHardMode = true;
-			}
-		});
-
-		tutorialButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				board = tutBoard;
-				easyButton.setVisible(false);
-				mediumButton.setVisible(false);
-				hardButton.setVisible(false);
-				tutorialButton.setVisible(false);
-				startButton.setVisible(true);
-				tutLitterTextIndex = board.getTutLitterTextIndex();
-				tutPredatorTextIndex = board.getTutPredatorTextIndex();
-				tutPowerUpTextIndex = board.getTutPowerUpTextIndex();
-				tutSalinityTextIndex = board.getTutSalinityTextIndex();
-				tutMiniMapTextIndex = board.getTutMiniMapTextIndex();
-
-				tutSalinityText = board.getTutSalinityText();
-				tutMiniMapText = board.getTutMiniMapText();
-
-				tutIsLitterHit = false;
-				tutIsPredatorHit = false;
-				predatorTextSeen = false;
-				litterTextSeen = false;
-				powerUpTextSeen = false;
-				salinityTextSeen = false;
-				miniMapTextSeen = false;
-
-				tutPauseTotal = 200;
-				tutPauseTimer = tutPauseTotal;
-
-				tutFontStyle = "TimesRoman";
-				tutFontSize = screenHeight/30;
-				tutSalinityTextXLoc = screenWidth/2 -((tutFontSize * tutSalinityText.length())/4);
-				tutMiniMapTextXLoc = screenWidth/2 -((tutFontSize * tutMiniMapText.length())/4);
-				tutTextYLoc = screenHeight/2;
-				
-				//tutorial stuff
-				nameTextField.setVisible(false);
-				enterNameButton.setVisible(false);
-
-
-			}
-		});
-		
-		enterNameButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				String tempName = nameTextField.getText();
-				if(tempName.length() == 3){
-					board.insertScore(tempName, gameScore);
-					try {
-						board.writeScoresToFile();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-
-					//			board.printHighScores();
-					goToStartButton.setVisible(true);
-					enterNameButton.setVisible(false);
-					nameTextField.setVisible(false);
-					isScoreBoardView = true;
-					currScoreName = tempName;
-					currScoreScore = gameScore;
-					repaint();
-				}
-			}
-		});
-
-		goToStartButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				endScreenVisible = false;
-				startScreenVisible = true;
-				hasWon = false;
-				bCrabButton.setVisible(true);
-				hCrabButton.setVisible(true);
-				goToStartButton.setVisible(false);
-				xLitterMax = 0;
-				xLitterMin = 0;
-				t.stop();
-				repaint();
-				board = null;
-				isScoreBoardView = false;
-			}
-		});
-
-		startButton.addActionListener(new ActionListener(){
-			//tutorial
-			public void actionPerformed(ActionEvent e){
-				isTutorial = board.getIsTutorial();
-				if(!isTutorial){
-					endWinText = "Congratulations, you won!";
-				}else{
-					endWinText = "You've Fininshed the Tutorial, try your skills at the real game!";
-				}
-				
-				nameTextField.setVisible(false);
-				nameTextField.addKeyListener(new KeyAdapter() {
-				    public void keyTyped(KeyEvent e) { 
-				    	//limits text to 3 letter and stops bad words
-
-				    	if(nameTextField.getText().length() > 4){
-				    		nameTextField.setText("");
-				    	}
-				    	else if(board.getBadWordsList().contains(nameTextField.getText().toLowerCase() + Character.toLowerCase(e.getKeyChar()))){
-				    		e.consume(); 
-				    	}
-				    	else if (nameTextField.getText().length() >= 3){
-				            e.consume(); 
-				    	}
-				    }  
-				});
-				enterNameButton.setVisible(false);
-				isScoreBoardView = false;
-				
-				scoreDecrementLimit = 1;
-				scoreDecrementTimer = 0;
-				scoreDecrementOnHit = board.getScoreDecrementOnHit();
-				
-				scoreFontStyle = "TimesRoman";
-				scoreFontSize = screenHeight/30;
-				scoreNameXLoc = screenWidth/2 - (4*scoreFontSize);
-				scoreScoreXLoc = scoreNameXLoc + (6*scoreFontSize);
-				scoreYLoc = screenHeight/7;
-				
-				if(isEasyMode){
-					gameScore = board.getEasyScore();
-				}else if(isMediumMode){
-					gameScore = board.getMediumScore();
-				}else if(isHardMode){
-					gameScore = board.getHardScore();
-				}
-				
-
-				//crab
-				health = testCrab.getHealth();
-				characterXLoc = testCrab.getXLoc();
-				characterYLoc = testCrab.getYLoc();
-				yIncr = testCrab.getXIncr();
-				xIncr = testCrab.getYIncr();
-				xVel = testCrab.getXVel();
-				yVel = testCrab.getYVel();
-
-
-				miniCharacter = board.inWhichCell(characterXLoc,characterYLoc);
-
-				grids = board.getGrid(); 
-				mazeWalls = board.getMazeWalls();
-				tutWalls = board.getTutWalls();
-				numRows = board.getNumRows();
-				numCols = board.getNumCols();
-				cellWidth = board.getCellWidth();
-				cellHeight = board.getCellHeight();
-				gameLitter = board.getGameLitter();
-
-				smallWidth = board.getCharacterWidth()/2;
-				smallHeight = board.getCharacterHeight()/2;
-				mediumWidth = board.getCharacterWidth()*3/4;
-				mediumHeight = board.getCharacterHeight()*3/4;
-				largeWidth = board.getCharacterWidth();
-				largeHeight = board.getCharacterHeight();
-				characterWidth = smallWidth;
-				characterHeight = smallHeight;
-
-				timeRemainingLabel = "Time Remaining: ";	
-				timeRemainingFontSize = screenWidth/50;
-				timeRemainingLabelXLoc = (screenWidth/2) - (timeRemainingLabel.length()*timeRemainingFontSize)/4;
-				timeRemainingLabelYLoc = featuresBarHeight - ((featuresBarHeight - timeRemainingFontSize)*3)/4;
-				timeXLoc = timeRemainingLabelXLoc + timeRemainingLabel.length()*timeRemainingFontSize/2;
-				timeYLoc = timeRemainingLabelYLoc;
-				
-				healthFontSize = screenHeight/20;
-
-				salinityTitleText = "Current Salinity:";
-				salinityTitleX = timeXLoc + screenWidth/8;
-				salinityTitleFontSize = screenWidth/60;
-				salinityTitleY = featuresBarHeight - (featuresBarHeight - salinityTitleFontSize)/2;
-				salinityTitleFontStyle = "TimesRoman";
-
-				salinityWarningText = "Watch out! Make sure to monitor your salinity meter!";
-				salinityWarningTimeLimit = 300;
-				salinityWarningTimeTimer = salinityWarningTimeLimit;
-				firstTimeWrongSalinity = true;
-				salinityWarningTextX = screenWidth/2 - (salinityWarningText.length()*endTitleFontSize)/5;
-				salinityWarningTextY = screenHeight/4;
-
-				meterX = salinityTitleX + (salinityTitleText.length() * salinityTitleFontSize)/2;
-				meterY = featuresBarHeight/8;
-
-				meterWidth = (screenWidth - 10) - meterX;
-				meterHeight = (featuresBarHeight*4)/5;
-
-				salinityTextSize = salinityTitleFontSize;
-				salinityTextStyle = "TimesRoman";
-
-				correctSalinityTextBCrab = "> 20 ppt";
-				correctSalinityTextHCrab = "20-30 ppt";
-				wrongSalinityTextBCrab = "Too low!";
-				wrongSalinityTextHCrab = "Too high!";
-
-				salinityTextArray = new String[2][2];
-				salinityTextArray[0][0] = correctSalinityTextHCrab;
-				salinityTextArray[0][1] = wrongSalinityTextHCrab;
-				salinityTextArray[1][0] = correctSalinityTextBCrab;
-				salinityTextArray[1][1] = wrongSalinityTextBCrab;
-
-				currentSalinityText = salinityTextArray[testCrab.getType()][0];
-				currentSalinityTextX = meterX + meterWidth/2 - (currentSalinityText.length() * salinityTextSize)/4;
-				currentSalinityTextY = meterY + (meterHeight*2)/3;
-
-				currPowerStringFontSize = screenWidth/60;
-				currPowerStringFontStyle = "TimesRoman";
-				currPowerStringX = testCrab.getXLoc();
-				currPowerStringY = testCrab.getYLoc() - characterHeight;
-				currPowerUp = 100;
-
-				miniMap = new MiniMap();
-				miniWidth = (screenWidth/4)/numCols;
-				miniHeight = (screenWidth/4)/numCols;
-
-				arrowWidth = 125;
-				arrowHeight = 150;
-				upArrowX = meterX + meterWidth/2 - arrowWidth/2;
-				upArrowY = meterY + meterHeight;
-
-				leftArrowX = miniWidth * numCols;
-				leftArrowY = (miniHeight * numCols)/2 - arrowHeight/2;
-
-
-				healthImgWidth = (featuresBarHeight*3)/5;
-				healthImgHeight = healthImgWidth;
-				healthImgXLoc = miniWidth * (numCols+1);
-				healthImgYLoc = (featuresBarHeight - healthImgHeight)/2;
-
-				litterWidth = gameLitter.get(0).getWidth();
-				litterHeight = gameLitter.get(0).getHeight();
-				predators = board.getPredators();
-				predSwitchCount = 0;
-				gamePowerUps = board.getGamePowerUps();
-				powerUpWidth = gamePowerUps.get(0).getWidth();
-				powerUpHeight = gamePowerUps.get(0).getHeight();
-				endCell  = grids[board.getXEnd()][board.getYEnd()];
-
-				for(MazeCell m: board.getCorrectPath())
-					ageStateCells.add(m);
-
-				ageStateCellOriginalCount = board.getCorrectPath().size();
-				ageStateCellCurrentCount = ageStateCells.size();
-				ageStateCellMediumCount = ageStateCellOriginalCount/3 * 2;
-				ageStateCellLargeCount = ageStateCellOriginalCount/3;
-				startScreenVisible = false;
-				startButton.setVisible(false);
-				timeRemaining = totalTime;
-
-	
-				//scoreStuff
-				try {
-					board.readScoresFromFile();
-				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				
-				
-				try {
-					board.readBadWordsFromFile();
-				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				
-				//cheatCodes
-				isWallCheat = false;
-				isInvCheat = false;
-				isSuperSpeedCheat = false;
-				
-				//Start Timer
-				t.start();
-			}
-		});
+		//button listener initialization
+		setupListeners();
 
 		//initialize key
 		addKeyListener(this);
@@ -876,7 +511,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 
 
-	//paintComponent
+	/**
+	 * Handles all images and components that are drawn onto the screen during the maze game.
+	 * @param g graphics
+	 */
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 
@@ -1197,6 +835,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	}//paintComponent
 
 
+	/**
+	 * Handles all actions that occur at every tick of the timer during the game
+	 * @param arg0 action event
+	 */
 	public void actionPerformed(ActionEvent arg0) {
 		if(tutPauseTimer < tutPauseTotal){
 			tutPauseTimer++;
@@ -1412,6 +1054,9 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		}
 	}
 
+	/**
+	 * Moves crab image up on screen
+	 */
 	public void up(){
 		testCrab.setDir(0);
 		crabDir = testCrab.getDir();
@@ -1419,6 +1064,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		crabIsMoving = true;
 		yVel = yIncr;
 	}
+	
+	/**
+	 * Moves crab image down on screen
+	 */
 	public void down(){
 		//checks crab type, sets direction accordingly
 		if(testCrab.getType() == 1){
@@ -1431,6 +1080,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		crabDir = testCrab.getDir();
 		yVel = -yIncr;
 	}
+	
+	/**
+	 * Moves crab image left on screen
+	 */
 	public void left(){
 		//checks crab type, sets direction accordingly
 		if(testCrab.getType() == 1){
@@ -1443,6 +1096,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		crabDir = testCrab.getDir();
 		xVel = xIncr;
 	}
+	
+	/**
+	 * Moves crab image right on screen
+	 */
 	public void right(){
 		//checks crab type, sets direction accordingly
 		if(testCrab.getType() == 1){
@@ -1455,6 +1112,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		crabDir = testCrab.getDir();
 		xVel = -xIncr;
 	}
+	
+	/**
+	 * Handles events that occur when a key is pressed during the game
+	 * @param arg0 key event
+	 */
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
@@ -1479,6 +1141,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		}
 	}
 
+	/**
+	 * Handles events that occur when a key is released during the game
+	 * @param arg0 key event
+	 */
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
@@ -1517,7 +1183,12 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			}
 		}
 	}
-
+	
+	
+	/**
+	 * Handles events that occur when a key is typed during the game
+	 * @param arg0 key event
+	 */
 	@Override
 	public void keyTyped(KeyEvent arg0) {
 		// TODO Auto-generated method stub
@@ -1525,7 +1196,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	}
 
 
-
+	/**
+	 * Creates a buffered image from a given file 
+	 * @param fileName name of file being read in
+	 * @return buffered image from file
+	 */
 	public BufferedImage createImage(String fileName){
 		BufferedImage bufferedImage;
 		try {
@@ -1537,6 +1212,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		return null;
 	}
 
+	/**
+	 * creates all images for litter
+	 * @return arrayList of buffered images of litter
+	 */
 	public ArrayList<BufferedImage> makeLitterList(){
 		ArrayList<BufferedImage> litterIcons = new ArrayList<BufferedImage>();
 		litterIcons.add(createImage("MazeExtraImgs/apple.png"));
@@ -1544,6 +1223,388 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		litterIcons.add(createImage("MazeExtraImgs/soda.png"));
 		litterIcons.add(createImage("mazeExtraImgs/crumbledpaper.png"));
 		return litterIcons;
+	}
+	
+	/**
+	 * sets up all button listeners for each button used during the game
+	 */
+	public void setupListeners(){
+		//Button Listeners
+				bCrabButton.addActionListener(new ActionListener(){
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						//initializes type of crab
+						testCrab.setType(1);
+						testCrab.setDir(0);
+						crabNumPics = 3;
+						bCrabButton.setVisible(false);
+						hCrabButton.setVisible(false);
+						easyButton.setVisible(true);
+						mediumButton.setVisible(true);
+						hardButton.setVisible(true);
+						tutorialButton.setVisible(true);
+						tutIsLitterHit = true;
+						tutIsPredatorHit = true;
+						predatorTextSeen = true;
+						litterTextSeen = true;
+						powerUpTextSeen = true;
+						salinityTextSeen = true;
+						miniMapTextSeen = true;
+						
+						isEasyMode = false;
+						isMediumMode = false;
+						isHardMode = false;
+					}
+
+				});
+
+				hCrabButton.addActionListener(new ActionListener(){
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						//initializes type of crab
+						testCrab.setType(0);
+						testCrab.setDir(2);
+						crabNumPics = 2;
+						bCrabButton.setVisible(false);
+						hCrabButton.setVisible(false);
+						easyButton.setVisible(true);
+						mediumButton.setVisible(true);
+						hardButton.setVisible(true);
+						tutorialButton.setVisible(true);
+						tutIsLitterHit = true;
+						tutIsPredatorHit = true;
+						predatorTextSeen = true;
+						litterTextSeen = true;
+						powerUpTextSeen = true;
+						salinityTextSeen = true;
+						miniMapTextSeen = true;
+						
+						isEasyMode = false;
+						isMediumMode = false;
+						isHardMode = false;
+					}
+
+				});
+
+				easyButton.addActionListener(new ActionListener(){
+					public void actionPerformed(ActionEvent e){
+						board = new MazeBoard(0, screenWidth,screenHeight);
+						easyButton.setVisible(false);
+						mediumButton.setVisible(false);
+						hardButton.setVisible(false);
+						tutorialButton.setVisible(false);
+						startButton.setVisible(true);
+						isEasyMode = true;
+					}
+				});
+
+				mediumButton.addActionListener(new ActionListener(){
+					public void actionPerformed(ActionEvent e){
+						board = new MazeBoard(1, screenWidth,screenHeight);
+						easyButton.setVisible(false);
+						mediumButton.setVisible(false);
+						hardButton.setVisible(false);
+						tutorialButton.setVisible(false);
+						startButton.setVisible(true);
+						isMediumMode = true;
+					}
+				});
+
+				hardButton.addActionListener(new ActionListener(){
+					public void actionPerformed(ActionEvent e){
+						board = new MazeBoard(2, screenWidth,screenHeight);
+						easyButton.setVisible(false);
+						mediumButton.setVisible(false);
+						hardButton.setVisible(false);
+						tutorialButton.setVisible(false);
+						startButton.setVisible(true);
+						isHardMode = true;
+					}
+				});
+
+				tutorialButton.addActionListener(new ActionListener(){
+					public void actionPerformed(ActionEvent e){
+						board = tutBoard;
+						easyButton.setVisible(false);
+						mediumButton.setVisible(false);
+						hardButton.setVisible(false);
+						tutorialButton.setVisible(false);
+						startButton.setVisible(true);
+						tutLitterTextIndex = board.getTutLitterTextIndex();
+						tutPredatorTextIndex = board.getTutPredatorTextIndex();
+						tutPowerUpTextIndex = board.getTutPowerUpTextIndex();
+						tutSalinityTextIndex = board.getTutSalinityTextIndex();
+						tutMiniMapTextIndex = board.getTutMiniMapTextIndex();
+
+						tutSalinityText = board.getTutSalinityText();
+						tutMiniMapText = board.getTutMiniMapText();
+
+						tutIsLitterHit = false;
+						tutIsPredatorHit = false;
+						predatorTextSeen = false;
+						litterTextSeen = false;
+						powerUpTextSeen = false;
+						salinityTextSeen = false;
+						miniMapTextSeen = false;
+
+						tutPauseTotal = 200;
+						tutPauseTimer = tutPauseTotal;
+
+						tutFontStyle = "TimesRoman";
+						tutFontSize = screenHeight/30;
+						tutSalinityTextXLoc = screenWidth/2 -((tutFontSize * tutSalinityText.length())/4);
+						tutMiniMapTextXLoc = screenWidth/2 -((tutFontSize * tutMiniMapText.length())/4);
+						tutTextYLoc = screenHeight/2;
+						
+						//tutorial stuff
+						nameTextField.setVisible(false);
+						enterNameButton.setVisible(false);
+
+
+					}
+				});
+				
+				enterNameButton.addActionListener(new ActionListener(){
+					public void actionPerformed(ActionEvent e){
+						String tempName = nameTextField.getText();
+						if(tempName.length() == 3){
+							board.insertScore(tempName, gameScore);
+							try {
+								board.writeScoresToFile();
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+
+							//			board.printHighScores();
+							goToStartButton.setVisible(true);
+							enterNameButton.setVisible(false);
+							nameTextField.setVisible(false);
+							isScoreBoardView = true;
+							currScoreName = tempName;
+							currScoreScore = gameScore;
+							repaint();
+						}
+					}
+				});
+
+				goToStartButton.addActionListener(new ActionListener(){
+					public void actionPerformed(ActionEvent e){
+						endScreenVisible = false;
+						startScreenVisible = true;
+						hasWon = false;
+						bCrabButton.setVisible(true);
+						hCrabButton.setVisible(true);
+						goToStartButton.setVisible(false);
+						xLitterMax = 0;
+						xLitterMin = 0;
+						t.stop();
+						repaint();
+						board = null;
+						isScoreBoardView = false;
+					}
+				});
+
+				startButton.addActionListener(new ActionListener(){
+					//tutorial
+					public void actionPerformed(ActionEvent e){
+						isTutorial = board.getIsTutorial();
+						if(!isTutorial){
+							endWinText = "Congratulations, you won!";
+						}else{
+							endWinText = "You've Fininshed the Tutorial, try your skills at the real game!";
+						}
+						
+						nameTextField.setVisible(false);
+						nameTextField.addKeyListener(new KeyAdapter() {
+						    public void keyTyped(KeyEvent e) { 
+						    	//limits text to 3 letter and stops bad words
+
+						    	if(nameTextField.getText().length() > 4){
+						    		nameTextField.setText("");
+						    	}
+						    	else if(board.getBadWordsList().contains(nameTextField.getText().toLowerCase() + Character.toLowerCase(e.getKeyChar()))){
+						    		e.consume(); 
+						    	}
+						    	else if (nameTextField.getText().length() >= 3){
+						            e.consume(); 
+						    	}
+						    }  
+						});
+						enterNameButton.setVisible(false);
+						isScoreBoardView = false;
+						
+						scoreDecrementLimit = 1;
+						scoreDecrementTimer = 0;
+						scoreDecrementOnHit = board.getScoreDecrementOnHit();
+						
+						scoreFontStyle = "TimesRoman";
+						scoreFontSize = screenHeight/30;
+						scoreNameXLoc = screenWidth/2 - (4*scoreFontSize);
+						scoreScoreXLoc = scoreNameXLoc + (6*scoreFontSize);
+						scoreYLoc = screenHeight/7;
+						
+						if(isEasyMode){
+							gameScore = board.getEasyScore();
+						}else if(isMediumMode){
+							gameScore = board.getMediumScore();
+						}else if(isHardMode){
+							gameScore = board.getHardScore();
+						}
+						
+
+						//crab
+						health = testCrab.getHealth();
+						characterXLoc = testCrab.getXLoc();
+						characterYLoc = testCrab.getYLoc();
+						yIncr = testCrab.getXIncr();
+						xIncr = testCrab.getYIncr();
+						xVel = testCrab.getXVel();
+						yVel = testCrab.getYVel();
+
+
+						miniCharacter = board.inWhichCell(characterXLoc,characterYLoc);
+
+						grids = board.getGrid(); 
+						mazeWalls = board.getMazeWalls();
+						tutWalls = board.getTutWalls();
+						numRows = board.getNumRows();
+						numCols = board.getNumCols();
+						cellWidth = board.getCellWidth();
+						cellHeight = board.getCellHeight();
+						gameLitter = board.getGameLitter();
+
+						smallWidth = board.getCharacterWidth()/2;
+						smallHeight = board.getCharacterHeight()/2;
+						mediumWidth = board.getCharacterWidth()*3/4;
+						mediumHeight = board.getCharacterHeight()*3/4;
+						largeWidth = board.getCharacterWidth();
+						largeHeight = board.getCharacterHeight();
+						characterWidth = smallWidth;
+						characterHeight = smallHeight;
+
+						timeRemainingLabel = "Time Remaining: ";	
+						timeRemainingFontSize = screenWidth/50;
+						timeRemainingLabelXLoc = (screenWidth/2) - (timeRemainingLabel.length()*timeRemainingFontSize)/4;
+						timeRemainingLabelYLoc = featuresBarHeight - ((featuresBarHeight - timeRemainingFontSize)*3)/4;
+						timeXLoc = timeRemainingLabelXLoc + timeRemainingLabel.length()*timeRemainingFontSize/2;
+						timeYLoc = timeRemainingLabelYLoc;
+						
+						healthFontSize = screenHeight/20;
+
+						salinityTitleText = "Current Salinity:";
+						salinityTitleX = timeXLoc + screenWidth/8;
+						salinityTitleFontSize = screenWidth/60;
+						salinityTitleY = featuresBarHeight - (featuresBarHeight - salinityTitleFontSize)/2;
+						salinityTitleFontStyle = "TimesRoman";
+
+						salinityWarningText = "Watch out! Make sure to monitor your salinity meter!";
+						salinityWarningTimeLimit = 300;
+						salinityWarningTimeTimer = salinityWarningTimeLimit;
+						firstTimeWrongSalinity = true;
+						salinityWarningTextX = screenWidth/2 - (salinityWarningText.length()*endTitleFontSize)/5;
+						salinityWarningTextY = screenHeight/4;
+
+						meterX = salinityTitleX + (salinityTitleText.length() * salinityTitleFontSize)/2;
+						meterY = featuresBarHeight/8;
+
+						meterWidth = (screenWidth - 10) - meterX;
+						meterHeight = (featuresBarHeight*4)/5;
+
+						salinityTextSize = salinityTitleFontSize;
+						salinityTextStyle = "TimesRoman";
+
+						correctSalinityTextBCrab = "> 20 ppt";
+						correctSalinityTextHCrab = "20-30 ppt";
+						wrongSalinityTextBCrab = "Too low!";
+						wrongSalinityTextHCrab = "Too high!";
+
+						salinityTextArray = new String[2][2];
+						salinityTextArray[0][0] = correctSalinityTextHCrab;
+						salinityTextArray[0][1] = wrongSalinityTextHCrab;
+						salinityTextArray[1][0] = correctSalinityTextBCrab;
+						salinityTextArray[1][1] = wrongSalinityTextBCrab;
+
+						currentSalinityText = salinityTextArray[testCrab.getType()][0];
+						currentSalinityTextX = meterX + meterWidth/2 - (currentSalinityText.length() * salinityTextSize)/4;
+						currentSalinityTextY = meterY + (meterHeight*2)/3;
+
+						currPowerStringFontSize = screenWidth/60;
+						currPowerStringFontStyle = "TimesRoman";
+						currPowerStringX = testCrab.getXLoc();
+						currPowerStringY = testCrab.getYLoc() - characterHeight;
+						currPowerUp = 100;
+
+						miniMap = new MiniMap();
+						miniWidth = (screenWidth/4)/numCols;
+						miniHeight = (screenWidth/4)/numCols;
+
+						arrowWidth = 125;
+						arrowHeight = 150;
+						upArrowX = meterX + meterWidth/2 - arrowWidth/2;
+						upArrowY = meterY + meterHeight;
+
+						leftArrowX = miniWidth * numCols;
+						leftArrowY = (miniHeight * numCols)/2 - arrowHeight/2;
+
+
+						healthImgWidth = (featuresBarHeight*3)/5;
+						healthImgHeight = healthImgWidth;
+						healthImgXLoc = miniWidth * (numCols+1);
+						healthImgYLoc = (featuresBarHeight - healthImgHeight)/2;
+
+						litterWidth = gameLitter.get(0).getWidth();
+						litterHeight = gameLitter.get(0).getHeight();
+						predators = board.getPredators();
+						predSwitchCount = 0;
+						gamePowerUps = board.getGamePowerUps();
+						powerUpWidth = gamePowerUps.get(0).getWidth();
+						powerUpHeight = gamePowerUps.get(0).getHeight();
+						endCell  = grids[board.getXEnd()][board.getYEnd()];
+
+						for(MazeCell m: board.getCorrectPath())
+							ageStateCells.add(m);
+
+						ageStateCellOriginalCount = board.getCorrectPath().size();
+						ageStateCellCurrentCount = ageStateCells.size();
+						ageStateCellMediumCount = ageStateCellOriginalCount/3 * 2;
+						ageStateCellLargeCount = ageStateCellOriginalCount/3;
+						startScreenVisible = false;
+						startButton.setVisible(false);
+						timeRemaining = totalTime;
+
+			
+						//scoreStuff
+						try {
+							board.readScoresFromFile();
+						} catch (ClassNotFoundException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						
+						
+						try {
+							board.readBadWordsFromFile();
+						} catch (ClassNotFoundException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						
+						//cheatCodes
+						isWallCheat = false;
+						isInvCheat = false;
+						isSuperSpeedCheat = false;
+						
+						//Start Timer
+						t.start();
+					}
+				});
 	}
 
 
