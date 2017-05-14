@@ -690,8 +690,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				scoreDecrementOnHit = board.getScoreDecrementOnHit();
 				
 				scoreFontStyle = "TimesRoman";
-				scoreFontSize = 20;
-				scoreNameXLoc = screenWidth/2 - (6*scoreFontSize);
+				scoreFontSize = screenHeight/30;
+				scoreNameXLoc = screenWidth/2 - (4*scoreFontSize);
 				scoreScoreXLoc = scoreNameXLoc + (6*scoreFontSize);
 				scoreYLoc = screenHeight/7;
 				
@@ -896,7 +896,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			g.setColor(Color.WHITE);
 			g.drawString("NAME", scoreNameXLoc, scoreYLoc);
 			g.drawString("SCORE", scoreScoreXLoc, scoreYLoc);
-			scoreYLoc += scoreFontSize;
+			scoreYLoc += (2*scoreFontSize);
 			int currRank = 1;
 			for(PlayerScore pS: board.getHighScores()){
 				g.drawString(String.valueOf(currRank),scoreNameXLoc - 2*scoreFontSize, scoreYLoc);
