@@ -1,5 +1,10 @@
 package model;
 
+/**
+ * MazeCell class contains all information pertaining to each individual cell in the maze board.
+ * @author Logan
+ *
+ */
 public class MazeCell {
 	int x; //location in grid
 	int y; //location in grid
@@ -22,8 +27,18 @@ public class MazeCell {
 	MazeCell correctRight;
 	MazeCell correctLeft;
 	
-	//getters and setters
 	
+	/**
+	 * Constructor, creates a new instance of a MazeCell object.
+	 * @param row row location
+	 * @param column column location
+	 * @param width cell width
+	 * @param height cell height
+	 * @param xStart x starting location of cell
+	 * @param yStart y starting locatio of cell
+	 * @param sWidth screen width
+	 * @param sHeight screen height
+	 */
 	MazeCell(int row, int column, int width, int height, int xStart, int yStart, int sWidth, int sHeight){
 		y = row;
 		x = column;
@@ -33,15 +48,35 @@ public class MazeCell {
 		yLoc = height*(y-yStart) + sHeight/2;
 	}
 	
+	/**
+	 * Changes cell's x and y location
+	 * @param xIncr x-increment
+	 * @param yIncr y-increment
+	 */
 	public void moveCell(int xIncr, int yIncr){
 		yLoc = yLoc + yIncr;
 		xLoc = xLoc + xIncr;
 	}
 	
+	/**
+	 * Checks if a given x and y coordinate falls within a certain cell
+	 * @param xCor x-coordinate
+	 * @param yCor y-coordinate
+	 * @return a boolean indicating whether x and y are within the cell
+	 */
 	public boolean inCell(int xCor, int yCor){
 		return(xCor >= xLoc && xCor <= xLoc + width && yCor >= yLoc && yCor <= yLoc + height);
 	}
 
+	/**
+	 * Checks if a given x and y coordinate collide with x and y of a given cell well
+	 * @param xCor x-coordinate
+	 * @param yCor y-coordinate
+	 * @param xIncr x-increment
+	 * @param yIncr y-increment
+	 * @param dir direction
+	 * @return boolean indicating if x and y coordinate equal x and y of given cell wall
+	 */
 	public boolean hitCellWall(int xCor, int yCor, int xIncr, int yIncr, int dir){
 		if(inCell(xCor,yCor)){
 			if(hasTopWall && dir == 0){// dir 0 = up
