@@ -9,7 +9,7 @@ public class Die {
 	static int imgWidth;
 	static int screenWidth;
 	static int screenHeight;
-	final int xIncr = 9;
+	final int xIncr;
 	final int yIncr = 6;
 	int xLoc;
 	int yLoc;
@@ -22,11 +22,12 @@ public class Die {
 	boolean isSelected = false;
 	Random rand = new Random();
 	
-	public Die(int n, int x, int y, int imgW, int sWidth, int sHeight){
+	public Die(int n, int x, int y, int xInc, int imgW, int sWidth, int sHeight){
 		dir = rand.nextInt(4);
 		dieImgNum = n;
 		startXLoc = x;
 		startYLoc = y;
+		xIncr = xInc;
 		imgWidth = imgW;
 		screenWidth = sWidth;
 		screenHeight = sHeight;

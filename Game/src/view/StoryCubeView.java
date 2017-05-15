@@ -104,6 +104,10 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	private int[] stringYCoords = new int[maxLines];
 	private boolean isStoryShowing = false;
 	private JTextPane storyPane;
+	private int diceLength;
+    private int diceSpacePixels;
+	private int diceSpaceWidth;
+	private String diceSpaceString;
 
 	// TextArea
 	JTextArea storyText;
@@ -112,13 +116,14 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	// Images
 	BufferedImage oceanBackground = createImage("background/dicebackground.jpg");
 	BufferedImage startScreen = createImage("background/dicestartscreen.jpg");
-	private String imgStrings[] = { "diceimages/appledie.png", "diceimages/bananadie.png", "diceimages/beakerdie.png",
-			"diceimages/boxdie.png", "diceimages/bucketdie.png", "diceimages/candie.png",
-			"diceimages/canwithwingsdie.png", "diceimages/chipbagdie.png", "diceimages/cleanvesseldie.png",
-			"diceimages/clipboarddie.png", "diceimages/clockdie.png", "diceimages/crabfooddie.png",
-			"diceimages/crabtrapdie.png", "diceimages/crumpledpaperdie.png", "diceimages/crushedcandie.png",
-			"diceimages/deadfishdie.png", "diceimages/dirtyvesseldie.png", "diceimages/dogpoopbagdie.png",
-			"diceimages/fishtagdie.png", "diceimages/flagdie.png" };
+	private String imgStrings[] = { "diceimages/bananadie.png", "diceimages/bassdie.png", "diceimages/bluecrabdie.png",
+			"diceimages/bogturtledie.png", "diceimages/candie.png", "diceimages/cattailsdie.png",
+			"diceimages/chipbagdie.png", "diceimages/clamdie.png", "diceimages/cleanvesseldie.png",
+			"diceimages/crabscientistdie.png", "diceimages/deadfishdie.png", "diceimages/fisheggsdie.png",
+			"diceimages/fishermandie.png", "diceimages/fishgroupdie.png", "diceimages/mittencrabsdie.png",
+			"diceimages/oilspilldie.png", "diceimages/seagrassdie.png", "diceimages/seamonsterdie.png",
+			"diceimages/toxicclouddie.png", "diceimages/troutdie.png"};
+
 	private BufferedImage[] possibleDiceImgs;
 
 	// Start Screen
@@ -186,6 +191,10 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		storyText.setPreferredSize(new Dimension(400, 96));
 		storyText.setFont(new Font(titleFont, Font.PLAIN, 16));
 		numCharsOnLine = screenWidth / 28;
+		diceLength = diceWidth * dgame.numDice;
+        diceSpacePixels = ((screenWidth - 2 * diceWidth) - diceLength) / 2 ;
+		diceSpaceWidth = 0;
+		diceSpaceString = "";
 
 		// Add Buttons
 		this.add(startGameButton);
@@ -286,8 +295,17 @@ public class StoryCubeView extends JPanel implements ActionListener {
 
 					// Story Text
 					if (canSaveStory) {
-						makeStory(storyPane, dgame.getDiceStory(), storyTextColor);
-						isStoryShowing = true;
+						saveStory();
+						diceSpaceWidth = g.getFontMetrics(storyTextStyle).stringWidth(diceSpaceString);
+						while(diceSpaceWidth < diceSpacePixels){
+							diceSpaceString += " ";
+							diceSpaceWidth = g.getFontMetrics(storyTextStyle).stringWidth(diceSpaceString);
+						}
+						if(diceSpaceWidth >= diceSpacePixels){
+							makeStory(storyPane, dgame.getDiceStory(), diceSpaceString, storyTextColor);
+							isStoryShowing = true;
+						}
+
 					} else if(isDialogUp){
 						JOptionPane
 								.showMessageDialog(null,
@@ -333,37 +351,49 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	}
 
 	// Add Story to Text Pane
-	// things to fix: resize text for bigger story, add dice cubes to
-	// textpane(or on top), remove prev text
-	public void makeStory(JTextPane pane, String text, Color color) {
-		StyledDocument doc = pane.getStyledDocument();
-
-		pane.setBounds(diceWidth, diceWidth, screenWidth - 2 * diceWidth, (screenHeight - (2 * diceWidth)));
-		pane.setPreferredSize(new Dimension(screenWidth - 2 * diceWidth, screenHeight - (2 * diceWidth)));
-		pane.setFont(storyTextStyle);
-		pane.setBackground(storyBackground);
-		pane.setEditable(false);
-
-		// add dice cubes to text pane
-		ImageIcon[] sizedIcons = new ImageIcon[dgame.getNumDice()];
-		for (int i = 0; i < dgame.getNumDice(); i++) {
-			sizedIcons[i] = new ImageIcon(
-					gameDice[i].getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
-		}
-		
-		Style style = pane.addStyle("Color Style", null);
-		StyleConstants.setForeground(style, color);
-		try {
-			doc.insertString(doc.getLength(), "           ", style);
-			for (ImageIcon icon : sizedIcons) {
-				pane.insertIcon(icon);
-			}
-			doc.insertString(doc.getLength(), "\n", style);
-			doc.insertString(doc.getLength(), text, style);
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-		}
-	}
+	 public void makeStory(JTextPane pane, String text, String diceSpace, Color color) {
+	        StyledDocument doc = pane.getStyledDocument();
+	        
+	        pane.setBounds(diceWidth, diceWidth, screenWidth - 2 * diceWidth, (screenHeight - (2 * diceWidth)));
+	        pane.setPreferredSize(new Dimension(screenWidth - 2 * diceWidth, screenHeight - (2 * diceWidth)));
+	        pane.setFont(storyTextStyle);
+	        pane.setBackground(storyBackground);
+	        pane.setEditable(false);
+	        
+	        // add dice cubes to text pane
+	        ImageIcon sizedIcon0 = new ImageIcon();
+	        ImageIcon sizedIcon1 = new ImageIcon();
+	        ImageIcon sizedIcon2 = new ImageIcon();
+	        ImageIcon sizedIcon3 = new ImageIcon();
+	        ImageIcon sizedIcon4 = new ImageIcon();
+	        for(Die d: gameDice){
+	        	if(d.getStoryIndex() == 0)
+	        		sizedIcon0 = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
+	        	else if(d.getStoryIndex() == 1)
+	        		sizedIcon1 = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
+	        	else if(d.getStoryIndex() == 2)
+	        		sizedIcon2 = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
+	        	else if(d.getStoryIndex() == 3)
+	        		sizedIcon3 = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
+	        	else if(d.getStoryIndex() == 4)
+	        		sizedIcon4 = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
+	        }
+	        Style style = pane.addStyle("Color Style", null);
+	        StyleConstants.setForeground(style, color);
+	        try {
+	        	doc.insertString(doc.getLength(), diceSpace, style);
+		        pane.insertIcon(sizedIcon0);
+		        pane.insertIcon(sizedIcon1);
+		        pane.insertIcon(sizedIcon2);
+		        pane.insertIcon(sizedIcon3);
+		        pane.insertIcon(sizedIcon4);
+		        doc.insertString(doc.getLength(), "\n", style);
+	            doc.insertString(doc.getLength(), text, style);
+	        } 
+	        catch (BadLocationException e) {
+	            e.printStackTrace();
+	        } 
+	 }
 
 	void setupListeners() {
 		startGameButton.addActionListener(new ActionListener() {
@@ -496,6 +526,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	void setupMouseListener(MouseInputListener listener) {
 		getMouseTarget().addMouseListener(listener);
 		getMouseTarget().addMouseMotionListener(listener);
+		storyText.addMouseListener(listener);
 	}
 
 	public class DiceListener implements MouseInputListener {
@@ -504,6 +535,8 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			// TODO Auto-generated method stub
+			if(e.getSource() == storyText)
+				storyText.setText("");
 		}
 
 		@Override
@@ -526,7 +559,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 				if (point.x >= sbx && point.x <= sbx + diceWidth && point.y >= storyStartX
 						&& point.y <= storyStartY + diceWidth && isDieSelected) {
 					dicePlaced--;
-					System.out.println("diceplaced--");
+					//System.out.println("diceplaced--");
 				}
 			}
 		}
@@ -548,7 +581,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 							isPlaced = true;
 							selectedDie.setStoryIndex(i);
 							dicePlaced++;
-							System.out.println("dicePlaced++");
+							//System.out.println("dicePlaced++");
 						}
 					}
 					for (int i = 0; i < dgame.getNumDice(); i++) {
@@ -559,7 +592,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 								selectedDie.setYLoc(selectedDie.getInitYLoc());
 								isPlaced = false;
 								dicePlaced--;
-								System.out.println("dicePlaced--");
+								//System.out.println("dicePlaced--");
 							}
 						}
 					}

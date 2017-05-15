@@ -19,6 +19,7 @@ public class DiceGame {
 	Die[] dice;
 	public int[] imgNums;
 	boolean[] imgBools;
+	int xIncr;
 	int screenWidth;
 	int screenHeight;
 	int diceWidth;
@@ -110,11 +111,13 @@ public class DiceGame {
 			if (i < 3) {
 				dieX = diceStartX + (diceWidth + betweenDice) * i - (diceWidth + betweenDice) / 2;
 				dieY = diceStartY;
+				xIncr = 9;
 			} else {
 				dieX = diceStartX + (diceWidth + betweenDice) * (i % (numDice / 2));
 				dieY = screenHeight - diceStartY - diceWidth;
+				xIncr = 4;
 			}
-			Die tempDie = new Die(i, dieX, dieY, diceWidth, screenWidth, screenHeight);
+			Die tempDie = new Die(i, dieX, dieY, xIncr, diceWidth, screenWidth, screenHeight);
 			int randInt = rand.nextInt(numImgs);
 			while (imgBools[randInt]) {
 				randInt = rand.nextInt(numImgs);
