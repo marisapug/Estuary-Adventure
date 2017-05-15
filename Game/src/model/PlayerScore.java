@@ -2,6 +2,11 @@ package model;
 
 import java.io.Serializable;
 
+/**
+ * PlayerScore contains the information for the entries that go into the score board for the maze game.
+ * @author Logan
+ *
+ */
 public class PlayerScore implements Serializable{
 	private String name;
 	private int score;
