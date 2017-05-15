@@ -294,14 +294,12 @@ public class StoryCubeView extends JPanel implements ActionListener {
 										"Inappropriate language detected! Please edit your story so it doesn't include this word: "
 												+ dgame.getCurseWord(),
 										"Unable to save story", JOptionPane.ERROR_MESSAGE);
-						repaint();
 						isStoryShowing = false;
 						JOptionPane.getRootFrame().setVisible(false);
 						JOptionPane.getRootFrame().dispose();
 						isDialogUp = false;
 						dicePlaced = 0;
 						isRolled = false;
-						repaint();
 						// make it so dice pop up again, maybe call function?
 						// make dice visible again, close dialog, maybe only
 						// show roll again button?
@@ -328,6 +326,8 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		if (dgame.isCurseWord()) {
 			canSaveStory = false;
 			isDialogUp = true;
+		} else{
+			canSaveStory = true;
 		}
 		isStorySaved = true;
 	}
@@ -424,6 +424,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 				// TODO
 
 				saveStory(); // save story function showStoryButton = false;
+				repaint();
 				storyButton.setVisible(false);
 				storyText.setVisible(false);
 				rollAgainButton.setVisible(true);
