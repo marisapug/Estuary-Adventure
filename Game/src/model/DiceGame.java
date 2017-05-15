@@ -32,7 +32,6 @@ public class DiceGame {
 	// Story Stuff
 	private int numStories = 10;
 	private int indexNum;
-	private PlayerStory[] storyList = new PlayerStory[numStories];
 	private ArrayList<String> curseWords; // = new ArrayList<String>();
 	private boolean isCurse = false;
 	private String curseWord = "";
@@ -131,52 +130,6 @@ public class DiceGame {
 			dice[i] = tempDie;
 		}
 	} // makes all dice with images
-
-	// SAVING STORIES
-	/**
-	 * updates stories in chronological order, with the newest being first (only
-	 * if they didn't enter a curse word)
-	 *
-	 * @param newName
-	 *            name of the Player
-	 * @param newStory
-	 *            story entered by the Player
-	 */
-	public void insertStory(String newName, String newStory) {
-		// must go chronologically, start in first one then move down
-		for (int i = numStories; i >= 0; i--) {
-			if (storyList[i] != null && i < numStories - 1) {
-				storyList[i + 1] = storyList[i];
-			}
-		}
-		storyList[0] = new PlayerStory(newName, newStory);
-	}// insertStory
-
-	/**
-	 * writes stories to a file
-	 *
-	 * @throws IOException
-	 */
-	public void writeStoriesToFile() throws IOException {
-		File file = new File("allStories.tmp");
-		FileOutputStream fos = new FileOutputStream(file);
-		ObjectOutputStream oos = new ObjectOutputStream(fos);
-		oos.writeObject(storyList);
-		oos.close();
-	}
-
-	/**
-	 * reads previous stories from a file
-	 *
-	 * @throws IOException
-	 * @throws ClassNotFoundException
-	 */
-	public void readStoriesFromFile() throws IOException, ClassNotFoundException {
-		FileInputStream fis = new FileInputStream("allStories.tmp");
-		ObjectInputStream ois = new ObjectInputStream(fis);
-		storyList = (PlayerStory[]) ois.readObject();
-		ois.close();
-	}
 
 	// Curse Word Checker
 	/**
