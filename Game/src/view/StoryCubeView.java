@@ -90,9 +90,12 @@ public class StoryCubeView extends JPanel implements ActionListener {
 
 	// Story
 	private Font storyTextStyle;
+	private Font errorTextStyle;
 	Color storyTextColor;
+	Color errorTextColor;
 	Color storyBackground;
 	private int storyFontSize = screenWidth / 40;
+	private int errorFontSize = screenWidth / 40;
 	private boolean isStorySaved = false;
 	private int storyTextX;
 	private int storyTextY;
@@ -140,7 +143,6 @@ public class StoryCubeView extends JPanel implements ActionListener {
 
 	// Constructor
 	public StoryCubeView() {
-		// TODO
 		dgame = new DiceGame(screenWidth, screenHeight, diceWidth);
 
 		storyStartY = (screenHeight - diceWidth) / 2;
@@ -151,6 +153,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		// Initialize Button Appearance
 		buttonFont = new Font(titleFont, Font.BOLD, buttonFontSize);
 		storyTextStyle = new Font("Verdana", Font.PLAIN, storyFontSize);
+		errorTextStyle = new Font("Verdana", Font.PLAIN, errorFontSize);
 		startButtonSize = new Dimension(startButtonSizeX, startButtonSizeY);
 		buttonSize = new Dimension(buttonSizeX, buttonSizeY);
 		showStoryButton = false;
@@ -307,20 +310,11 @@ public class StoryCubeView extends JPanel implements ActionListener {
 						}
 
 					} else if(isDialogUp){
-						JOptionPane
-								.showMessageDialog(null,
-										"Inappropriate language detected! Please edit your story so it doesn't include this word: "
-												+ dgame.getCurseWord(),
-										"Unable to save story", JOptionPane.ERROR_MESSAGE);
+						//TODO change text to make bigger and better
+						g.drawString("Inappropriate language detected! Please edit your story so it doesn't include this word: " + dgame.getCurseWord(), titleX, titleY);
 						isStoryShowing = false;
-						JOptionPane.getRootFrame().setVisible(false);
-						JOptionPane.getRootFrame().dispose();
-						isDialogUp = false;
-						dicePlaced = 0;
 						isRolled = false;
-						// make it so dice pop up again, maybe call function?
-						// make dice visible again, close dialog, maybe only
-						// show roll again button?
+                        storyPane.setVisible(false);
 					}
 
 				}
@@ -361,12 +355,13 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	        pane.setEditable(false);
 	        
 	        // add dice cubes to text pane
-	        ImageIcon sizedIcon0 = new ImageIcon();
-	        ImageIcon sizedIcon1 = new ImageIcon();
-	        ImageIcon sizedIcon2 = new ImageIcon();
-	        ImageIcon sizedIcon3 = new ImageIcon();
-	        ImageIcon sizedIcon4 = new ImageIcon();
-	        for(Die d: gameDice){
+	        ImageIcon[] sizedIcons = new ImageIcon[dgame.getNumDice()];
+	        for (int i = 0; i < dgame.getNumDice(); i++) {
+	            sizedIcons[i] = new ImageIcon(
+	                    gameDice[i].getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
+	        }
+	        
+	        /*(Die d: gameDice){
 	        	if(d.getStoryIndex() == 0)
 	        		sizedIcon0 = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
 	        	else if(d.getStoryIndex() == 1)
@@ -377,16 +372,19 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	        		sizedIcon3 = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
 	        	else if(d.getStoryIndex() == 4)
 	        		sizedIcon4 = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
-	        }
+	        }*/
 	        Style style = pane.addStyle("Color Style", null);
 	        StyleConstants.setForeground(style, color);
 	        try {
 	        	doc.insertString(doc.getLength(), diceSpace, style);
-		        pane.insertIcon(sizedIcon0);
+	        	for (ImageIcon icon : sizedIcons) {
+	                pane.insertIcon(icon);
+	            }
+	        	/*pane.insertIcon(sizedIcon0);
 		        pane.insertIcon(sizedIcon1);
 		        pane.insertIcon(sizedIcon2);
 		        pane.insertIcon(sizedIcon3);
-		        pane.insertIcon(sizedIcon4);
+		        pane.insertIcon(sizedIcon4);*/
 		        doc.insertString(doc.getLength(), "\n", style);
 	            doc.insertString(doc.getLength(), text, style);
 	        } 
@@ -399,28 +397,16 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		startGameButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO
 				rollDiceButton.setVisible(true);
 				startGameButton.setVisible(false);
 				isStartScreenVisible = false;
 
 				// Story Stuff
-
-				/*
-				 * reading curse words to file
-				 * 
-				 * try { dgame.writeCurseWordsToFile(); } catch (IOException e2)
-				 * { // TODO Auto-generated catch block e2.printStackTrace(); }
-				 */
-
-
 				try {
 					dgame.readCurseWordsFromFile();
 				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 
@@ -431,20 +417,14 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		rollDiceButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO
-
-				rollDice(); // roll dice function
+				rollDice(); 
 				rollDiceButton.setVisible(false);
-				// showStoryButton = true;
 				repaint();
-
 			}
 		});
 		storyButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO
-
 				saveStory(); // save story function showStoryButton = false;
 				repaint();
 				storyButton.setVisible(false);
@@ -460,8 +440,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		rollAgainButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO
-
+				isDialogUp = false;
 				rollAgainButton.setVisible(false);
 				isRolled = false;
 				isStorySaved = false;
@@ -472,7 +451,6 @@ public class StoryCubeView extends JPanel implements ActionListener {
 				storyPane.setVisible(false);
 				dgame.setDice();
 				rollDice();
-				// showStoryButton = true;
 				repaint();
 				storyPane.setText("");
 
@@ -492,7 +470,6 @@ public class StoryCubeView extends JPanel implements ActionListener {
 
 	// Timer
 	public void actionPerformed(ActionEvent e) {
-		// TODO
 		if (numAnimations < animsToDo) {
 			if (isRolled && !isAnimDone) {
 				animDice();
@@ -526,15 +503,12 @@ public class StoryCubeView extends JPanel implements ActionListener {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			// TODO Auto-generated method stub
 			if(e.getSource() == storyText)
 				storyText.setText("");
 		}
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			// TODO Auto-generated method stub
-			// if die is clicked on, isSelected = true
 			point = e.getPoint();
 			for (Die d : gameDice) {
 				if (point.x >= d.getXLoc() && point.x <= d.getXLoc() + diceWidth && point.y >= d.getYLoc()
@@ -551,17 +525,14 @@ public class StoryCubeView extends JPanel implements ActionListener {
 				if (point.x >= sbx && point.x <= sbx + diceWidth && point.y >= storyStartX
 						&& point.y <= storyStartY + diceWidth && isDieSelected) {
 					dicePlaced--;
-					//System.out.println("diceplaced--");
 				}
 			}
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			// TODO Auto-generated method stub
 			point = e.getPoint();
 			boolean isPlaced = false;
-			// if in range of storycubes
 			if (isDieSelected) {
 				if (selectedDie != null) {
 					for (int i = 0; i < dgame.getNumDice(); i++) {
@@ -573,7 +544,6 @@ public class StoryCubeView extends JPanel implements ActionListener {
 							isPlaced = true;
 							selectedDie.setStoryIndex(i);
 							dicePlaced++;
-							//System.out.println("dicePlaced++");
 						}
 					}
 					for (int i = 0; i < dgame.getNumDice(); i++) {
@@ -584,7 +554,6 @@ public class StoryCubeView extends JPanel implements ActionListener {
 								selectedDie.setYLoc(selectedDie.getInitYLoc());
 								isPlaced = false;
 								dicePlaced--;
-								//System.out.println("dicePlaced--");
 							}
 						}
 					}
@@ -604,21 +573,13 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		}
 
 		@Override
-		public void mouseEntered(MouseEvent e) {
-			// TODO Auto-generated method stub
-
-		}
+		public void mouseEntered(MouseEvent e) {}
 
 		@Override
-		public void mouseExited(MouseEvent e) {
-			// TODO Auto-generated method stub
-
-		}
+		public void mouseExited(MouseEvent e) {}
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			// TODO Auto-generated method stub
-			// update selectedDie's location to point.x and point.y
 			point = e.getPoint();
 			if (isDieSelected && selectedDie != null) {
 				selectedDie.setXLoc(point.x - diceWidth / 2);
@@ -628,9 +589,6 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		}
 
 		@Override
-		public void mouseMoved(MouseEvent e) {
-			// TODO Auto-generated method stub
-
-		}
+		public void mouseMoved(MouseEvent e) {}
 	}
 }
