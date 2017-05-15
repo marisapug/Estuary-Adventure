@@ -18,11 +18,19 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.Timer;
 import javax.swing.event.MouseInputListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 public class StoryCubeView extends JPanel implements ActionListener {
 	DiceGame dgame;
@@ -74,13 +82,12 @@ public class StoryCubeView extends JPanel implements ActionListener {
 
 	// Story
 	private Font storyTextStyle;
+	Color storyTextColor;
+	Color storyBackground;
 	private int storyFontSize = screenWidth / 25;
 	private boolean isStorySaved = false;
 	private int storyTextX;
 	private int storyTextY;
-	private boolean isSplitStoryLinesCalled = false; // to make sure the
-														// function is only
-														// called once
 	private ArrayList<String> storyWords = new ArrayList<String>();
 	private ArrayList<String> storyLines = new ArrayList<String>();
 	private int numLines = 0;
@@ -88,6 +95,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	private int numCharsOnLine;
 	private int[] stringYCoords = new int[maxLines];
 	private boolean isStoryShowing = false;
+	private JTextPane storyPane;
 
 	// TextArea
 	JTextArea storyText;
@@ -179,6 +187,13 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		this.add(rollAgainButton);
 		this.setupListeners();
 		this.setupMouseListener(listener);
+		
+		// Final Text Display
+		storyBackground = new Color(136, 191, 246);
+		storyTextColor = new Color(3, 0, 130);
+		storyPane = new JTextPane();
+		this.add(storyPane);
+		storyPane.setVisible(false);
 
 		initializeCoordinates();
 	}
@@ -242,61 +257,29 @@ public class StoryCubeView extends JPanel implements ActionListener {
 			g.drawImage(oceanBackground, 0, 0, screenWidth, screenHeight, this); // draws
 
 			// Dice
-			for (int i = 0; i < dgame.getNumDice(); i++) {
-				if (isRolled) {
-					g.drawImage(gameDice[i].getDieImg(), gameDice[i].getXLoc(), gameDice[i].getYLoc(), diceWidth,
-							diceWidth, this); // draws
-					// images
-					if (isAnimDone) {
-						// slots to drag dice into
-						g.drawRect(storyboardX[i], storyStartY, diceWidth, diceWidth); // draws
-						if (showStoryButton) {
-							storyButton.setVisible(true);
-							storyText.setVisible(true);
+			if(!isStoryShowing){
+				for (int i = 0; i < dgame.getNumDice(); i++) {
+					if (isRolled) {
+						g.drawImage(gameDice[i].getDieImg(), gameDice[i].getXLoc(), gameDice[i].getYLoc(), diceWidth,
+								diceWidth, this); // draws
+						// images
+						if (isAnimDone) {
+							// slots to drag dice into
+							g.drawRect(storyboardX[i], storyStartY, diceWidth, diceWidth); // draws
+							if (showStoryButton) {
+								storyButton.setVisible(true);
+								storyText.setVisible(true);
+							}
 						}
 					}
 				}
-				if (isStorySaved) {
-					Color storyBackground = new Color(136, 191, 246);
-					g.setColor(storyBackground);
-					g.fillRect(diceWidth, diceWidth, screenWidth - 2 * diceWidth, screenHeight - 2 * diceWidth);
+				if (isStorySaved && !isStoryShowing) {
+					//Color storyBackground = new Color(136, 191, 246);
 
 					// Story Text
-					Color navy = new Color(3, 0, 130);
-					g.setColor(navy);
-					g.setFont(storyTextStyle);
-					if (dgame.getDiceStory().length() <= numCharsOnLine) {
-						g.drawString(dgame.getDiceStory(), storyTextX, storyTextY);
-					} else {
-						String[] storyWordsTmp = dgame.getDiceStory().split(" ");
-						for (String s : storyWordsTmp) {
-							if (s.length() > numCharsOnLine) {
-								int numSplits = s.length() / numCharsOnLine;
-								for (int j = 0; j < numSplits; j++) {
-									String piece = s.substring(j * numCharsOnLine, (j + 1) * numCharsOnLine);
-									storyWords.add(piece);
-								}
-								String lastPiece = s.substring(numSplits * numCharsOnLine);
-								storyWords.add(lastPiece);
-							} else
-								storyWords.add(s);
-						}
-						if (!isSplitStoryLinesCalled) {
-							storyLines = splitStoryLines();
-							numLines = storyLines.size();
-							if (numLines > maxLines) {
-								numLines = maxLines;
-							}
-							isSplitStoryLinesCalled = true;
-						}
-						for (int j = 0; j < numLines; j++) {
-							g.drawString(storyLines.get(j), storyTextX, stringYCoords[j]);
-						}
-					}
-					for (int k = 0; k < dgame.getNumDice(); k++)
-						g.drawImage(gameDice[k].getDieImg(), storyboardX[gameDice[k].getStoryIndex()],
-								screenHeight - 2 * (diceWidth + betweenStory), diceWidth, diceWidth, this);
-
+					saveStory();
+					makeStory(storyPane, dgame.getDiceStory(), storyTextColor);
+					isStoryShowing = true;
 				}
 			}
 		}
@@ -315,42 +298,42 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		isStorySaved = true;
 	}
 
-	// Splits strings of story into lines
-	ArrayList<String> splitStoryLines() {
-		int currWord = 0;
-		ArrayList<String> lines = new ArrayList<String>();
-		stringYCoords[0] = storyTextY;
-		for (int k = 1; k < maxLines; k++) { // initializing array to all 0's
-			stringYCoords[k] = 0;
-		}
-		int yCoordIndex = 0;
-		int numStrings = storyWords.size();
-		while (currWord < storyWords.size()) {
-			String fragment = "";
-			int j = currWord;
-			boolean lineOver = false;
-			int numChars = storyWords.get(currWord).length();
-			while (j < storyWords.size() && !lineOver) {
-				numChars += storyWords.get(j).length();
-				fragment = fragment + storyWords.get(j) + " ";
-				if (j < (storyWords.size() - 1) && numChars + storyWords.get(j + 1).length() > numCharsOnLine) {
-					if (stringYCoords[yCoordIndex] == 0)
-						stringYCoords[yCoordIndex] = stringYCoords[yCoordIndex - 1] + 50;
-					lineOver = true;
-					yCoordIndex++;
-					lines.add(fragment);
-				} else if (j == (storyWords.size() - 1) && yCoordIndex > 0) {
-					stringYCoords[yCoordIndex] = stringYCoords[yCoordIndex - 1] + 50;
-					lineOver = true;
-					yCoordIndex++;
-					lines.add(fragment);
-				}
-				j++;
-				currWord = j;
-			}
-		}
-		return lines;
-	}
+	
+	// Add Story to Text Pane
+	//things to fix: resize text for bigger story, add dice cubes to textpane(or on top), remove prev text
+	 public void makeStory(JTextPane pane, String text, Color color) {
+		 System.out.println("makeStory called");
+	        StyledDocument doc = pane.getStyledDocument();
+	        
+	        pane.setBounds(diceWidth, diceWidth, screenWidth - 2 * diceWidth, (screenHeight - (2 * diceWidth)));
+	        pane.setPreferredSize(new Dimension(screenWidth - 2 * diceWidth, screenHeight - (2 * diceWidth)));
+	        pane.setFont(storyTextStyle);
+	        pane.setBackground(storyBackground);
+	        pane.setEditable(false);
+	        
+	        // add dice cubes to text pane
+	        JLabel diceContainer = new JLabel();
+	        for (int k = 0; k < dgame.getNumDice(); k++){
+	        	JLabel tmpIcon = new JLabel();
+	        	tmpIcon.setIcon(new ImageIcon(gameDice[k].getDieImg()));
+	        	diceContainer.add(tmpIcon);	        	
+	        }
+	        pane.add(diceContainer);
+	        diceContainer.setVisible(true);
+	      //  	pane.insertIcon(new ImageIcon(gameDice[k].getDieImg()));
+				//g.drawImage(gameDice[k].getDieImg(), storyboardX[gameDice[k].getStoryIndex()],
+					//	screenHeight - 2 * (diceWidth + betweenStory), diceWidth, diceWidth, this);
+	        
+
+	        Style style = pane.addStyle("Color Style", null);
+	        StyleConstants.setForeground(style, color);
+	        try {
+	            doc.insertString(doc.getLength(), text, style);
+	        } 
+	        catch (BadLocationException e) {
+	            e.printStackTrace();
+	        } 
+	 }
 
 	void setupListeners() {
 		startGameButton.addActionListener(new ActionListener() {
@@ -386,7 +369,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 				storyText.setVisible(false);
 				rollAgainButton.setVisible(true);
 				showStoryButton = false;
-				isStoryShowing = true;
+				storyPane.setVisible(true);
 
 				repaint(); // print story function
 
@@ -404,6 +387,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 				dicePlaced = 0;
 				isAnimDone = false;
 				isStoryShowing = false;
+				storyPane.setVisible(false);
 				dgame.setDice();
 				rollDice();
 				// showStoryButton = true;
