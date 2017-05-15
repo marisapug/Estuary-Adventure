@@ -24,6 +24,14 @@ public class Barrier {
 		return height;
 	}
 	
+	public void setXLoc(int x){
+		xLoc = x;
+	}
+	
+	public void setYLoc(int y){
+		yLoc = y;
+	}
+	
 	public void setWidth(int w){
 		width = w;
 	}
