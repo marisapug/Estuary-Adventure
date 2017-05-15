@@ -806,6 +806,22 @@ public class BeachBoard {
 
 
 	//GETTERS
+	public int getScreenWidth(){
+		return this.screenWidth;
+	}
+	
+	public int getScreenHeight(){
+		return screenHeight;
+	}
+	
+	public int getNumRows(){
+		return numRows;
+	}
+	
+	public int getNumCols(){
+		return numCols;
+	}
+	
 	public BeachCell[][] getGrid(){
 		return grid;
 	}
