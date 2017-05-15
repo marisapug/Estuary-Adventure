@@ -36,10 +36,11 @@ public class Wave {
 	
 	//move(int speed)
 	/**
-	 * Increments the wave by the speed
+	 * Increments the wave by s, the speed
+	 * @param s, the speed
 	 */
-	public void move(int speed){
-		yLoc += speed;
+	public void move(int s){
+		yLoc += s;
 	}
 	
 
