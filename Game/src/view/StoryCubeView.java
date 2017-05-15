@@ -412,15 +412,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 				 * try { dgame.writeCurseWordsToFile(); } catch (IOException e2)
 				 * { // TODO Auto-generated catch block e2.printStackTrace(); }
 				 */
-				try {
-					dgame.readStoriesFromFile();
-				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+
 
 				try {
 					dgame.readCurseWordsFromFile();
