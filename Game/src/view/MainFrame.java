@@ -13,6 +13,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
+import model.MazeKeyInputs;
+
 public class MainFrame extends JFrame {
 
 
@@ -116,7 +118,10 @@ public class MainFrame extends JFrame {
 	}
 	
 	public void resetMaze(){
-		this.currMazePanel = new MazeGameView();
+		MazeGameView newView = new MazeGameView();
+		newView.requestFocusInWindow();
+		currMazePanel.requestFocus(false);
+		this.currMazePanel = newView;
 	}
 	
 	public void resetBeach(){
@@ -148,13 +153,14 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				removeKeyListener(currMazePanel);
-				removeKeyListener(currBeachPanel);
+				currMazePanel.nameTextField.removeKeyListener(currMazePanel);
 				cardPanel.remove(currMazePanel);
+				currMazePanel.t.stop();
 				resetMaze();
 				cardPanel.add(currMazePanel, "maze");
 				addKeyListener(currMazePanel);
 				cl.show(cardPanel, "maze");
+				currMazePanel.requestFocusInWindow();
 			}
 		});
 
@@ -164,11 +170,13 @@ public class MainFrame extends JFrame {
 				// TODO Auto-generated method stub
 				removeKeyListener(currMazePanel);
 				removeKeyListener(currBeachPanel);
+				currMazePanel.nameTextField.removeKeyListener(currMazePanel);
 				cardPanel.remove(currBeachPanel);
 				resetBeach();
 				cardPanel.add(currBeachPanel, "beach");
 				addKeyListener(currBeachPanel);
 				cl.show(cardPanel, "beach");
+				currBeachPanel.requestFocusInWindow();
 			}
 		});
 		

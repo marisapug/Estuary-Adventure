@@ -23,9 +23,13 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -113,7 +117,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private BufferedImage rightImage = createImage("MazeExtraImgs/greencircle.png");
 
 	//create the maze board
-	private MazeBoard board;
+	MazeBoard board;
 	private MazeCell[][] grids;
 	private ArrayList<MazeWall> mazeWalls;
 	private int numRows;
@@ -373,7 +377,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private int ageStateCellCurrentCount;
 	
 	//scoreboard
-	private JTextArea nameTextField;
+	JTextArea nameTextField;
 	private JButton enterNameButton;
 	private int gameScore;
 	private int scoreDecrementTimer;
@@ -390,15 +394,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	private String currScoreName;
 	private int currScoreScore;
 	
-	//cheatCodes for presentation
-	private boolean isWallCheat;
-	private boolean isInvCheat;
-	private int powerUpInvLimitOriginal = powerUpInvLimit;
-	private int cheatInvLimit = 100000000;
-	
-	private boolean isSuperSpeedCheat;
-	private int superSpeedXIncr = 20;
-	private int superSpeedYIncr = 20;
 	
 
 	//=================================================================//
@@ -409,6 +404,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 	 * Initalizes all buttons and apsects of the game, including game states and timers.
 	 */
 	public MazeGameView(){
+		this.requestFocusInWindow(true);
 		
 		//Buttons
 		hCrabButton = new JButton("Horseshoe Crab");
@@ -484,8 +480,10 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		testCrab = new Crab(5,0,screenWidth/2 + 10 ,screenHeight/2 + 10);
 		
 		//scoreboard
-		nameTextField = new JTextArea("Enter your name here",1,5);
+		nameTextField = new JTextArea("Enter Name",1,5);
 		nameTextField.setBackground(Color.WHITE);
+
+
 		this.add(nameTextField);
 		this.add(enterNameButton);
 		nameTextField.setVisible(false);
@@ -878,11 +876,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		}
 
 		if(ageStateCellCurrentCount <= ageStateCellLargeCount && characterWidth != largeWidth && 
-				!board.isHittingAnyWalls(characterXLoc - xVel, characterYLoc - yVel, largeWidth, largeHeight)){
+				!board.isHittingAnyWalls(characterXLoc - testCrab.getXVel(), characterYLoc - testCrab.getYVel(), largeWidth, largeHeight)){
 			characterWidth = largeWidth;
 			characterHeight = largeHeight;
 		} else if(ageStateCellCurrentCount <= ageStateCellMediumCount && characterWidth != mediumWidth && characterWidth != largeWidth &&
-				!board.isHittingAnyWalls(characterXLoc - xVel, characterYLoc - yVel, mediumWidth, mediumHeight)){
+				!board.isHittingAnyWalls(characterXLoc - testCrab.getXVel(), characterYLoc - testCrab.getYVel(), mediumWidth, mediumHeight)){
 			characterWidth = mediumWidth;
 			characterHeight = mediumHeight;
 		}
@@ -922,7 +920,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 			swimTimer--;
 		}
 
-		if(xVel == 0 && yVel ==0){
+		if(testCrab.getXVel() == 0 && testCrab.getYVel() ==0){
 			crabIsMoving = false;
 		}
 
@@ -972,7 +970,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		}
 
 		//sets crabs speed back to initial (after power up)
-		if(powerUpSpeedTimer == powerUpSpeedLimit && !isSuperSpeedCheat){
+		if(powerUpSpeedTimer == powerUpSpeedLimit ){
 			xIncr = testCrab.getXIncr();
 			yIncr = testCrab.getYIncr();
 		}
@@ -1044,15 +1042,25 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		repaint();
 
 		//MOVES MAZE IF CRAB IS NOT HITTING WALL
-		if(board.isHittingAnyWalls(characterXLoc - xVel, characterYLoc - yVel, characterWidth, characterHeight) && 
-				!isWallCheat){
-			return;
+		if(board.isHittingAnyWalls(characterXLoc - testCrab.getXVel(), characterYLoc - testCrab.getYVel(), characterWidth, characterHeight)){
+			if(board.isHittingAnyWalls(characterXLoc - testCrab.getXVel(), characterYLoc, characterWidth, characterHeight)){
+				if(board.isHittingAnyWalls(characterXLoc, characterYLoc - testCrab.getYVel(), characterWidth, characterHeight)){
+					return;
+				}else{
+					board.moveGrid(0,testCrab.getYVel());
+				}
+			}else{
+				board.moveGrid(testCrab.getXVel(),0);
+			}
+			repaint();
 		}
 		else{
 			repaint();
-			board.moveGrid(xVel,yVel);
+			board.moveGrid(testCrab.getXVel(),testCrab.getYVel());
 		}
 	}
+	
+	
 
 	/**
 	 * Moves crab image up on screen
@@ -1062,7 +1070,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		crabDir = testCrab.getDir();
 
 		crabIsMoving = true;
-		yVel = yIncr;
+		testCrab.setYVel(yIncr);
 	}
 	
 	/**
@@ -1078,7 +1086,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 		crabIsMoving = true;
 		crabDir = testCrab.getDir();
-		yVel = -yIncr;
+		testCrab.setYVel(-yIncr);
 	}
 	
 	/**
@@ -1094,7 +1102,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 		crabIsMoving = true;
 		crabDir = testCrab.getDir();
-		xVel = xIncr;
+		testCrab.setXVel(xIncr);
 	}
 	
 	/**
@@ -1110,7 +1118,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 		crabIsMoving = true;
 		crabDir = testCrab.getDir();
-		xVel = -xIncr;
+		testCrab.setXVel(-xIncr);
 	}
 	
 	/**
@@ -1132,12 +1140,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		}
 		else if(code == KeyEvent.VK_RIGHT){
 			right();
-		}		else if(code == KeyEvent.VK_M){
-			if(isWallCheat){
-				isWallCheat = false;
-			}else{
-				isWallCheat = true;
-			}
 		}
 	}
 
@@ -1150,37 +1152,16 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		// TODO Auto-generated method stub
 		int code = e.getKeyCode();
 		if(code == KeyEvent.VK_UP){
-			yVel = 0;
+			testCrab.setYVel(0);
 		}
 		else if(code == KeyEvent.VK_DOWN){
-			yVel = 0;
+			testCrab.setYVel(0);
 		}
 		else if(code == KeyEvent.VK_LEFT){
-			xVel = 0;
+			testCrab.setXVel(0);
 		}
 		else if(code == KeyEvent.VK_RIGHT){
-			xVel = 0;
-		}
-		else if(code == KeyEvent.VK_I){
-			if(isInvCheat){
-				powerUpInvLimit = powerUpInvLimitOriginal;
-				isInvCheat = false;
-			}else{
-				powerUpInvLimit = cheatInvLimit;
-				isInvCheat = true;
-			}
-		}
-		else if(code == KeyEvent.VK_S){
-			if(isSuperSpeedCheat){
-				xIncr = testCrab.getXIncr();
-				yIncr = testCrab.getYIncr();
-				isSuperSpeedCheat = false;
-			}
-			else{
-				xIncr = superSpeedXIncr;
-				yIncr = superSpeedYIncr;
-				isSuperSpeedCheat = true;
-			}
+			testCrab.setXVel(0);
 		}
 	}
 	
@@ -1364,6 +1345,8 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 					}
 				});
 				
+
+				
 				enterNameButton.addActionListener(new ActionListener(){
 					public void actionPerformed(ActionEvent e){
 						String tempName = nameTextField.getText();
@@ -1407,6 +1390,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 				startButton.addActionListener(new ActionListener(){
 					//tutorial
+					
 					public void actionPerformed(ActionEvent e){
 						isTutorial = board.getIsTutorial();
 						if(!isTutorial){
@@ -1416,21 +1400,6 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 						}
 						
 						nameTextField.setVisible(false);
-						nameTextField.addKeyListener(new KeyAdapter() {
-						    public void keyTyped(KeyEvent e) { 
-						    	//limits text to 3 letter and stops bad words
-
-						    	if(nameTextField.getText().length() > 4){
-						    		nameTextField.setText("");
-						    	}
-						    	else if(board.getBadWordsList().contains(nameTextField.getText().toLowerCase() + Character.toLowerCase(e.getKeyChar()))){
-						    		e.consume(); 
-						    	}
-						    	else if (nameTextField.getText().length() >= 3){
-						            e.consume(); 
-						    	}
-						    }  
-						});
 						enterNameButton.setVisible(false);
 						isScoreBoardView = false;
 						
@@ -1596,15 +1565,28 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 							e1.printStackTrace();
 						}
 						
-						//cheatCodes
-						isWallCheat = false;
-						isInvCheat = false;
-						isSuperSpeedCheat = false;
-						
 						//Start Timer
 						t.start();
 					}
 				});
+				nameTextField.addKeyListener(new KeyAdapter() {
+					public void keyTyped(KeyEvent e) { 
+						//limits text to 3 letter and stops bad words
+						if(nameTextField.getText().length() > 4){
+							nameTextField.setText("");
+						}
+						else if(board.getBadWordsList().contains(nameTextField.getText().toLowerCase() + Character.toLowerCase(e.getKeyChar()))){
+							e.consume(); 
+						}
+						else if (nameTextField.getText().length() >= 3){
+							e.consume(); 
+						}
+					}  
+				});
+
+
+
+				addKeyListener(this);
 	}
 
 
@@ -1615,6 +1597,14 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 
 	public int getScreenHeight(){
 		return screenHeight;
+	}
+	
+	public MazeBoard getBoard(){
+		return board;
+	}
+	
+	public Crab getCrab(){
+		return testCrab;
 	}
 
 }
