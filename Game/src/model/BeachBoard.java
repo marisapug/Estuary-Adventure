@@ -454,7 +454,6 @@ public class BeachBoard {
 	 * Sets crab current object based on which "bucket" its x and y location fall into
 	 */
 	public void setObjectFromBucket(){
-		//grassBucket = 1
 		int width = gameCrab.getWidth();
 		int height = gameCrab.getHeight();
 		int xL = gameCrab.getXLoc() + width/2;
@@ -471,7 +470,7 @@ public class BeachBoard {
 				yL >= seawallBucketYLoc && yL <= seawallBucketYLoc + seawallBucketHeight){
 			gameCrab.setCurrObject(2);
 		}
-		//gabionBucket = 2
+		//gabionBucket = 3
 		else if(xL >= gabionBucketXLoc && xL <= gabionBucketXLoc + gabionBucketWidth && 
 				yL >= gabionBucketYLoc && yL <= gabionBucketYLoc + gabionBucketHeight){
 			gameCrab.setCurrObject(3);
@@ -862,6 +861,7 @@ public class BeachBoard {
 		return waveCells;
 	}
 
+
 	public int getWaveSpeed(){
 		return waveSpeed;
 	}
@@ -964,5 +964,7 @@ public class BeachBoard {
 	public int getFeaturesBarHeight(){
 		return this.featuresBarHeight;
 	}
+	
+	
 
 }

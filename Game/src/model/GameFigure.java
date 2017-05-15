@@ -1,5 +1,11 @@
 package model;
 
+/**
+ * GameFigure is a super class for a multitude of classes used in all games, such as Crab
+ * It is used as a general outline of what objects in each game should have.
+ * @author Logan
+ *
+ */
 public class GameFigure {
 	protected int xLoc;
 	protected int yLoc;

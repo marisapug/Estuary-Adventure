@@ -55,6 +55,21 @@ public class ShoreCrab extends GameFigure {
 		currObject = curr;
 	}
 	
+	public void setWidth(int w){
+		this.width = w;
+	}
+	
+	public void setHeight(int h){
+		this.height = h;
+	}
+	
+	public void setXLoc(int x){
+		xLoc = x;
+	}
+	
+	public void setYLoc(int y){
+		yLoc = y;
+	}
 
 	public void move(int xVel, int yVel) {
 		xLoc = xLoc + xVel;
