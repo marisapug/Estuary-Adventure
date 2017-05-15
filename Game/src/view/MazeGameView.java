@@ -541,12 +541,12 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 				if(pS != null){
 					g.drawString(pS.getName(), scoreNameXLoc, scoreYLoc);
 					g.drawString(String.valueOf(pS.getScore()), scoreScoreXLoc, scoreYLoc);
-					currRank++;
 				}else{
 					g.drawString("---", scoreNameXLoc, scoreYLoc);
 					g.drawString("---", scoreScoreXLoc, scoreYLoc);
 				}
 				scoreYLoc += scoreFontSize;
+				currRank++;
 			}
 		}
 		//EVERYTHING ELSE
@@ -1542,7 +1542,7 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 						startButton.setVisible(false);
 						timeRemaining = totalTime;
 
-			
+
 						//scoreStuff
 						try {
 							board.readScoresFromFile();
