@@ -7,6 +7,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,6 +29,7 @@ import javax.swing.JTextPane;
 import javax.swing.Timer;
 import javax.swing.event.MouseInputListener;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
@@ -84,7 +86,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	private Font storyTextStyle;
 	Color storyTextColor;
 	Color storyBackground;
-	private int storyFontSize = screenWidth / 25;
+	private int storyFontSize = screenWidth / 40;
 	private boolean isStorySaved = false;
 	private int storyTextX;
 	private int storyTextY;
@@ -137,7 +139,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 
 		// Initialize Button Appearance
 		buttonFont = new Font(titleFont, Font.BOLD, buttonFontSize);
-		storyTextStyle = new Font("Tempus Sans ITC", Font.BOLD, storyFontSize);
+		storyTextStyle = new Font("Verdana", Font.PLAIN, storyFontSize);
 		startButtonSize = new Dimension(startButtonSizeX, startButtonSizeY);
 		buttonSize = new Dimension(buttonSizeX, buttonSizeY);
 		showStoryButton = false;
@@ -273,7 +275,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 						}
 					}
 				}
-				if (isStorySaved && !isStoryShowing) {
+				if (isStorySaved) {
 					//Color storyBackground = new Color(136, 191, 246);
 
 					// Story Text
@@ -282,6 +284,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 					isStoryShowing = true;
 				}
 			}
+
 		}
 	}
 
@@ -302,7 +305,6 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	// Add Story to Text Pane
 	//things to fix: resize text for bigger story, add dice cubes to textpane(or on top), remove prev text
 	 public void makeStory(JTextPane pane, String text, Color color) {
-		 System.out.println("makeStory called");
 	        StyledDocument doc = pane.getStyledDocument();
 	        
 	        pane.setBounds(diceWidth, diceWidth, screenWidth - 2 * diceWidth, (screenHeight - (2 * diceWidth)));
@@ -312,22 +314,22 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	        pane.setEditable(false);
 	        
 	        // add dice cubes to text pane
-	        JLabel diceContainer = new JLabel();
-	        for (int k = 0; k < dgame.getNumDice(); k++){
-	        	JLabel tmpIcon = new JLabel();
-	        	tmpIcon.setIcon(new ImageIcon(gameDice[k].getDieImg()));
-	        	diceContainer.add(tmpIcon);	        	
-	        }
-	        pane.add(diceContainer);
-	        diceContainer.setVisible(true);
-	      //  	pane.insertIcon(new ImageIcon(gameDice[k].getDieImg()));
-				//g.drawImage(gameDice[k].getDieImg(), storyboardX[gameDice[k].getStoryIndex()],
-					//	screenHeight - 2 * (diceWidth + betweenStory), diceWidth, diceWidth, this);
-	        
+	        ImageIcon sizedIcon0 = new ImageIcon(gameDice[0].getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
+	        ImageIcon sizedIcon1 = new ImageIcon(gameDice[1].getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
+	        ImageIcon sizedIcon2 = new ImageIcon(gameDice[2].getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
+	        ImageIcon sizedIcon3 = new ImageIcon(gameDice[3].getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
+	        ImageIcon sizedIcon4 = new ImageIcon(gameDice[4].getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
 
 	        Style style = pane.addStyle("Color Style", null);
 	        StyleConstants.setForeground(style, color);
 	        try {
+	        	doc.insertString(doc.getLength(), "           ", style);
+		        pane.insertIcon(sizedIcon0);
+		        pane.insertIcon(sizedIcon1);
+		        pane.insertIcon(sizedIcon2);
+		        pane.insertIcon(sizedIcon3);
+		        pane.insertIcon(sizedIcon4);
+		        doc.insertString(doc.getLength(), "\n", style);
 	            doc.insertString(doc.getLength(), text, style);
 	        } 
 	        catch (BadLocationException e) {
@@ -392,7 +394,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 				rollDice();
 				// showStoryButton = true;
 				repaint();
-				//storyText.setVisible(true);
+				storyPane.setText("");
 
 			}
 		});
