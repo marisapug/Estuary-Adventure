@@ -1,5 +1,10 @@
 package model;
 
+/**
+ * WaveCell contains information for wave cells, which indicate whether a boat can spawn a wave or not
+ * @author Logan
+ *
+ */
 public class WaveCell {
 
 	private boolean hasSmallWave = true;
@@ -9,6 +14,11 @@ public class WaveCell {
 	private int xLoc;
 	
 	
+	/**
+	 * Constructor, creates an instance of a wave cellobject
+	 * @param w width
+	 * @param x x-location
+	 */
 	public WaveCell(int w, int x){
 		width = w;
 		xLoc = w * x;
