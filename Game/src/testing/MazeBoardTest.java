@@ -8,6 +8,7 @@ import model.Litter;
 import model.MazeBoard;
 import model.MazeCell;
 import model.MazeWall;
+import model.PlayerScore;
 import model.PowerUp;
 
 public class MazeBoardTest {
@@ -84,6 +85,23 @@ public class MazeBoardTest {
 		PowerUp pow1 = tB.getGamePowerUps().get(0);
 		assertTrue(tB.hitAnyPowerUps(pow1.getXLoc(), pow1.getYLoc(), 10, 10));
 		assertFalse(tB.hitAnyPowerUps(-100,-100, 10, 10));
+	}
+	
+	@Test 
+	public void insertScoreTest(){
+		MazeBoard tB = new MazeBoard(500,500);
+		PlayerScore[] highscores = tB.getHighScores();
+		assertTrue(tB.getHighScores()[0] == null);
+		tB.insertScore("LOGAN!!!!" , 9001);
+		assertEquals(tB.getHighScores()[0].getScore(), 9001);
+		
+		for(int i = 0; i < 9; i++){
+			tB.insertScore("LOGAN!!!!" , 9001);
+		}
+
+		tB.insertScore("LOGAN!!!!" , 8000);
+		assertEquals(tB.getHighScores()[0].getScore(), 9001);
+		
 	}
 	
 }

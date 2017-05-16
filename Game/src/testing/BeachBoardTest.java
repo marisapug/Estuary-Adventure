@@ -317,6 +317,58 @@ public class BeachBoardTest {
 		assertEquals(b.getGameCrab().getNumOysters(), 0);
 		b.removeOyster(b.getGameCrab());
 		assertEquals(b.getGameCrab().getNumOysters(),1);
+		
+		tempCell = b.getGrid()[5][5];
+		tempCell.setCanHoldOyster(false);
+		b.getGameCrab().setXLoc(tempCell.getXLoc());
+		b.getGameCrab().setYLoc(tempCell.getYLoc());
+		oyster = new Oyster(tempCell.getXLoc(),tempCell.getYLoc());
+		b.getGameOysters().add(oyster);
+		assertEquals(b.getGameCrab().getNumOysters(), 1);
+		b.removeOyster(b.getGameCrab());
+		assertEquals(b.getGameCrab().getNumOysters(),1);
+		
+		tempCell = b.getGrid()[5][5];
+		b.getGameCrab().setXLoc(b.getScreenWidth()*2);
+		b.getGameCrab().setYLoc(b.getScreenHeight()*2);
+		oyster = new Oyster(b.getGameCrab().getXLoc(),b.getGameCrab().getYLoc());
+		b.getGameOysters().add(oyster);
+		assertEquals(b.getGameCrab().getNumOysters(), 1);
+		b.removeOyster(b.getGameCrab());
+	}
+	
+	@Test
+	public void setAdjacentTest(){
+		BeachBoard b = new BeachBoard(10,10,1000,800);
+		BeachCell tempCellLeft = b.getGrid()[0][5];
+		BeachCell tempCellLeft2 = b.getGrid()[1][5];
+		BeachCell tempCellMid = b.getGrid()[5][5];
+		BeachCell tempCellRight2 = b.getGrid()[b.getNumRows()-2][5];
+		BeachCell tempCellRight = b.getGrid()[b.getNumRows()-1][5];
+		
+		b.setAdjacent(tempCellLeft);
+		assertTrue(tempCellLeft2.getCanHoldBarrier());
+		tempCellLeft.setCanHoldBarrier(false);
+		b.setAdjacent(tempCellLeft2);
+		assertTrue(tempCellLeft.getCanHoldBarrier());
+		
+		b.setAdjacent(tempCellRight);
+		assertTrue(tempCellRight2.getCanHoldBarrier());
+		tempCellRight.setCanHoldBarrier(false);
+		b.setAdjacent(tempCellRight2);
+		assertTrue(tempCellRight.getCanHoldBarrier());
+		
+		b.getGrid()[3][5].setHasBarrier(true);
+		b.getGrid()[7][5].setHasBarrier(true);
+		b.setAdjacent(tempCellMid);
+		assertTrue(!b.getGrid()[4][5].getCanHoldBarrier());
+		assertTrue(!b.getGrid()[6][5].getCanHoldBarrier());
+		
+		b.getGrid()[3][5].setHasBarrier(false);
+		b.getGrid()[7][5].setHasBarrier(false);
+		b.setAdjacent(tempCellMid);
+		assertTrue(b.getGrid()[4][5].getCanHoldBarrier());
+		assertTrue(b.getGrid()[6][5].getCanHoldBarrier());
 	}
 	
 	

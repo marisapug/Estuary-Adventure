@@ -698,7 +698,7 @@ public class BeachBoard {
 	 * @param tempCell
 	 */
 	public void setRightAdjacent(BeachCell tempCell){
-		if(grid[tempCell.getX()+2][tempCell.getY()] != null && !grid[tempCell.getX()+2][tempCell.getY()].getHasBarrier())
+		if(!grid[tempCell.getX()+2][tempCell.getY()].getHasBarrier())
 			grid[tempCell.getX()+1][tempCell.getY()].setCanHoldBarrier(true);
 	}
 	/**
@@ -706,7 +706,7 @@ public class BeachBoard {
 	 * @param tempCell
 	 */
 	public void setLeftAdjacent(BeachCell tempCell){
-		if(grid[tempCell.getX()-2][tempCell.getY()] != null && !grid[tempCell.getX()-2][tempCell.getY()].getHasBarrier())
+		if(!grid[tempCell.getX()-2][tempCell.getY()].getHasBarrier())
 			grid[tempCell.getX()-1][tempCell.getY()].setCanHoldBarrier(true);
 	}
 	/**

@@ -269,11 +269,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		this.add(rollAgainButton);
 		this.add(goBackButton);
 		this.setupListeners();
-<<<<<<< HEAD
 
-=======
-		
->>>>>>> 9a2c4ee4c97b92e07cb3e67685741e4e3640b56b
 		// Final Text Display
 		storyBackground = new Color(136, 191, 246);
 		storyTextColor = new Color(3, 0, 130);
