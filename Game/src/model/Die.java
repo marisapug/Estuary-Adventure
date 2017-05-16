@@ -111,6 +111,10 @@ public class Die {
 		return storyIndex;
 	}
 	
+	public int getDir(){
+		return dir;
+	}
+	
 	//Setters
 	public void setXLoc(int x){
 		xLoc = x;
@@ -146,5 +150,9 @@ public class Die {
 	
 	public void setStoryIndex(int si){
 		storyIndex = si;
+	}
+	
+	public void setDir(int d){
+		dir = d;
 	}
 }

@@ -1,4 +1,4 @@
-package testing;
+/*package testing;
 
 import static org.junit.Assert.*;
 
@@ -45,23 +45,23 @@ public class DieTest {
 
 	@Test
 	public void throwTest(){
-		Die d = new Die(0,0,0,0,0,0);
+		Die d = new Die(0,0,0,0,0,0,0);
 		d.throwDie();
 		assertTrue(d.getXLoc()>=-10);
 		assertTrue(d.getYLoc()>=-10);
 		assertTrue(d.getDir()>=0 || d.getDir()<=4);
-		Die d1 = new Die(1,1,1,1,1,1);
+		Die d1 = new Die(1,1,1,1,1,1,1);
 		d1.throwDie();
 		assertTrue(d1.getDir()>=0);
 		assertTrue(d1.getXLoc()>=-10);
 		assertTrue(d1.getXLoc()>=-10);
-		Die d2 = new Die(2,2,2,2,2,2);
+		Die d2 = new Die(2,2,2,2,2,2,2);
 		d2.setDir(2);
 		d2.throwDie();
 		assertTrue(d2.getXLoc()>=-10);
 		assertTrue(d2.getXLoc()>=-10);
 		assertTrue(d2.getDir()>=0 && d2.getDir()<=4);
-		Die d3 = new Die(10,10,10,10,10,10);
+		Die d3 = new Die(10,10,10,10,10,10,10);
 		d3.setDir(1);
 		d3.throwDie();
 		d3.setStartXLoc(75);
@@ -70,7 +70,7 @@ public class DieTest {
 		assertTrue(d3.getXLoc()>=0);
 		assertTrue(d3.getXLoc()>=0);
 		assertTrue(d3.getDir()>=0 && d3.getDir()<=4);
-		Die d4 = new Die(10,10,10,10,10,10);
+		Die d4 = new Die(10,10,10,10,10,10,10);
 		d4.setDir(5);
 		d4.throwDie();
 		d4.setStartXLoc(75);
@@ -79,7 +79,7 @@ public class DieTest {
 		assertTrue(d4.getXLoc()>=0);
 		assertTrue(d4.getXLoc()>=0);
 		assertTrue(d4.getDir()>=0 && d4.getDir()<=4);
-		Die d5 = new Die(-5,-5,-5,-5,-5,-5);
+		Die d5 = new Die(-5,-5,-5,-5,-5,-5,-5);
 		d5.setDir(0);
 		d5.throwDie();
 		d5.setStartXLoc(75);
@@ -88,7 +88,7 @@ public class DieTest {
 		assertTrue(d5.getXLoc()>=0);
 		assertTrue(d5.getXLoc()>=0);
 		assertTrue(d5.getDir()>=0 && d5.getDir()<=4);
-		Die d6 = new Die(-5,-5,-5,-5,-5,-5);
+		Die d6 = new Die(-5,-5,-5,-5,-5,-5,-5);
 		d6.setDir(2);
 		d6.throwDie();
 		d6.setStartXLoc(75);
@@ -101,7 +101,7 @@ public class DieTest {
 	
 	@Test
 	public void finishTest(){
-		Die d = new Die(0,0,0,0,0,0);
+		Die d = new Die(0,0,0,0,0,0,0);
 		d.setStartXLoc(10);
 		d.setStartYLoc(10);
 		d.finishThrowing();
@@ -166,4 +166,4 @@ public class DieTest {
 
 }
 
-	
+*/	
