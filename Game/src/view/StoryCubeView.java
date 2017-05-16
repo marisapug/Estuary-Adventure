@@ -52,7 +52,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 
 	// Dice
 	private Die[] gameDice;
-	private int diceWidth = 120;
+	private int diceWidth = screenWidth / 10;
 	private Die selectedDie;
 	private int dicePlaced = 0;
 
@@ -60,7 +60,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	private int[] storyboardX;
 	private int storyStartX;
 	private int storyStartY;
-	private int betweenStory = 10;
+	private int betweenStory = screenWidth / 120;
 
 	// Dice Rolling Animation
 	int numAnimations = 0;
@@ -90,6 +90,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	private int buttonSizeY = screenWidth / 25;
 	private Dimension buttonSize;
 	private boolean showStoryButton;
+	private Color helpButtonColor;
 
 	// Story
 	private Font errorTextStyle;
@@ -127,6 +128,12 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	private int instructFontSize;
 	private Font instructFont;
 	private Border instructBorder;
+	
+	private JTextPane badWordPane;
+	private Color badWordTextColor;
+	private int badWordFontSize;
+	private Font badWordFont;
+	private Border badWordBorder;
 
 	// Images
 	BufferedImage oceanBackground = createImage("background/dicebackground.jpg");
@@ -181,6 +188,8 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		startGameButton.setFont(buttonFont);
 		startGameButton.setPreferredSize(startButtonSize);
 		startGameButton.setBackground(Color.black);
+		startGameButton.setOpaque(true);
+		startGameButton.setBorderPainted(false);
 		startGameButton.setForeground(Color.white);
 
 		rollDiceButton = new JButton("Roll Dice");
@@ -189,6 +198,8 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		rollDiceButton.setFont(buttonFont);
 		rollDiceButton.setPreferredSize(startButtonSize);
 		rollDiceButton.setBackground(Color.black);
+		rollDiceButton.setOpaque(true);
+		rollDiceButton.setBorderPainted(false);
 		rollDiceButton.setForeground(Color.white);
 		
 		helpButton = new JButton("HELP");
@@ -196,7 +207,10 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		helpButton.setVisible(false);
 		helpButton.setFont(buttonFont);
 		helpButton.setPreferredSize(startButtonSize);
-		helpButton.setBackground(Color.red);
+		helpButtonColor = new Color(0, 169, 92);
+		helpButton.setBackground(helpButtonColor);
+		helpButton.setOpaque(true);
+		helpButton.setBorderPainted(false);
 		helpButton.setForeground(Color.white);
 
 		storyButton = new JButton("Submit");
@@ -205,6 +219,8 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		storyButton.setFont(buttonFont);
 		storyButton.setPreferredSize(buttonSize);
 		storyButton.setBackground(Color.black);
+		storyButton.setOpaque(true);
+		storyButton.setBorderPainted(false);
 		storyButton.setForeground(Color.white);
 
 		rollAgainButton = new JButton("Roll Again");
@@ -213,6 +229,8 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		rollAgainButton.setFont(buttonFont);
 		rollAgainButton.setPreferredSize(startButtonSize);
 		rollAgainButton.setBackground(Color.black);
+		rollAgainButton.setOpaque(true);
+		rollAgainButton.setBorderPainted(false);
 		rollAgainButton.setForeground(Color.white);
 
 		// Text Fields
@@ -220,7 +238,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		storyText.setLineWrap(true);
 		storyText.setVisible(false);
 		storyText.setPreferredSize(new Dimension(400, 96));
-		storyText.setFont(new Font(titleFont, Font.PLAIN, 16));
+		storyText.setFont(new Font(titleFont, Font.PLAIN, screenWidth / 75));
 		numCharsOnLine = screenWidth / 28;
 		diceLength = diceWidth * dgame.numDice;
         diceSpacePixels = ((screenWidth - 2 * diceWidth) - diceLength) / 2 ;
@@ -235,8 +253,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		this.add(storyButton);
 		this.add(rollAgainButton);
 		this.setupListeners();
-		this.setupMouseListener(listener);
-
+		
 		// Final Text Display
 		storyBackground = new Color(136, 191, 246);
 		storyTextColor = new Color(3, 0, 130);
@@ -254,6 +271,17 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		this.add(instructPane);
 		instructPane.setVisible(false);
 		makeInstructionPane();
+		
+		// Bad Word Pop-Up Box
+		badWordTextColor = new Color(124, 37, 41);
+		badWordFontSize = screenWidth / 30;
+		badWordFont = new Font("Verdana", Font.PLAIN, instructFontSize);
+		badWordBorder = new LineBorder(badWordTextColor, 1);
+		badWordPane = new JTextPane();
+		this.add(badWordPane);
+		badWordPane.setVisible(false);
+		makeBadWordPane();
+
 
 		initializeCoordinates();
 	}
@@ -351,7 +379,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 
 					} else if(isDialogUp){
 						//TODO change text to make bigger and better
-						g.drawString("Inappropriate language detected! Please edit your story so it doesn't include this word: " + dgame.getCurseWord(), titleX, titleY);
+						badWordPane.setVisible(true);
 						isStoryShowing = false;
 						isRolled = false;
                         storyPane.setVisible(false);
@@ -461,9 +489,9 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		 StyleConstants.setFontSize(style, screenWidth / 35);
 		 try {
 			 doc.insertString(doc.getLength(), "\n  Roll the dice, then let the icons inspire you! Starting \n  with 'Once "
-			 		+ "upon a time...', pick the icon that catches \n  your eye first. As you create a story that links "
-			 		+ "all the \n  icons together, click and drag each die into a box in \n  the order they appear in your "
-			 		+ "story. When you're all \n  done, type your estuary adventure story in the box!", style);	
+				 		+ "upon a time...', pick the icon that catches \n  your eye first. As you create a story that links "
+				 		+ "all the \n  icons together, click and drag each die into a box in \n  the order they appear in your "
+				 		+ "story. When you're all \n  done, type your estuary adventure story in the box!", style);	
 		 } 
 		 catch (BadLocationException e) {
 			 e.printStackTrace();
@@ -476,6 +504,39 @@ public class StoryCubeView extends JPanel implements ActionListener {
 			 e.printStackTrace();
 		 } 
 	 }
+	 
+	 // Set up bad word text pane
+	 public void makeBadWordPane() {
+		 StyledDocument doc = badWordPane.getStyledDocument();
+
+		 badWordPane.setBounds(diceWidth, diceWidth, (screenWidth - 2 * diceWidth) - (diceWidth / 2), (screenHeight - (2 * diceWidth)));
+		 badWordPane.setPreferredSize(new Dimension(screenWidth - 2 * diceWidth, screenHeight - (2 * diceWidth)));
+		 badWordPane.setFont(badWordFont);
+		 badWordPane.setBorder(badWordBorder);
+		 badWordPane.setEditable(false);
+
+		 Style style = badWordPane.addStyle("Color Style", null);
+		 StyleConstants.setForeground(style, badWordTextColor);
+		 StyleConstants.setBold(style, true);
+		 StyleConstants.setFontSize(style, screenWidth / 25);
+		 try {
+			 doc.insertString(doc.getLength(), "          Curse Word Detected", style);
+			 doc.insertString(doc.getLength(), "\n", style);
+		 } 
+		 catch (BadLocationException e) {
+			 e.printStackTrace();
+		 }
+		 StyleConstants.setBold(style, false);
+		 StyleConstants.setFontSize(style, screenWidth / 35);
+		 try {
+			 doc.insertString(doc.getLength(),"\n  Inappropriate language detected! Please edit your story so it doesn't" 
+						+ " include this word: " + dgame.getCurseWord(), style);	
+		 } 
+		 catch (BadLocationException e) {
+			 e.printStackTrace();
+		 } 
+	 }
+
 		 
 	void setupListeners() {
 		startGameButton.addActionListener(new ActionListener() {
@@ -484,6 +545,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 				rollDiceButton.setVisible(true);
 				startGameButton.setVisible(false);
 				isStartScreenVisible = false;
+				setupMouseListener(listener);
 
 				// Story Stuff
 				try {
