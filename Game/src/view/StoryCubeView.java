@@ -235,7 +235,6 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		this.add(storyButton);
 		this.add(rollAgainButton);
 		this.setupListeners();
-		this.setupMouseListener(listener);
 
 		// Final Text Display
 		storyBackground = new Color(136, 191, 246);
@@ -481,6 +480,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		startGameButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				setupMouseListener(listener);
 				rollDiceButton.setVisible(true);
 				startGameButton.setVisible(false);
 				isStartScreenVisible = false;

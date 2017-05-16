@@ -178,4 +178,6 @@ public class MazeCell {
 	public void setHasBottomWall(boolean b){
 		hasBottomWall = b;
 	}
+	
+
 }
