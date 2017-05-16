@@ -126,7 +126,6 @@ public class DiceGame {
 			imgNums[i] = randInt;
 			tempDie.setInitXLoc(dieX);
 			tempDie.setInitYLov(dieY);
-			// System.out.println(randInt);
 			dice[i] = tempDie;
 		}
 	} // makes all dice with images
@@ -177,10 +176,7 @@ public class DiceGame {
 		for (String s : storyEntered) {
 			if (curseWords.contains(s)) {
 				curseWord = s;
-				System.out.println(curseWord);
 				return true;
-			} else{
-				System.out.println("no curse word detected");
 			}
 		}
 		return false;
