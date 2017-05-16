@@ -28,6 +28,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.Timer;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 import javax.swing.event.MouseInputListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
@@ -74,6 +76,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	// Buttons
 	private JButton startGameButton;
 	private JButton rollDiceButton;
+	private JButton helpButton;
 	private JButton storyButton;
 	private JButton rollAgainButton;
 
@@ -89,12 +92,8 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	private boolean showStoryButton;
 
 	// Story
-	private Font storyTextStyle;
 	private Font errorTextStyle;
-	Color storyTextColor;
 	Color errorTextColor;
-	Color storyBackground;
-	private int storyFontSize = screenWidth / 40;
 	private int errorFontSize = screenWidth / 40;
 	private boolean isStorySaved = false;
 	private int storyTextX;
@@ -106,7 +105,6 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	private int numCharsOnLine;
 	private int[] stringYCoords = new int[maxLines];
 	private boolean isStoryShowing = false;
-	private JTextPane storyPane;
 	private int diceLength;
     private int diceSpacePixels;
 	private int diceSpaceWidth;
@@ -115,6 +113,20 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	// TextArea
 	JTextArea storyText;
 	String storyString;
+	
+	// Text Panes
+	private JTextPane storyPane;
+	private Color storyBackground;
+	private Color storyTextColor;
+	private int storyFontSize = screenWidth / 40;
+	private Font storyTextStyle;
+
+	private JTextPane instructPane;
+	private Color instructTextColor;
+	private Color instructBackground;
+	private int instructFontSize;
+	private Font instructFont;
+	private Border instructBorder;
 
 	// Images
 	BufferedImage oceanBackground = createImage("background/dicebackground.jpg");
@@ -168,24 +180,40 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		startGameButton.setFocusable(false);
 		startGameButton.setFont(buttonFont);
 		startGameButton.setPreferredSize(startButtonSize);
+		startGameButton.setBackground(Color.black);
+		startGameButton.setForeground(Color.white);
 
 		rollDiceButton = new JButton("Roll Dice");
 		rollDiceButton.setFocusable(false);
 		rollDiceButton.setVisible(false);
 		rollDiceButton.setFont(buttonFont);
 		rollDiceButton.setPreferredSize(startButtonSize);
+		rollDiceButton.setBackground(Color.black);
+		rollDiceButton.setForeground(Color.white);
+		
+		helpButton = new JButton("HELP");
+		helpButton.setFocusable(false);
+		helpButton.setVisible(false);
+		helpButton.setFont(buttonFont);
+		helpButton.setPreferredSize(startButtonSize);
+		helpButton.setBackground(Color.red);
+		helpButton.setForeground(Color.white);
 
 		storyButton = new JButton("Submit");
 		storyButton.setFocusable(false);
 		storyButton.setVisible(false);
 		storyButton.setFont(buttonFont);
 		storyButton.setPreferredSize(buttonSize);
+		storyButton.setBackground(Color.black);
+		storyButton.setForeground(Color.white);
 
 		rollAgainButton = new JButton("Roll Again");
 		rollAgainButton.setFocusable(false);
 		rollAgainButton.setVisible(false);
 		rollAgainButton.setFont(buttonFont);
 		rollAgainButton.setPreferredSize(startButtonSize);
+		rollAgainButton.setBackground(Color.black);
+		rollAgainButton.setForeground(Color.white);
 
 		// Text Fields
 		storyText = new JTextArea("Enter Story Here");
@@ -202,6 +230,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		// Add Buttons
 		this.add(startGameButton);
 		this.add(rollDiceButton);
+		this.add(helpButton);
 		this.add(storyText);
 		this.add(storyButton);
 		this.add(rollAgainButton);
@@ -214,6 +243,17 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		storyPane = new JTextPane();
 		this.add(storyPane);
 		storyPane.setVisible(false);
+		
+		// Game Instructions
+		instructBackground = new Color(194, 238, 231);
+		instructTextColor = Color.BLACK;
+		instructFontSize = screenWidth / 30;
+		instructFont = new Font("Verdana", Font.PLAIN, instructFontSize);
+		instructBorder = new LineBorder(Color.black, 1);
+		instructPane = new JTextPane();
+		this.add(instructPane);
+		instructPane.setVisible(false);
+		makeInstructionPane();
 
 		initializeCoordinates();
 	}
@@ -356,23 +396,25 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	        
 	        // add dice cubes to text pane
 	        ImageIcon[] sizedIcons = new ImageIcon[dgame.getNumDice()];
-	        for (int i = 0; i < dgame.getNumDice(); i++) {
-	            sizedIcons[i] = new ImageIcon(
-	                    gameDice[i].getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
+	        for (Die d: gameDice){
+	        	if(d.getStoryIndex() == 0)
+	        		sizedIcons[0] = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
+	        	else if(d.getStoryIndex() == 1)
+	        		sizedIcons[1] = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
+	        	else if(d.getStoryIndex() == 2)
+	        		sizedIcons[2] = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
+	        	else if(d.getStoryIndex() == 3)
+	        		sizedIcons[3] = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
+	        	else if(d.getStoryIndex() == 4)
+	        		sizedIcons[4] = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
 	        }
 	        
-	        /*(Die d: gameDice){
-	        	if(d.getStoryIndex() == 0)
-	        		sizedIcon0 = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
-	        	else if(d.getStoryIndex() == 1)
-	        		sizedIcon1 = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
-	        	else if(d.getStoryIndex() == 2)
-	        		sizedIcon2 = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
-	        	else if(d.getStoryIndex() == 3)
-	        		sizedIcon3 = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
-	        	else if(d.getStoryIndex() == 4)
-	        		sizedIcon4 = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
+	        /*(int i = 0; i < dgame.getNumDice(); i++) {
+	            sizedIcons[i] = new ImageIcon(
+	                    gameDice[i].getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
 	        }*/
+	        
+	        
 	        Style style = pane.addStyle("Color Style", null);
 	        StyleConstants.setForeground(style, color);
 	        try {
@@ -393,6 +435,48 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	        } 
 	 }
 
+	 // Set up Instructions Text Pane
+	 public void makeInstructionPane() {
+		 StyledDocument doc = instructPane.getStyledDocument();
+
+		 instructPane.setBounds(diceWidth, diceWidth, (screenWidth - 2 * diceWidth) - (diceWidth / 2), (screenHeight - (2 * diceWidth)));
+		 instructPane.setPreferredSize(new Dimension(screenWidth - 2 * diceWidth, screenHeight - (2 * diceWidth)));
+		 instructPane.setFont(instructFont);
+		 instructPane.setBackground(instructBackground);
+		 instructPane.setBorder(instructBorder);
+		 instructPane.setEditable(false);
+
+		 Style style = instructPane.addStyle("Color Style", null);
+		 StyleConstants.setForeground(style, Color.black);
+		 StyleConstants.setBold(style, true);
+		 StyleConstants.setFontSize(style, screenWidth / 25);
+		 try {
+			 doc.insertString(doc.getLength(), "  Estuary Story Cubes Instructions", style);
+			 doc.insertString(doc.getLength(), "\n", style);
+		 } 
+		 catch (BadLocationException e) {
+			 e.printStackTrace();
+		 }
+		 StyleConstants.setBold(style, false);
+		 StyleConstants.setFontSize(style, screenWidth / 35);
+		 try {
+			 doc.insertString(doc.getLength(), "\n  Roll the dice, then let the icons inspire you! Starting \n  with 'Once "
+			 		+ "upon a time...', pick the icon that catches \n  your eye first. As you create a story that links "
+			 		+ "all the \n  icons together, click and drag each die into a box in \n  the order they appear in your "
+			 		+ "story. When you're all \n  done, type your estuary adventure story in the box!", style);	
+		 } 
+		 catch (BadLocationException e) {
+			 e.printStackTrace();
+		 } 
+		 StyleConstants.setFontSize(style, screenWidth / 55);
+		 try {
+			 doc.insertString(doc.getLength(), "\n \n \n                                                 -click HELP again to exit-", style);	
+		 } 
+		 catch (BadLocationException e) {
+			 e.printStackTrace();
+		 } 
+	 }
+		 
 	void setupListeners() {
 		startGameButton.addActionListener(new ActionListener() {
 			@Override
@@ -419,6 +503,18 @@ public class StoryCubeView extends JPanel implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				rollDice(); 
 				rollDiceButton.setVisible(false);
+				//rollAgainButton.setVisible(true);
+				helpButton.setVisible(true);
+				repaint();
+			}
+		});
+		helpButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(!instructPane.isVisible())
+					instructPane.setVisible(true);
+				else
+					instructPane.setVisible(false);
 				repaint();
 			}
 		});
@@ -496,6 +592,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		getMouseTarget().addMouseListener(listener);
 		getMouseTarget().addMouseMotionListener(listener);
 		storyText.addMouseListener(listener);
+		//instructPane.addMouseListener(listener);
 	}
 
 	public class DiceListener implements MouseInputListener {
@@ -505,6 +602,8 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		public void mouseClicked(MouseEvent e) {
 			if(e.getSource() == storyText)
 				storyText.setText("");
+		//	else if(e.getSource() == instructPane)
+		//		instructPane.setVisible(false);
 		}
 
 		@Override
