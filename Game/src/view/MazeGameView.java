@@ -461,11 +461,11 @@ public class MazeGameView extends JPanel implements KeyListener, ActionListener 
 		startScreenVisible = true;
 		this.add(bCrabButton);
 		this.add(hCrabButton);
+		this.add(tutorialButton);
 		this.add(easyButton);
 		this.add(mediumButton);
 		this.add(hardButton);
 		this.add(startButton);
-		this.add(tutorialButton);
 		this.add(goToStartButton);
 
 		//Button Visibility

@@ -70,11 +70,11 @@ public class MainFrame extends JFrame {
 		miniGamesMenu = new JMenu("Mini Games");
 		startItem = new JMenuItem("Start Screen");
 		startItem.setFocusable(false);
-		mazeItem = new JMenuItem("Maze Game");
+		mazeItem = new JMenuItem("Estuary Maze Adventure");
 		mazeItem.setFocusable(false);
-		beachItem = new JMenuItem("Estuary Defense Game");
+		beachItem = new JMenuItem("Estuary Defense");
 		beachItem.setFocusable(false);
-		diceItem = new JMenuItem("Dice Game");
+		diceItem = new JMenuItem("Estuary StoryBuilder");
 		diceItem.setFocusable(false);
 		
 //		addKeyListener(currMazePanel);
@@ -188,6 +188,7 @@ public class MainFrame extends JFrame {
 				resetDice();
 				cardPanel.add(currDicePanel, "dice");
 				cl.show(cardPanel, "dice");
+				currDicePanel.requestFocusInWindow();
 			}
 		});
 	}

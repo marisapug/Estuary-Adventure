@@ -605,7 +605,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 		}
 
 		if(timeRemaining < 60){
-			newBoatTimer = 200;
+			newBoatTimer = 400;
 		}
 
 		//Checks if you lose
@@ -860,7 +860,7 @@ public class BeachGameView extends JPanel implements KeyListener, ActionListener
 				tutorialTextSize = screenHeight/40;
 
 				firstBoatStateText = "Oh No! The WAKES from the ships are destroying the shore!";
-				grassStateText = "Plant grass to heal the shore over time";
+				grassStateText = "Plant grass to heal the shore over time, use ARROW keys and SPACEBAR";
 				seawallStateText = "Use seawalls to protect the shore";
 				oysterStateText = "You need three oysters to set an oyster gabion";
 				gabionStateText = "Gabions are STRONGER than seawalls";
