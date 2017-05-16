@@ -134,6 +134,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	private int badWordFontSize;
 	private Font badWordFont;
 	private Border badWordBorder;
+	private boolean isBadWordPaneMade;
 
 	// Images
 	BufferedImage oceanBackground = createImage("background/dicebackground.jpg");
@@ -280,7 +281,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		badWordPane = new JTextPane();
 		this.add(badWordPane);
 		badWordPane.setVisible(false);
-		makeBadWordPane();
+		isBadWordPaneMade = false;
 
 
 		initializeCoordinates();
@@ -379,6 +380,10 @@ public class StoryCubeView extends JPanel implements ActionListener {
 
 					} else if(isDialogUp){
 						//TODO change text to make bigger and better
+						if(!isBadWordPaneMade){
+							makeBadWordPane(dgame.getCurseWord());
+							isBadWordPaneMade = true;
+						}
 						badWordPane.setVisible(true);
 						isStoryShowing = false;
 						isRolled = false;
@@ -506,7 +511,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	 }
 	 
 	 // Set up bad word text pane
-	 public void makeBadWordPane() {
+	 public void makeBadWordPane(String badWord) {
 		 StyledDocument doc = badWordPane.getStyledDocument();
 
 		 badWordPane.setBounds(diceWidth, diceWidth, (screenWidth - 2 * diceWidth) - (diceWidth / 2), (screenHeight - (2 * diceWidth)));
@@ -530,7 +535,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		 StyleConstants.setFontSize(style, screenWidth / 35);
 		 try {
 			 doc.insertString(doc.getLength(),"\n  Inappropriate language detected! Please edit your story so it doesn't" 
-						+ " include this word: " + dgame.getCurseWord(), style);	
+						+ " include this word: " + badWord, style);	
 		 } 
 		 catch (BadLocationException e) {
 			 e.printStackTrace();
@@ -611,6 +616,9 @@ public class StoryCubeView extends JPanel implements ActionListener {
 				rollDice();
 				repaint();
 				storyPane.setText("");
+				badWordPane.setVisible(false);
+				badWordPane.setText("");
+				isBadWordPaneMade = false;
 
 			}
 		});
