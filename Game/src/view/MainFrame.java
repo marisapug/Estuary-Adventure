@@ -13,7 +13,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-import model.MazeKeyInputs;
 
 public class MainFrame extends JFrame {
 
