@@ -79,6 +79,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	private JButton helpButton;
 	private JButton storyButton;
 	private JButton rollAgainButton;
+	private JButton goBackButton;
 
 	// Button Appearance
 	private int buttonFontSize = screenWidth / 50;
@@ -112,8 +113,9 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	private String diceSpaceString;
 
 	// TextArea
-	JTextArea storyText;
-	String storyString;
+	private JTextArea storyText;
+	private String storyString;
+	private boolean shouldEraseStory;
 	
 	// Text Panes
 	private JTextPane storyPane;
@@ -233,6 +235,17 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		rollAgainButton.setOpaque(true);
 		rollAgainButton.setBorderPainted(false);
 		rollAgainButton.setForeground(Color.white);
+		
+		goBackButton = new JButton("Go Back");
+		goBackButton.setFocusable(false);
+		goBackButton.setVisible(false);
+		goBackButton.setFont(buttonFont);
+		goBackButton.setPreferredSize(startButtonSize);
+		goBackButton.setBackground(Color.black);
+		goBackButton.setOpaque(true);
+		goBackButton.setBorderPainted(false);
+		goBackButton.setForeground(Color.white);
+
 
 		// Text Fields
 		storyText = new JTextArea("Enter Story Here");
@@ -245,6 +258,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
         diceSpacePixels = ((screenWidth - 2 * diceWidth) - diceLength) / 2 ;
 		diceSpaceWidth = 0;
 		diceSpaceString = "";
+		shouldEraseStory = true;
 
 		// Add Buttons
 		this.add(startGameButton);
@@ -253,6 +267,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		this.add(storyText);
 		this.add(storyButton);
 		this.add(rollAgainButton);
+		this.add(goBackButton);
 		this.setupListeners();
 		
 		// Final Text Display
@@ -384,9 +399,11 @@ public class StoryCubeView extends JPanel implements ActionListener {
 							makeBadWordPane(dgame.getCurseWord());
 							isBadWordPaneMade = true;
 						}
+						rollAgainButton.setVisible(false);
+						goBackButton.setVisible(true);
 						badWordPane.setVisible(true);
 						isStoryShowing = false;
-						isRolled = false;
+						//isRolled = false;
                         storyPane.setVisible(false);
 					}
 
@@ -595,6 +612,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 				rollAgainButton.setVisible(true);
 				showStoryButton = false;
 				storyPane.setVisible(true);
+				helpButton.setVisible(false);
 
 				repaint(); // print story function
 
@@ -619,6 +637,20 @@ public class StoryCubeView extends JPanel implements ActionListener {
 				badWordPane.setVisible(false);
 				badWordPane.setText("");
 				isBadWordPaneMade = false;
+				shouldEraseStory = true;
+
+			}
+		});
+		goBackButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				goBackButton.setVisible(false);
+				badWordPane.setVisible(false);
+				storyText.setVisible(true);
+				storyButton.setVisible(true);
+				isDialogUp = false;
+
+				repaint(); // print story function
 
 			}
 		});
@@ -670,10 +702,10 @@ public class StoryCubeView extends JPanel implements ActionListener {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if(e.getSource() == storyText)
+			if(e.getSource() == storyText && shouldEraseStory){
 				storyText.setText("");
-		//	else if(e.getSource() == instructPane)
-		//		instructPane.setVisible(false);
+				shouldEraseStory = false;
+			}
 		}
 
 		@Override
