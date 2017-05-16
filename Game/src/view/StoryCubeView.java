@@ -551,7 +551,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		 StyleConstants.setBold(style, false);
 		 StyleConstants.setFontSize(style, screenWidth / 35);
 		 try {
-			 doc.insertString(doc.getLength(),"\n  Inappropriate language detected! Please edit your story so it doesn't" 
+			 doc.insertString(doc.getLength(),"\n  Inappropriate language detected! Please edit your \n  story so it doesn't" 
 						+ " include this word: " + badWord, style);	
 		 } 
 		 catch (BadLocationException e) {
@@ -638,6 +638,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 				badWordPane.setText("");
 				isBadWordPaneMade = false;
 				shouldEraseStory = true;
+				helpButton.setVisible(true);
 
 			}
 		});
