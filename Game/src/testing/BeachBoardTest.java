@@ -8,8 +8,12 @@ import java.util.Iterator;
 import org.junit.Test;
 
 import model.BeachBoard;
+import model.BeachCell;
 import model.Boat;
 import model.Grass;
+import model.Oyster;
+import model.OysterGabion;
+import model.Seawall;
 import model.Wave;
 import model.WaveCell;
 
@@ -78,7 +82,34 @@ public class BeachBoardTest {
 	@Test
 	public void sandToOceanTest(){
 		BeachBoard b = new BeachBoard(6,6,4,4);
+		BeachCell tempCell = b.getGrid()[2][1];
+		tempCell.setType(0);
+		tempCell.setHealth(-1);
 		b.sandToOcean();
+		assertEquals(tempCell.getType(),1);
+	}
+	
+	@Test
+	public void healCellsAboveGrassTest(){
+		BeachBoard b = new BeachBoard(10,10,1000,800);
+		BeachCell tempCell = b.getGrid()[5][5];
+		BeachCell tempCell2 = b.getGrid()[5][4];
+		int orgHealth = tempCell2.getHealth();
+		tempCell2.setHealth(tempCell2.getHealth()/2);
+		int midHealth = tempCell2.getHealth();
+		Grass grass = new Grass(tempCell.getXLoc(),tempCell.getYLoc());
+		b.getGameGrass().add(grass);
+		b.healCellsAboveGrass();
+		int endHealth = tempCell2.getHealth();
+		
+		assertTrue(midHealth < orgHealth);
+		assertTrue(endHealth > midHealth);
+
+		tempCell2.setHealth(orgHealth);
+		b.healCellsAboveGrass();
+		endHealth = tempCell2.getHealth();
+		assertFalse(endHealth > orgHealth);
+		
 	}
 
 	@Test
@@ -103,8 +134,26 @@ public class BeachBoardTest {
 
 	@Test
 	public void placeObjectTest(){
-		BeachBoard b = new BeachBoard(6,6,4,4);
-		b.placeObject(0, 1, 1, 2, 2);
+		BeachBoard b = new BeachBoard(10,10,1000,800);
+		BeachCell tempCell = b.getGrid()[5][5];
+		tempCell.setCanHoldGrass(true);
+		tempCell.setHasGrass(false);
+		b.placeObject(1, tempCell.getXLoc(), tempCell.getYLoc(), 10, 10);
+		assertTrue(tempCell.getHasGrass());
+		
+		tempCell = b.getGrid()[5][5];
+		tempCell.setCanHoldBarrier(true);
+		tempCell.setHasBarrier(false);
+		b.placeObject(2, tempCell.getXLoc(), tempCell.getYLoc(), 10, 10);
+		assertTrue(tempCell.getHasBarrier());
+		
+		tempCell = b.getGrid()[5][5];
+		tempCell.setCanHoldBarrier(true);
+		tempCell.setHasBarrier(false);
+		b.getGameCrab().setNumOysters(3);
+		b.placeObject(3, tempCell.getXLoc(), tempCell.getYLoc(), 10, 10);
+		assertTrue(tempCell.getHasBarrier());
+		
 	}
 
 	@Test
@@ -189,29 +238,111 @@ public class BeachBoardTest {
 		b.resetWaveBasedOnBoatSize(wc, 0);
 		b.resetWaveBasedOnBoatSize(wc, 1);
 		b.resetWaveBasedOnBoatSize(wc, 2);
+		assertTrue(!wc.getHasLargeWave());
+		assertTrue(!wc.getHasMediumWave());
+		assertTrue(!wc.getHasSmallWave());
 	}
 	
 	@Test
 	public void resetWavesTest(){
 		BeachBoard b = new BeachBoard(10,10,1000,800);
 		Boat boat = new Boat(500,0,0,0,10,0,0);
-		Boat boat2 = new Boat(500,0,0,1,-50,0,0);
+		Boat boat2 = new Boat(500,0,1,1,-50,0,0);
+		Boat boat3 = new Boat(500,0,2,0,20,0,0);;
+		WaveCell wc = b.inWhichWaveCell(boat.getXLoc());
 		b.resetWaves(boat);
+		assertTrue(!wc.getHasSmallWave());
 		b.resetWaves(boat2);
+		assertTrue(!wc.getHasMediumWave());
+		b.resetWaves(boat3);
+		assertTrue(!wc.getHasLargeWave());
 	}
 	
 	@Test
 	public void removeHitWavesTest(){
 		BeachBoard b = new BeachBoard(10,10,1000,800);
-		Wave w = new Wave(1,1,0,50);
+		BeachCell tempCell = b.getGrid()[5][5];
+		Wave w = new Wave(tempCell.getXLoc(),tempCell.getYLoc(),0,50);
 		b.getGameWaves().add(w);
+		assertEquals(b.getGameWaves().size(),1);
 		b.removeHitWaves();
+		assertEquals(b.getGameWaves().size(), 0);
+		Wave w1 = new Wave(tempCell.getXLoc(),b.getScreenHeight()*2,0,50);
+		b.getGameWaves().add(w1);
+		assertEquals(b.getGameWaves().size(),1);
+		b.removeHitWaves();
+		assertEquals(b.getGameWaves().size(),0);
 	}
+	
+	
 	
 	@Test
 	public void removeBarrierTest(){
 		BeachBoard b = new BeachBoard(10,10,1000,800);
+		BeachCell tempCell = b.getGrid()[0][5];
+		Seawall sw = new Seawall(tempCell.getXLoc(),tempCell.getYLoc());
+		b.getGameSeawalls().add(sw);
+		assertEquals(b.getGameSeawalls().size(),1);
+		b.removeBarrier(tempCell.getXLoc(),tempCell.getYLoc());
+		assertEquals(b.getGameSeawalls().size(),0);
 		
+		OysterGabion gb = new OysterGabion(tempCell.getXLoc(),tempCell.getYLoc());
+		b.getGameGabs().add(gb);
+		assertEquals(b.getGameGabs().size(),1);
+		b.removeBarrier(tempCell.getXLoc(),tempCell.getYLoc());
+		assertEquals(b.getGameGabs().size(),0);
+	}
+	
+	@Test
+	public void removeDeadBarriersTest(){
+		BeachBoard b = new BeachBoard(10,10,1000,800);
+		BeachCell tempCell = b.getGrid()[0][5];
+		tempCell.setHasBarrier(true);
+		tempCell.setHealth(-1);
+		assertTrue(tempCell.getHasBarrier());
+		Wave w = new Wave(tempCell.getXLoc() + 25,tempCell.getYLoc() + 25,0,50);
+		b.getGameWaves().add(w);
+		b.removeDeadBarriers();
+		assertFalse(tempCell.getHasBarrier());
+	}
+	
+	@Test
+	public void removeOysterTest(){
+		BeachBoard b = new BeachBoard(10,10,1000,800);
+		BeachCell tempCell = b.getGrid()[5][5];
+		b.getGameCrab().setXLoc(tempCell.getXLoc());
+		b.getGameCrab().setYLoc(tempCell.getYLoc());
+		Oyster oyster = new Oyster(tempCell.getXLoc(),tempCell.getYLoc());
+		b.getGameOysters().add(oyster);
+		assertEquals(b.getGameCrab().getNumOysters(), 0);
+		b.removeOyster(b.getGameCrab());
+		assertEquals(b.getGameCrab().getNumOysters(),1);
+	}
+	
+	
+	@Test
+	public void gettersTest(){
+		BeachBoard b = new BeachBoard(10,10,1000,800);
+		assertEquals(b.getCellWidth(),1000/10);
+		assertEquals(b.getCellHeight(),400/10);
+		assertEquals(b.getWaveSpeed(),3);
+		assertEquals(b.getTotalSandHealth(),100);
+		assertEquals(b.getTotalSeawallHealth(),100);
+		assertEquals(b.getTotalGabionHealth(),300);
+		assertEquals(b.getCrabGridStartX(),10/2 - 1);
+		assertEquals(b.getCrabGridStartY(),10/2);
+		assertEquals(b.getCrabTopLeftCell(),b.getGrid()[1][0]);
+		assertEquals(b.getCrabBottomLeftCell(),b.getGrid()[9][0]);
+		assertEquals(b.getSeawallBucketWidth(),1000/5);
+		assertEquals(b.getSeawallBucketHeight(),800/10);
+		assertEquals(b.getGrassBucketWidth(),1000/5);
+		assertEquals(b.getGrassBucketHeight(),800/10);
+		assertEquals(b.getGabionBucketWidth(),1000/5);
+		assertEquals(b.getGabionBucketHeight(),800/10);
+		assertEquals(b.getCurrentShoreHealth(),2666);
+		assertEquals(b.getTotalShoreHealth(),2666);
+		assertEquals(b.getFeaturesBarWidth(),1000);
+		assertEquals(b.getFeaturesBarHeight(),800/16);
 	}
 	
 }

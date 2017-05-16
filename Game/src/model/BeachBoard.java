@@ -807,7 +807,7 @@ public class BeachBoard {
 	//GETTERS
 	public int getScreenWidth(){
 		return this.screenWidth;
-	}
+	} 
 	
 	public int getScreenHeight(){
 		return screenHeight;
@@ -964,6 +964,8 @@ public class BeachBoard {
 	public int getFeaturesBarHeight(){
 		return this.featuresBarHeight;
 	}
+	
+	
 	
 	
 
