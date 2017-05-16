@@ -164,6 +164,4 @@ public class DieTest {
 		assertEquals(d8.getYLoc(), 494);
 	}
 
-}
-
-*/	
+} */
