@@ -3,6 +3,17 @@ package model;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
+/**
+* Die creates all of the information needed for a specific die in the dice game, including its starting
+* x and y locations, current (constantly updated) x and y locations, direction, image on the die, 
+* position in the dice story, and whether it is currently selected by the user, as well as giving the 
+* die a method for incrementing its location to be used for the rolling dice animation.
+* 
+* @author Natalie
+*
+*/
+
+
 public class Die {
 	BufferedImage dieImg;
 	int dieImgNum = 0;
@@ -22,6 +33,17 @@ public class Die {
 	boolean isSelected = false;
 	Random rand = new Random();
 	
+	/**
+	 * The constructor initializes the direction (which is random), image on the die, starting x and y locations,
+	 * x-increment for movement, image width/height (same since it's square), and the screen width and height.
+	 * @param n index of the image that will be painted to represent the die
+	 * @param x starting and current x-location
+	 * @param y starting and current y-location
+	 * @param xInc x-increment (how much the x-location changes each time the die moves)
+	 * @param imgW width/size of the die image
+	 * @param sWidth screen width
+	 * @param sHeight screen height
+	 */
 	public Die(int n, int x, int y, int xInc, int imgW, int sWidth, int sHeight){
 		dir = rand.nextInt(4);
 		dieImgNum = n;
@@ -34,7 +56,13 @@ public class Die {
 		xLoc = screenWidth / 2 - (imgWidth / 2);
 		yLoc = screenHeight / 2 - (imgWidth / 2);
 	}
-	
+
+	/**
+	 * Increments the x- and y-locations of the die, by the x- and y-increment variable values,
+	 * to give it the appearance of moving from its initial location to the final ending location of the dice
+	 * animation.
+	 * 
+	 */
 	public void throwDie(){
 		if(xLoc < startXLoc){
 			if(yLoc < startYLoc){

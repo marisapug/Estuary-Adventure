@@ -37,6 +37,15 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+/**
+ * StoryCubeView contains all of the display information for the dice game, including the start screen, 
+ * animation timer, images of dice, slots to drag the dice into, JTextPanes, JTextArea, buttons, 
+ * button listener, and mouse listener. 
+ * 
+ * @author Natalie
+ *
+ */
+
 public class StoryCubeView extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
@@ -108,7 +117,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	private int[] stringYCoords = new int[maxLines];
 	private boolean isStoryShowing = false;
 	private int diceLength;
-    private int diceSpacePixels;
+	private int diceSpacePixels;
 	private int diceSpaceWidth;
 	private String diceSpaceString;
 
@@ -116,7 +125,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	private JTextArea storyText;
 	private String storyString;
 	private boolean shouldEraseStory;
-	
+
 	// Text Panes
 	private JTextPane storyPane;
 	private Color storyBackground;
@@ -130,7 +139,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	private int instructFontSize;
 	private Font instructFont;
 	private Border instructBorder;
-	
+
 	private JTextPane badWordPane;
 	private Color badWordTextColor;
 	private int badWordFontSize;
@@ -163,7 +172,13 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	// Mouse Listener
 	private DiceListener listener = new DiceListener();
 
-	// Constructor
+	// Constructor	
+	/**
+	 * The constructor creates an instance of StoryCubeView and of DiceGame, and initializes the positions
+	 * and appearance of the buttons, dice used in the game, text area for the user to type their story, text 
+	 * pane to display the story at the end, text pane to show the game instructions, and text pane for the 
+	 * pop-up if the user types a banned word.
+	 */
 	public StoryCubeView() {
 		dgame = new DiceGame(screenWidth, screenHeight, diceWidth);
 
@@ -204,7 +219,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		rollDiceButton.setOpaque(true);
 		rollDiceButton.setBorderPainted(false);
 		rollDiceButton.setForeground(Color.white);
-		
+
 		helpButton = new JButton("HELP");
 		helpButton.setFocusable(false);
 		helpButton.setVisible(false);
@@ -235,7 +250,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		rollAgainButton.setOpaque(true);
 		rollAgainButton.setBorderPainted(false);
 		rollAgainButton.setForeground(Color.white);
-		
+
 		goBackButton = new JButton("Go Back");
 		goBackButton.setFocusable(false);
 		goBackButton.setVisible(false);
@@ -255,7 +270,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		storyText.setFont(new Font(titleFont, Font.PLAIN, screenWidth / 75));
 		numCharsOnLine = screenWidth / 28;
 		diceLength = diceWidth * dgame.numDice;
-        diceSpacePixels = ((screenWidth - 2 * diceWidth) - diceLength) / 2 ;
+		diceSpacePixels = ((screenWidth - 2 * diceWidth) - diceLength) / 2 ;
 		diceSpaceWidth = 0;
 		diceSpaceString = "";
 		shouldEraseStory = true;
@@ -276,7 +291,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		storyPane = new JTextPane();
 		this.add(storyPane);
 		storyPane.setVisible(false);
-		
+
 		// Game Instructions
 		instructBackground = new Color(194, 238, 231);
 		instructTextColor = Color.BLACK;
@@ -287,7 +302,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		this.add(instructPane);
 		instructPane.setVisible(false);
 		makeInstructionPane();
-		
+
 		// Bad Word Pop-Up Box
 		badWordTextColor = new Color(124, 37, 41);
 		badWordFontSize = screenWidth / 30;
@@ -311,15 +326,20 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		return this.screenHeight;
 	}
 
-	// Set Initial Coordinates for Images
+	/**
+	 * Sets up the coordinates where the dice should end up on the screen.
+	 */
 	public void initializeCoordinates() { // change coordinates
-		// do i need this?
 		for (int i = 0; i < dgame.getNumDice(); i++) {
 			storyboardX[i] = storyStartX + (diceWidth + betweenStory) * i;
 		}
 	}
 
-	// To Create BufferedImages
+	/**
+	 * Creates BufferedImage type from file path to image file
+	 * @param fileName file path
+	 * @return img BufferedImage of image file
+	 */
 	public BufferedImage createImage(String fileName) {
 		BufferedImage img = null;
 		try {
@@ -330,7 +350,9 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		return img;
 	}
 
-	// Creates all possible images
+	/**
+	 *  Creates all possible images to be chosen from
+	 */
 	public void makeImages() {
 		if (!isRolled)
 			dgame.setDice();
@@ -339,7 +361,9 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		}
 	}
 
-	// Sets images to dice
+	/**
+	 *  Sets image to each die, sets isRolled to true to signify that the rolling animation is complete
+	 */
 	public void setDiceImgs() {
 		for (int i = 0; i < dgame.getNumDice(); i++) {
 			int temp = dgame.imgNums[i];
@@ -349,6 +373,10 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	}
 
 	// paintComponent
+	/**
+	 * Handles all images and components that are drawn onto the screen during the dice game.
+	 * @param g graphics
+	 */
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		if (isStartScreenVisible) {
@@ -404,7 +432,7 @@ public class StoryCubeView extends JPanel implements ActionListener {
 						badWordPane.setVisible(true);
 						isStoryShowing = false;
 						//isRolled = false;
-                        storyPane.setVisible(false);
+						storyPane.setVisible(false);
 					}
 
 				}
@@ -413,6 +441,10 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		}
 	}
 
+	/**
+	 * Calls makeImages to create all possible images, then calls animDice to start the dice animation,
+	 * then sets isRolled to true once the animation is done
+	 */
 	public void rollDice() {
 		makeImages();
 		animDice();
@@ -420,7 +452,9 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		repaint();
 	}
 
-	// Saves Story the user entered
+	/**
+	 *  Saves Story the user entered after searching it for banned words.
+	 */
 	void saveStory() {
 		// if !iscurseword
 		dgame.setDiceStory(storyText.getText());
@@ -434,132 +468,137 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		isStorySaved = true;
 	}
 
-	// Add Story to Text Pane
-	 public void makeStory(JTextPane pane, String text, String diceSpace, Color color) {
-	        StyledDocument doc = pane.getStyledDocument();
-	        
-	        pane.setBounds(diceWidth, diceWidth, screenWidth - 2 * diceWidth, (screenHeight - (2 * diceWidth)));
-	        pane.setPreferredSize(new Dimension(screenWidth - 2 * diceWidth, screenHeight - (2 * diceWidth)));
-	        pane.setFont(storyTextStyle);
-	        pane.setBackground(storyBackground);
-	        pane.setEditable(false);
-	        
-	        // add dice cubes to text pane
-	        ImageIcon[] sizedIcons = new ImageIcon[dgame.getNumDice()];
-	        for (Die d: gameDice){
-	        	if(d.getStoryIndex() == 0)
-	        		sizedIcons[0] = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
-	        	else if(d.getStoryIndex() == 1)
-	        		sizedIcons[1] = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
-	        	else if(d.getStoryIndex() == 2)
-	        		sizedIcons[2] = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
-	        	else if(d.getStoryIndex() == 3)
-	        		sizedIcons[3] = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
-	        	else if(d.getStoryIndex() == 4)
-	        		sizedIcons[4] = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
-	        }
-	        
-	        /*(int i = 0; i < dgame.getNumDice(); i++) {
-	            sizedIcons[i] = new ImageIcon(
-	                    gameDice[i].getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
-	        }*/
-	        
-	        
-	        Style style = pane.addStyle("Color Style", null);
-	        StyleConstants.setForeground(style, color);
-	        try {
-	        	doc.insertString(doc.getLength(), diceSpace, style);
-	        	for (ImageIcon icon : sizedIcons) {
-	                pane.insertIcon(icon);
-	            }
-	        	/*pane.insertIcon(sizedIcon0);
-		        pane.insertIcon(sizedIcon1);
-		        pane.insertIcon(sizedIcon2);
-		        pane.insertIcon(sizedIcon3);
-		        pane.insertIcon(sizedIcon4);*/
-		        doc.insertString(doc.getLength(), "\n", style);
-	            doc.insertString(doc.getLength(), text, style);
-	        } 
-	        catch (BadLocationException e) {
-	            e.printStackTrace();
-	        } 
-	 }
+	/**
+	 *  Adds final story and ordered dice to Text Pane and sets up display settings such as colors, sizes, and 
+	 *  fonts for text pane.
+	 * @param pane JTextPane for displaying the final story
+	 * @param text final story
+	 * @param diceSpace string of spaces so that the dice are centered
+	 * @param color text color
+	 */
+	public void makeStory(JTextPane pane, String text, String diceSpace, Color color) {
+		StyledDocument doc = pane.getStyledDocument();
 
-	 // Set up Instructions Text Pane
-	 public void makeInstructionPane() {
-		 StyledDocument doc = instructPane.getStyledDocument();
+		pane.setBounds(diceWidth, diceWidth, screenWidth - 2 * diceWidth, (screenHeight - (2 * diceWidth)));
+		pane.setPreferredSize(new Dimension(screenWidth - 2 * diceWidth, screenHeight - (2 * diceWidth)));
+		pane.setFont(storyTextStyle);
+		pane.setBackground(storyBackground);
+		pane.setEditable(false);
 
-		 instructPane.setBounds(diceWidth, diceWidth, (screenWidth - 2 * diceWidth) - (diceWidth / 2), (screenHeight - (2 * diceWidth)));
-		 instructPane.setPreferredSize(new Dimension(screenWidth - 2 * diceWidth, screenHeight - (2 * diceWidth)));
-		 instructPane.setFont(instructFont);
-		 instructPane.setBackground(instructBackground);
-		 instructPane.setBorder(instructBorder);
-		 instructPane.setEditable(false);
+		// add dice cubes to text pane
+		ImageIcon[] sizedIcons = new ImageIcon[dgame.getNumDice()];
+		for (Die d: gameDice){
+			if(d.getStoryIndex() == 0)
+				sizedIcons[0] = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
+			else if(d.getStoryIndex() == 1)
+				sizedIcons[1] = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
+			else if(d.getStoryIndex() == 2)
+				sizedIcons[2] = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
+			else if(d.getStoryIndex() == 3)
+				sizedIcons[3] = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
+			else if(d.getStoryIndex() == 4)
+				sizedIcons[4] = new ImageIcon(d.getDieImg().getScaledInstance(diceWidth, diceWidth, Image.SCALE_DEFAULT));
+		}
 
-		 Style style = instructPane.addStyle("Color Style", null);
-		 StyleConstants.setForeground(style, Color.black);
-		 StyleConstants.setBold(style, true);
-		 StyleConstants.setFontSize(style, screenWidth / 25);
-		 try {
-			 doc.insertString(doc.getLength(), "  Estuary Story Cubes Instructions", style);
-			 doc.insertString(doc.getLength(), "\n", style);
-		 } 
-		 catch (BadLocationException e) {
-			 e.printStackTrace();
-		 }
-		 StyleConstants.setBold(style, false);
-		 StyleConstants.setFontSize(style, screenWidth / 35);
-		 try {
-			 doc.insertString(doc.getLength(), "\n  Roll the dice, then let the icons inspire you! Starting \n  with 'Once "
-				 		+ "upon a time...', pick the icon that catches \n  your eye first. As you create a story that links "
-				 		+ "all the \n  icons together, click and drag each die into a box in \n  the order they appear in your "
-				 		+ "story. When you're all \n  done, type your estuary adventure story in the box!", style);	
-		 } 
-		 catch (BadLocationException e) {
-			 e.printStackTrace();
-		 } 
-		 StyleConstants.setFontSize(style, screenWidth / 55);
-		 try {
-			 doc.insertString(doc.getLength(), "\n \n \n                                                 -click HELP again to exit-", style);	
-		 } 
-		 catch (BadLocationException e) {
-			 e.printStackTrace();
-		 } 
-	 }
-	 
-	 // Set up bad word text pane
-	 public void makeBadWordPane(String badWord) {
-		 StyledDocument doc = badWordPane.getStyledDocument();
+		Style style = pane.addStyle("Color Style", null);
+		StyleConstants.setForeground(style, color);
+		try {
+			doc.insertString(doc.getLength(), diceSpace, style);
+			for (ImageIcon icon : sizedIcons) {
+				pane.insertIcon(icon);
+			}
 
-		 badWordPane.setBounds(diceWidth, diceWidth, (screenWidth - 2 * diceWidth) - (diceWidth / 2), (screenHeight - (2 * diceWidth)));
-		 badWordPane.setPreferredSize(new Dimension(screenWidth - 2 * diceWidth, screenHeight - (2 * diceWidth)));
-		 badWordPane.setFont(badWordFont);
-		 badWordPane.setBorder(badWordBorder);
-		 badWordPane.setEditable(false);
+			doc.insertString(doc.getLength(), "\n", style);
+			doc.insertString(doc.getLength(), text, style);
+		} 
+		catch (BadLocationException e) {
+			e.printStackTrace();
+		} 
+	}
 
-		 Style style = badWordPane.addStyle("Color Style", null);
-		 StyleConstants.setForeground(style, badWordTextColor);
-		 StyleConstants.setBold(style, true);
-		 StyleConstants.setFontSize(style, screenWidth / 25);
-		 try {
-			 doc.insertString(doc.getLength(), "          Curse Word Detected", style);
-			 doc.insertString(doc.getLength(), "\n", style);
-		 } 
-		 catch (BadLocationException e) {
-			 e.printStackTrace();
-		 }
-		 StyleConstants.setBold(style, false);
-		 StyleConstants.setFontSize(style, screenWidth / 35);
-		 try {
-			 doc.insertString(doc.getLength(),"\n  Inappropriate language detected! Please edit your \n  story so it doesn't" 
-						+ " include this word: " + badWord, style);	
-		 } 
-		 catch (BadLocationException e) {
-			 e.printStackTrace();
-		 } 
-	 }
+	 /**
+	  *  Set up Instructions Text Pane, setting size, font, text, and colors.
+	  */
+	public void makeInstructionPane() {
+		StyledDocument doc = instructPane.getStyledDocument();
 
-		 
+		instructPane.setBounds(diceWidth, diceWidth, (screenWidth - 2 * diceWidth) - (diceWidth / 2), (screenHeight - (2 * diceWidth)));
+		instructPane.setPreferredSize(new Dimension(screenWidth - 2 * diceWidth, screenHeight - (2 * diceWidth)));
+		instructPane.setFont(instructFont);
+		instructPane.setBackground(instructBackground);
+		instructPane.setBorder(instructBorder);
+		instructPane.setEditable(false);
+
+		Style style = instructPane.addStyle("Color Style", null);
+		StyleConstants.setForeground(style, Color.black);
+		StyleConstants.setBold(style, true);
+		StyleConstants.setFontSize(style, screenWidth / 25);
+		try {
+			doc.insertString(doc.getLength(), "  Estuary Story Cubes Instructions", style);
+			doc.insertString(doc.getLength(), "\n", style);
+		} 
+		catch (BadLocationException e) {
+			e.printStackTrace();
+		}
+		StyleConstants.setBold(style, false);
+		StyleConstants.setFontSize(style, screenWidth / 35);
+		try {
+			doc.insertString(doc.getLength(), "\n  Roll the dice, then let the icons inspire you! Starting \n  with 'Once "
+					+ "upon a time...', pick the icon that catches \n  your eye first. As you create a story that links "
+					+ "all the \n  icons together, click and drag each die into a box in \n  the order they appear in your "
+					+ "story. When you're all \n  done, type your estuary adventure story in the box!", style);	
+		} 
+		catch (BadLocationException e) {
+			e.printStackTrace();
+		} 
+		StyleConstants.setFontSize(style, screenWidth / 55);
+		try {
+			doc.insertString(doc.getLength(), "\n \n \n                                                 -click HELP again to exit-", style);	
+		} 
+		catch (BadLocationException e) {
+			e.printStackTrace();
+		} 
+	}
+
+	/**
+	  *  Sets up bad word text pane, setting size, font, text, and colors, and passing the specific banned word
+	  *  the user typed so that it's displayed on the text pane.
+	  * @param badWord banned word typed by the user
+	  */
+	public void makeBadWordPane(String badWord) {
+		StyledDocument doc = badWordPane.getStyledDocument();
+
+		badWordPane.setBounds(diceWidth, diceWidth, (screenWidth - 2 * diceWidth) - (diceWidth / 2), (screenHeight - (2 * diceWidth)));
+		badWordPane.setPreferredSize(new Dimension(screenWidth - 2 * diceWidth, screenHeight - (2 * diceWidth)));
+		badWordPane.setFont(badWordFont);
+		badWordPane.setBorder(badWordBorder);
+		badWordPane.setEditable(false);
+
+		Style style = badWordPane.addStyle("Color Style", null);
+		StyleConstants.setForeground(style, badWordTextColor);
+		StyleConstants.setBold(style, true);
+		StyleConstants.setFontSize(style, screenWidth / 25);
+		try {
+			doc.insertString(doc.getLength(), "          Curse Word Detected", style);
+			doc.insertString(doc.getLength(), "\n", style);
+		} 
+		catch (BadLocationException e) {
+			e.printStackTrace();
+		}
+		StyleConstants.setBold(style, false);
+		StyleConstants.setFontSize(style, screenWidth / 35);
+		try {
+			doc.insertString(doc.getLength(),"\n  Inappropriate language detected! Please edit your \n  story so it doesn't" 
+					+ " include this word: " + badWord, style);	
+		} 
+		catch (BadLocationException e) {
+			e.printStackTrace();
+		} 
+	}
+
+	/**
+	 * Sets up all button listeners for each button used in the game.	 
+	 */
 	void setupListeners() {
 		startGameButton.addActionListener(new ActionListener() {
 			@Override
@@ -658,6 +697,11 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		});
 	}
 
+	/**
+	 * Creates the rolling dice animation by changing the displayed image for each die every fraction of a 
+	 * second (using the timer), as well as calling the Die class's throwDie function for each die to change 
+	 * the x- and y-locations. 
+	 */
 	void animDice() {
 		Random rand = new Random();
 		if (!isAnimDone) {
@@ -669,6 +713,10 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	}
 
 	// Timer
+	/**
+	 * Handles all actions that occur at every tick of the timer during the game
+	 * @param e action event
+	 */
 	public void actionPerformed(ActionEvent e) {
 		if (numAnimations < animsToDo) {
 			if (isRolled && !isAnimDone) {
@@ -688,10 +736,20 @@ public class StoryCubeView extends JPanel implements ActionListener {
 	}
 
 	// Set up mouse listener
+	
+	/**
+	 * Getter that returns the game screen as the target for the mouse listener and mouse motion listener
+	 * @return this (game screen)
+	 */
 	private Component getMouseTarget() {
 		return this;
 	}
 
+	/**
+	 * Sets up the mouse listener and mouse motion listener for the game, adds a mouse listener to the text 
+	 * area where the user inputs their story.
+	 * @param listener mouse input listener
+	 */
 	void setupMouseListener(MouseInputListener listener) {
 		getMouseTarget().addMouseListener(listener);
 		getMouseTarget().addMouseMotionListener(listener);
@@ -699,9 +757,23 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		//instructPane.addMouseListener(listener);
 	}
 
+	/**
+	 * DiceListener is a nested class that uses the mouse listener and mouse motion listener to call certain 
+	 * methods and change booleans when the user clicks, presses, drags, releases, and so on. It sets an initial 
+	 * point at (0, 0) and changes this point to wherever the most recent mouse event occurs. DiceListener 
+	 * implements the MouseInputListener interface.
+	 * 
+	 * @author Natalie
+	 *
+	 */
 	public class DiceListener implements MouseInputListener {
 		Point point = new Point(0, 0);
 
+		/**
+		 * If the boolean shouldEraseStory is true and the user clicks in the story text area, this method
+		 * erases all the text in the text area.
+		 * @param e mouse event
+		 */
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if(e.getSource() == storyText && shouldEraseStory){
@@ -710,6 +782,12 @@ public class StoryCubeView extends JPanel implements ActionListener {
 			}
 		}
 
+		/**
+		 * sets isDieSelected to true for the die that the user presses the mouse over and sets selectedDie to
+		 * that die. Also decrements dicePlaced if the user presses a die that is currently placed in a story
+		 * slot.
+		 * @param e mouse event
+		 */
 		@Override
 		public void mousePressed(MouseEvent e) {
 			point = e.getPoint();
@@ -732,6 +810,11 @@ public class StoryCubeView extends JPanel implements ActionListener {
 			}
 		}
 
+		/**
+		 * Places the die that the user selected, either placing it in the story slot the user dragged it into,
+		 * or snapping it back to its original position if the user didn't drag it into a story slot.
+		 * @param e mouse event
+		 */
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			point = e.getPoint();
@@ -781,6 +864,10 @@ public class StoryCubeView extends JPanel implements ActionListener {
 		@Override
 		public void mouseExited(MouseEvent e) {}
 
+		/**
+		 * Updates the x- and y-locations of the selected die that the user is dragging to the position of the
+		 * mouse, then calls repaint to update the graphics.
+		 */
 		@Override
 		public void mouseDragged(MouseEvent e) {
 			point = e.getPoint();

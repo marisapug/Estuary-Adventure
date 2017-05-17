@@ -11,6 +11,13 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
+/**
+ * This class sets up all of the features of the dice game, including the dice used, their images, the story 
+ * displayed/entered by the user, and the ArrayList of banned words.
+ * @author natalie
+ *
+ */
+
 public class DiceGame {
 	public int numDice = 5;
 	int numImgs = 20;
@@ -32,7 +39,16 @@ public class DiceGame {
 	// Story Stuff
 	private ArrayList<String> curseWords; // = new ArrayList<String>();
 	private String curseWord = "";
-
+	
+	/**
+	 * The constructor initializes the array of dice(type Die), the array of indexes of images selected for the
+	 * dice, the array of booleans of which images are used, the screen width and height, the width/size of 
+	 * the dice, the space between each die, the starting x- and y-locations of the first die, and the ArrayList of
+	 * curse words.
+	 * @param sWidth screen width
+	 * @param sHeight screen height
+	 * @param dWidth width of each die
+	 */
 	public DiceGame(int sWidth, int sHeight, int dWidth) {
 		dice = new Die[numDice];
 		imgNums = new int[numDice];
@@ -110,14 +126,19 @@ public class DiceGame {
 	}
 	
 
-	// Makes array of length numDice signaling whether or not an image has been
-	// chosen
+	/**
+	 *  Makes array of length numDice signaling whether or not an image has been chosen
+	 */
 	public void setImgBools() {
 		for (int i = 0; i < numImgs; i++) {
 			imgBools[i] = false;
 		}
 	}
 
+	/**
+	 * Sets starting locations of each die and then creates a Die object for each one as well as setting an image
+	 * to each die.
+	 */
 	public void setDice() {
 		setImgBools();
 		Random rand = new Random();
@@ -146,7 +167,7 @@ public class DiceGame {
 			tempDie.setInitYLov(dieY);
 			dice[i] = tempDie;
 		}
-	} // makes all dice with images
+	}
 
 	// Curse Word Checker
 	/**
