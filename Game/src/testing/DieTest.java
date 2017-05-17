@@ -31,6 +31,7 @@ public class DieTest {
 		d.setStoryIndex(4);
 		d.setXLoc(0);
 		d.setYLoc(0);
+		d.setDieImgNum(4);
 		assertEquals(d.getDieImg(), bi);
 		assertEquals(d.getInitXLoc(), 50);
 		assertEquals(d.getInitYLoc(), 30);
@@ -40,6 +41,7 @@ public class DieTest {
 		assertEquals(d.getStoryIndex(), 4);
 		assertEquals(d.getXLoc(), 0);
 		assertEquals(d.getYLoc(),0);
+		assertEquals(d.getDieImgNum(), 4);
 	}
 
 

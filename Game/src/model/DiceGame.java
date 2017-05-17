@@ -18,7 +18,7 @@ public class DiceGame {
 	int animNum;
 	Die[] dice;
 	public int[] imgNums;
-	boolean[] imgBools;
+	public boolean[] imgBools;
 	int xIncr;
 	int screenWidth;
 	int screenHeight;
@@ -27,7 +27,7 @@ public class DiceGame {
 	int betweenStory;
 	int diceStartX;
 	int diceStartY;
-	String[] storyEntered;
+	public String[] storyEntered;
 
 	// Story Stuff
 	private ArrayList<String> curseWords; // = new ArrayList<String>();
@@ -108,6 +108,7 @@ public class DiceGame {
 	public void setDiceStory(String s){
 		diceStory = s;
 	}
+	
 
 	// Makes array of length numDice signaling whether or not an image has been
 	// chosen
@@ -201,7 +202,7 @@ public class DiceGame {
 
 	/**
 	 * Removes any characters that aren't letters from the string, and splits
-	 * the string into an array of words
+	 * the string into an array of words, where all the letters are lowercase.
 	 * 
 	 * @param s
 	 */

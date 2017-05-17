@@ -115,6 +115,10 @@ public class Die {
 		return dir;
 	}
 	
+	public int getDieImgNum(){
+		return dieImgNum;
+	}
+	
 	//Setters
 	public void setXLoc(int x){
 		xLoc = x;
@@ -154,5 +158,9 @@ public class Die {
 	
 	public void setDir(int d){
 		dir = d;
+	}
+	
+	public void setDieImgNum(int din){
+		dieImgNum = din;
 	}
 }
