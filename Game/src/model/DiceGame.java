@@ -30,10 +30,7 @@ public class DiceGame {
 	String[] storyEntered;
 
 	// Story Stuff
-	private int numStories = 10;
-	private int indexNum;
 	private ArrayList<String> curseWords; // = new ArrayList<String>();
-	private boolean isCurse = false;
 	private String curseWord = "";
 
 	public DiceGame(int sWidth, int sHeight, int dWidth) {
@@ -84,6 +81,26 @@ public class DiceGame {
 	}
 	
 	// Setters
+	public void setNumDice(int nd){
+		numDice = nd;
+	}
+	
+	public void setNumImgs(int ni){
+		numImgs = ni;
+	}
+	
+	public void diceSetter(Die[] darr){
+		dice = darr;
+	}
+	
+	public void setDieElem(Die d, int elem){
+		dice[elem] = d;
+	}
+	
+	public void setCurseWord(String curse){
+		curseWord = curse;
+	}
+	
 	public void setAnimNum(int a) {
 		animNum = a;
 	}
