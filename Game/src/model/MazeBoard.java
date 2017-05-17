@@ -95,7 +95,7 @@ public class MazeBoard {
 
 	/**
 	 * Constructor, creates and instance of a game MazeBoard
-	 * @param dif difficulty of maze (1-3)
+	 * @param dif difficulty of maze (0-2)
 	 * @param sWidth width of the screen
 	 * @param sHeight height of the screen
 	 */

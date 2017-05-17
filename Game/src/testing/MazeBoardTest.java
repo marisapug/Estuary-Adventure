@@ -2,6 +2,9 @@ package testing;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 import org.junit.Test;
 
 import model.Litter;
@@ -10,6 +13,7 @@ import model.MazeCell;
 import model.MazeWall;
 import model.PlayerScore;
 import model.PowerUp;
+import model.Predator;
 
 public class MazeBoardTest {
 
@@ -81,7 +85,7 @@ public class MazeBoardTest {
 	
 	@Test
 	public void hitAnyPowerUpTest(){
-		MazeBoard tB = new MazeBoard(500,500);
+		MazeBoard tB = new MazeBoard(1,500,500);
 		PowerUp pow1 = tB.getGamePowerUps().get(0);
 		assertTrue(tB.hitAnyPowerUps(pow1.getXLoc(), pow1.getYLoc(), 10, 10));
 		assertFalse(tB.hitAnyPowerUps(-100,-100, 10, 10));
@@ -89,7 +93,7 @@ public class MazeBoardTest {
 	
 	@Test 
 	public void insertScoreTest(){
-		MazeBoard tB = new MazeBoard(500,500);
+		MazeBoard tB = new MazeBoard(0,500,500);
 		PlayerScore[] highscores = tB.getHighScores();
 		assertTrue(tB.getHighScores()[0] == null);
 		tB.insertScore("LOGAN!!!!" , 9001);
@@ -102,6 +106,90 @@ public class MazeBoardTest {
 		tB.insertScore("LOGAN!!!!" , 8000);
 		assertEquals(tB.getHighScores()[0].getScore(), 9001);
 		
+	}
+	
+	@Test
+	public void readRightScoresTest(){
+		MazeBoard tB = new MazeBoard(0,500,500);
+		assertTrue(tB.getHighScores()[0] == null);
+		try {
+			tB.readScoresFromFile();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			tB.writeScoresToFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		assertFalse(tB.getHighScores()[0] == null);
+	}
+	
+	@Test
+	public void readWriteBadWordsTest(){
+		MazeBoard tB = new MazeBoard(0,500,500);
+		assertFalse(tB.getBadWordsList() == null);
+		try {
+			tB.readBadWordsFromFile();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			tB.writeBadWordsToFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		assertFalse(tB.getBadWordsList().get(0) == null);
+	}
+	
+	@Test
+	public void addBadWordToListTest(){
+		MazeBoard tB = new MazeBoard(0,500,500);
+		int origSize = tB.getBadWordsList().size();
+		tB.addBadWordToList("doodoo");
+		int endSize = tB.getBadWordsList().size();
+
+		assertTrue(endSize > origSize);
+	}
+	
+	@Test
+	public void setRandomDirectionTest(){
+		MazeBoard tB = new MazeBoard(0,500,500);
+		Predator p1 = new Predator(-200,-200,0,10,10);
+		Predator p2 = new Predator(-200,-200,1,10,10);
+		Predator p3 = new Predator(-200,-200,2,10,10);
+		Predator p4 = new Predator(-200,-200,3,10,10);
+		tB.getPredators().add(p1);
+		tB.getPredators().add(p2);
+		tB.getPredators().add(p3);
+		tB.getPredators().add(p4);
+		int predDir = p1.getDirection();
+		tB.moveAllPredators();
+		assertTrue(p1.getDirection() == predDir);
+		MazeWall mw = new MazeWall(-195,-195, 205, -195, 0);
+		MazeWall mw1 = new MazeWall(-200,-200, 205, -195, 0);
+		tB.getMazeWalls().add(mw);
+		tB.getMazeWalls().add(mw1);
+		tB.setRandomDirections();
+		assertFalse(p1.getDirection() == predDir);
+	}
+	
+	@Test
+	public void hitAnyPredsTest(){
+		MazeBoard tB = new MazeBoard(0,500,500);
+		Predator p1 = new Predator(-200,-200,0,10,10);
+		tB.getPredators().add(p1);
+		assertTrue(!tB.hitAnyPreds(p1.getXLoc(), p1.getYLoc(), p1.getWidth(), p1.getHeight()));
 	}
 	
 }
