@@ -111,7 +111,7 @@ public class DiceGame {
 
 	// Makes array of length numDice signaling whether or not an image has been
 	// chosen
-	void setImgBools() {
+	public void setImgBools() {
 		for (int i = 0; i < numImgs; i++) {
 			imgBools[i] = false;
 		}
